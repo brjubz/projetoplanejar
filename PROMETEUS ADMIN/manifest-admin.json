@@ -1,0 +1,50 @@
+{
+  "name": "PROMETEUS - Admin Dashboard",
+  "short_name": "PROMETEUS Admin",
+  "description": "Painel administrativo do PROMETEUS",
+  "start_url": "/admin.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030305",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "prometeus-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "prometeus-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [
+    {
+      "src": "prometeus-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Usuários",
+      "short_name": "Usuários",
+      "description": "Gerenciar usuários",
+      "url": "/admin.html?view=usuarios",
+      "icons": []
+    },
+    {
+      "name": "Planilhas",
+      "short_name": "Planilhas",
+      "description": "Configurar planilhas",
+      "url": "/admin.html?view=planilhas",
+      "icons": []
+    }
+  ]
+}

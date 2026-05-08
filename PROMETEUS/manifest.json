@@ -1,0 +1,51 @@
+{
+  "name": "PROMETEUS - Executive Monitor",
+  "short_name": "PROMETEUS",
+  "description": "Dashboard inteligente de gestão de leads, vendas e obras",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030305",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "prometeus-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "prometeus-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [
+    {
+      "src": "prometeus-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Atendimento",
+      "short_name": "Atendimento",
+      "description": "Acesso rápido ao módulo de atendimento",
+      "url": "/?view=atendimento",
+      "icons": []
+    },
+    {
+      "name": "Vendas",
+      "short_name": "Vendas",
+      "description": "Acesso rápido ao módulo de vendas",
+      "url": "/?view=vendas",
+      "icons": []
+    }
+  ]
+}
+
