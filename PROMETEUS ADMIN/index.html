@@ -97,18 +97,38 @@
     #usuarios_status { padding: 10px; border-radius: 6px; margin-top: 12px; font-size: 14px; font-weight: 600; min-height: 20px; }
     .empty-state { text-align: center; padding: 40px; color: #475569; }
 
-    /* HISTORICO */
-    .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .hist-table th { text-align: left; padding: 10px 14px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .hist-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-    .hist-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .hist-online { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; margin-right: 6px; box-shadow: 0 0 6px rgba(16,185,129,0.6); }
-    .hist-offline { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #475569; margin-right: 6px; }
-    .hist-dur { font-size: 11px; color: #64748b; }
-    .hist-filter { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
-    .hist-filter select { padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-size: 13px; cursor: pointer; }
-    .hist-filter button { padding: 8px 16px; background: #3b82f6; border: none; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .hist-filter button:hover { background: #2563eb; }
+    /* DASHBOARD STATS */
+    .dash-stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .dash-stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .dash-stat-val { font-size: 28px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
+    .dash-stat-label { font-size: 12px; color: #64748b; font-weight: 600; }
+
+    /* ONLINE CARD */
+    .online-card { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; min-width: 240px; }
+    .online-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.7); flex-shrink: 0; animation: pulse-green 2s infinite; }
+    @keyframes pulse-green { 0%,100% { box-shadow: 0 0 4px rgba(16,185,129,0.5); } 50% { box-shadow: 0 0 12px rgba(16,185,129,1); } }
+    .online-info { flex: 1; min-width: 0; }
+    .online-name { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .online-meta { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    /* MODULO BAR */
+    .mod-bar-row { display: flex; align-items: center; gap: 10px; }
+    .mod-bar-label { width: 120px; font-size: 12px; color: #94a3b8; text-align: right; flex-shrink: 0; }
+    .mod-bar-track { flex: 1; background: rgba(255,255,255,0.05); border-radius: 4px; height: 10px; overflow: hidden; }
+    .mod-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #06b6d4); transition: width 0.6s ease; }
+    .mod-bar-count { width: 36px; font-size: 12px; color: #64748b; text-align: right; flex-shrink: 0; }
+
+    /* MODULO STATUS PILL */
+    .mod-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .mod-pill-ok { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25); }
+    .mod-pill-off { background: rgba(100,116,139,0.12); color: #64748b; border: 1px solid rgba(100,116,139,0.2); }
+
+    /* USERS TABLE */
+    .users-mini { width: 100%; border-collapse: collapse; }
+    .users-mini th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #475569; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .users-mini td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; vertical-align: middle; }
+    .users-mini tr:last-child td { border-bottom: none; }
+    .users-mini tr:hover td { background: rgba(255,255,255,0.02); }
   </style>
 </head>
 <body>
@@ -139,7 +159,6 @@
       <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
       <button class="tab-btn" onclick="switchTab('prevenda', this)">Pre-Vendas</button>
       <button class="tab-btn" onclick="switchTab('usuarios', this)">Usuarios</button>
-      <button class="tab-btn" onclick="switchTab('historico', this)">Historico</button>
     </div>
 
     <!-- Conteudo -->
@@ -153,8 +172,63 @@
 
         <!-- Dashboard -->
         <div id="section-dashboard" class="section active">
-          <h2>Bem-vindo ao Admin</h2>
-          <p style="color:#64748b; margin-top:8px;">Use o menu lateral para configurar as planilhas.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 style="margin-bottom:4px;">Visao Geral</h2>
+              <p style="color:#64748b; font-size:13px;" id="dash_lastUpdate">Carregando dados...</p>
+            </div>
+            <button class="btn" style="width:auto; padding:10px 20px;" onclick="carregarDashboard()">↻ Atualizar</button>
+          </div>
+
+          <!-- STAT CARDS -->
+          <div id="dash_statsRow" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; margin-bottom:28px;">
+            <div class="dash-stat-card" id="stat_usuarios">
+              <div class="dash-stat-icon" style="background:rgba(59,130,246,0.15); color:#60a5fa;">👥</div>
+              <div class="dash-stat-val" id="stat_usuarios_val">—</div>
+              <div class="dash-stat-label">Usuarios Cadastrados</div>
+            </div>
+            <div class="dash-stat-card" id="stat_ativos">
+              <div class="dash-stat-icon" style="background:rgba(16,185,129,0.15); color:#10b981;">🟢</div>
+              <div class="dash-stat-val" id="stat_ativos_val">—</div>
+              <div class="dash-stat-label">Online Agora</div>
+            </div>
+            <div class="dash-stat-card">
+              <div class="dash-stat-icon" style="background:rgba(251,191,36,0.15); color:#fbbf24;">📋</div>
+              <div class="dash-stat-val" id="stat_modulos_val">—</div>
+              <div class="dash-stat-label">Modulos Configurados</div>
+            </div>
+            <div class="dash-stat-card">
+              <div class="dash-stat-icon" style="background:rgba(168,85,247,0.15); color:#a78bfa;">📅</div>
+              <div class="dash-stat-val" id="stat_logins_val">—</div>
+              <div class="dash-stat-label">Logins Hoje</div>
+            </div>
+          </div>
+
+          <!-- SESSOES ATIVAS -->
+          <div class="section-label" style="margin-top:0;">🟢 Usuarios Online Agora</div>
+          <div id="dash_online" style="display:flex; flex-wrap:wrap; gap:14px; margin-bottom:28px;">
+            <p style="color:#475569; font-size:13px; padding:8px 0;">Carregando...</p>
+          </div>
+
+          <!-- MODULOS MAIS ACESSADOS -->
+          <div class="section-label">📊 Modulos Mais Acessados</div>
+          <div class="card" style="margin-bottom:28px; padding:20px;">
+            <div id="dash_modulos_chart" style="display:flex; flex-direction:column; gap:10px;">
+              <p style="color:#475569; font-size:13px;">Carregando...</p>
+            </div>
+          </div>
+
+          <!-- MODULOS CONFIGURADOS -->
+          <div class="section-label">⚙️ Status dos Modulos</div>
+          <div id="dash_modulos_status" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:28px;">
+            <p style="color:#475569; font-size:13px;">Carregando...</p>
+          </div>
+
+          <!-- USUARIOS CADASTRADOS -->
+          <div class="section-label">👤 Usuarios do Sistema</div>
+          <div id="dash_users_table" style="margin-bottom:12px;">
+            <p style="color:#475569; font-size:13px;">Carregando...</p>
+          </div>
         </div>
 
         <!-- Pre-Vendas -->
@@ -363,44 +437,6 @@
 
         </div><!-- /section-usuarios -->
 
-        <!-- Historico -->
-        <div id="section-historico" class="section">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-            <h2>Historico de Acessos</h2>
-            <button class="btn" style="width:auto; padding:10px 20px;" onclick="carregarHistorico()">Atualizar</button>
-          </div>
-          <p style="color:#64748b; margin-bottom:20px; font-size:13px;">Registro de logins e logouts dos usuarios do dashboard.</p>
-
-          <div class="hist-filter">
-            <select id="hist_filtroUser" onchange="carregarHistorico()">
-              <option value="">Todos os usuarios</option>
-            </select>
-            <select id="hist_limite" onchange="carregarHistorico()">
-              <option value="50">Ultimos 50</option>
-              <option value="100">Ultimos 100</option>
-              <option value="200">Ultimos 200</option>
-            </select>
-          </div>
-
-          <div class="card" style="padding:0; overflow:hidden;">
-            <div id="historicoContainer" style="overflow-x:auto;">
-              <table class="hist-table">
-                <thead>
-                  <tr>
-                    <th>Usuario</th>
-                    <th>Entrada</th>
-                    <th>Saida</th>
-                    <th>Duracao</th>
-                    <th>Dispositivo</th>
-                  </tr>
-                </thead>
-                <tbody id="historicoBody">
-                  <tr><td colspan="5" class="empty-state">Carregando...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div><!-- /section-historico -->
 
       </div><!-- /admin-body -->
     </div><!-- /admin-content -->
@@ -443,6 +479,8 @@ function handleLogin() {
     document.getElementById('adminLayout').classList.add('visible');
     currentUser = { email: 'adminmaster' };
     document.getElementById('loginError').style.display = 'none';
+    // Carregar dashboard logo ao entrar
+    setTimeout(carregarDashboard, 400);
   } else {
     document.getElementById('loginError').textContent = 'Credenciais invalidas';
     document.getElementById('loginError').style.display = 'block';
@@ -464,14 +502,14 @@ function switchTab(tab, btnEl) {
   document.getElementById('section-' + tab).classList.add('active');
   if (btnEl) btnEl.classList.add('active');
 
+  if (tab === 'dashboard') {
+    carregarDashboard();
+  }
   if (tab === 'prevenda') {
     carregarConfigPreVendas();
   }
   if (tab === 'usuarios') {
     carregarUsuarios();
-  }
-  if (tab === 'historico') {
-    carregarHistorico();
   }
 }
 
@@ -610,6 +648,212 @@ async function carregarConfigPreVendas() {
     console.error('Erro ao carregar:', error);
     statusDiv.textContent = 'Erro ao carregar: ' + error.message;
     statusDiv.style.color = '#ef4444';
+  }
+}
+
+// ============================================================
+// DASHBOARD ADMIN
+// ============================================================
+
+const MODULO_LABELS = {
+  'view-atendimento':    'Atendimento',
+  'view-vendas':         'Vendas',
+  'view-gastos':         'Gastos MKT',
+  'view-estoque':        'Estoque',
+  'view-premiacaojulia': 'Premiação',
+  'view-veiculacoes':    'Veiculações',
+  'view-obras':          'Obras',
+  'view-sociais':        'Redes Sociais'
+};
+
+function fmtDuracao(ms) {
+  if (!ms || ms < 0) return '—';
+  const mins = Math.round(ms / 60000);
+  if (mins < 60)   return mins + ' min';
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return h + 'h' + (m ? ' ' + m + 'min' : '');
+}
+
+function fmtHora(isoOrTs) {
+  if (!isoOrTs) return '—';
+  const d = new Date(isoOrTs);
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function carregarDashboard() {
+  if (!db) {
+    document.getElementById('dash_lastUpdate').textContent = 'Firebase nao conectado.';
+    return;
+  }
+
+  document.getElementById('dash_lastUpdate').textContent = 'Atualizando...';
+
+  try {
+    // ── 1. Usuarios ─────────────────────────────────────────
+    const usersSnap  = await db.collection('admin_users').get();
+    const allUsers   = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const totalUsers = allUsers.length;
+    document.getElementById('stat_usuarios_val').textContent = totalUsers;
+
+    // ── 2. Sessoes ativas (logoutTime == null, login últimas 24h) ──
+    const limite24h  = new Date(Date.now() - 86400000).toISOString();
+    const activeSess = await db.collection('admin_history')
+      .where('logoutTime', '==', null)
+      .orderBy('loginTime', 'desc')
+      .limit(30)
+      .get();
+
+    // filtra pelo limite de 24h localmente (evita índice composto)
+    const sessActive = activeSess.docs
+      .filter(d => d.data().loginTime >= limite24h)
+      .map(d => ({ id: d.id, ...d.data() }));
+
+    document.getElementById('stat_ativos_val').textContent = sessActive.length;
+
+    // Render "Online Agora"
+    const onlineDiv = document.getElementById('dash_online');
+    if (sessActive.length === 0) {
+      onlineDiv.innerHTML = '<p style="color:#475569; font-size:13px; padding:8px 0;">Nenhum usuario online no momento.</p>';
+    } else {
+      const userMap = {};
+      allUsers.forEach(u => { userMap[u.id] = u; });
+
+      onlineDiv.innerHTML = sessActive.map(s => {
+        const u       = userMap[s.userId] || {};
+        const name    = u.name || s.userName || '?';
+        const inicial = name.charAt(0).toUpperCase();
+        const avatarHtml = u.foto
+          ? `<img src="${u.foto}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+          : `<div style="width:40px;height:40px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;font-weight:700;color:#94a3b8;flex-shrink:0;">${inicial}</div>`;
+        const durMs  = s.loginTime ? Date.now() - new Date(s.loginTime).getTime() : 0;
+        const ua     = s.device || '';
+        let dev = '🖥️';
+        if (/iPhone|iPad/i.test(ua)) dev = '📱';
+        else if (/Android/i.test(ua)) dev = '📱';
+
+        return `
+          <div class="online-card">
+            ${avatarHtml}
+            <div class="online-dot"></div>
+            <div class="online-info">
+              <div class="online-name">${name}</div>
+              <div class="online-meta">${dev} Entrou às ${fmtHora(s.loginTime)} · Há ${fmtDuracao(durMs)}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ── 3. Logins Hoje ───────────────────────────────────────
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const loginsHojeSnap = await db.collection('admin_history')
+      .where('loginTime', '>=', hoje.toISOString())
+      .get();
+    document.getElementById('stat_logins_val').textContent = loginsHojeSnap.size;
+
+    // ── 4. Modulos configurados ──────────────────────────────
+    const sheetsSnap    = await db.collection('admin_sheets').get();
+    const sheetsAtivos  = sheetsSnap.docs.filter(d => (d.data().googleSheetId || '').length > 3);
+    const configDoc     = await db.collection('admin_config').doc('prevenda_julia').get();
+    const temMensais    = configDoc.exists && !!configDoc.data().atendimento?.id;
+    const modulosConf   = sheetsAtivos.length + (temMensais ? 3 : 0); // obras/est/veic + 3 mensais
+    document.getElementById('stat_modulos_val').textContent = modulosConf;
+
+    // Status pills dos modulos
+    const nomesFixas = { obras: 'Obras', estoque: 'Estoque', veiculacoes: 'Veiculações' };
+    const sheetsMap  = {};
+    sheetsSnap.docs.forEach(d => { sheetsMap[d.id] = (d.data().googleSheetId || '').length > 3; });
+    const configData = temMensais ? configDoc.data() : null;
+
+    const pillsHtml = [
+      { key: 'atend',  label: 'Atendimento', ok: !!(configData?.atendimento?.id) },
+      { key: 'vendas', label: 'Vendas',       ok: !!(configData?.vendas?.id) },
+      { key: 'gastos', label: 'Gastos MKT',   ok: !!(configData?.gastos?.id) },
+      { key: 'obras',       label: 'Obras',        ok: !!sheetsMap['obras'] },
+      { key: 'estoque',     label: 'Estoque',       ok: !!sheetsMap['estoque'] },
+      { key: 'veiculacoes', label: 'Veiculações',   ok: !!sheetsMap['veiculacoes'] }
+    ].map(m => `
+      <span class="mod-pill ${m.ok ? 'mod-pill-ok' : 'mod-pill-off'}">
+        ${m.ok ? '✅' : '⚪'} ${m.label}
+      </span>`).join('');
+    document.getElementById('dash_modulos_status').innerHTML = pillsHtml;
+
+    // ── 5. Analytics de módulos ──────────────────────────────
+    const analyticsDoc = await db.collection('admin_analytics').doc('modules').get();
+    const chartDiv     = document.getElementById('dash_modulos_chart');
+
+    if (analyticsDoc.exists) {
+      const data    = analyticsDoc.data();
+      const entries = Object.entries(data)
+        .map(([k, v]) => ({ key: k, label: MODULO_LABELS[k] || k, count: v || 0 }))
+        .filter(e => e.count > 0)
+        .sort((a, b) => b.count - a.count);
+
+      if (entries.length === 0) {
+        chartDiv.innerHTML = '<p style="color:#475569;font-size:13px;">Nenhum acesso registrado ainda. Os dados aparecem conforme os usuarios navegam no dashboard.</p>';
+      } else {
+        const maxVal = entries[0].count;
+        chartDiv.innerHTML = entries.map(e => `
+          <div class="mod-bar-row">
+            <span class="mod-bar-label">${e.label}</span>
+            <div class="mod-bar-track">
+              <div class="mod-bar-fill" style="width:${Math.round((e.count/maxVal)*100)}%"></div>
+            </div>
+            <span class="mod-bar-count">${e.count}x</span>
+          </div>`).join('');
+      }
+    } else {
+      chartDiv.innerHTML = '<p style="color:#475569;font-size:13px;">Nenhum acesso registrado ainda. Os dados aparecem conforme os usuarios navegam no dashboard.</p>';
+    }
+
+    // ── 6. Tabela mini de usuarios ───────────────────────────
+    const tableDiv = document.getElementById('dash_users_table');
+    if (allUsers.length === 0) {
+      tableDiv.innerHTML = '<p style="color:#475569;font-size:13px;">Nenhum usuario cadastrado.</p>';
+    } else {
+      const rows = allUsers
+        .sort((a, b) => (b.lastActive || 0) - (a.lastActive || 0))
+        .map(u => {
+          const ativo  = u.ativo !== false;
+          const gestor = !!u.isTeamManager;
+          const ultimo = u.lastActive ? new Date(u.lastActive).toLocaleDateString('pt-BR') : '—';
+          const inicial = (u.name || u.email || '?').charAt(0).toUpperCase();
+          const avatarHtml = u.foto
+            ? `<img src="${u.foto}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;">`
+            : `<span style="display:inline-flex;width:30px;height:30px;border-radius:50%;background:#1e293b;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#94a3b8;margin-right:8px;vertical-align:middle;">${inicial}</span>`;
+          return `
+            <tr>
+              <td>${avatarHtml}<span style="font-weight:600;">${u.name || '—'}</span></td>
+              <td style="color:#64748b;">${u.email || '—'}</td>
+              <td>${gestor ? '<span class="badge badge-gestor">Gestor</span>' : '<span style="color:#475569;font-size:12px;">Corretor</span>'}</td>
+              <td><span class="badge ${ativo ? 'badge-ativo' : 'badge-inativo'}">${ativo ? 'Ativo' : 'Inativo'}</span></td>
+              <td style="color:#64748b;font-size:12px;">${ultimo}</td>
+            </tr>`;
+        }).join('');
+
+      tableDiv.innerHTML = `
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="users-mini">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th>Ultimo Acesso</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
+    const now = new Date();
+    document.getElementById('dash_lastUpdate').textContent =
+      'Atualizado em ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  } catch (err) {
+    console.error('Erro no dashboard admin:', err);
+    document.getElementById('dash_lastUpdate').textContent = 'Erro: ' + err.message;
   }
 }
 
@@ -951,6 +1195,7 @@ window.handleLogout           = handleLogout;
 window.switchTab              = switchTab;
 window.salvarConfigPreVendas  = salvarConfigPreVendas;
 window.carregarConfigPreVendas = carregarConfigPreVendas;
+window.carregarDashboard      = carregarDashboard;
 window.carregarUsuarios       = carregarUsuarios;
 window.renderListaUsuarios    = renderListaUsuarios;
 window.abrirFormUsuario       = abrirFormUsuario;
@@ -959,7 +1204,6 @@ window.salvarUsuario          = salvarUsuario;
 window.deletarUsuario         = deletarUsuario;
 window.toggleAtivo            = toggleAtivo;
 window.previewFoto            = previewFoto;
-window.carregarHistorico      = carregarHistorico;
 </script>
 
 </body>

@@ -2314,14 +2314,22 @@
       }
 
       if (window.innerWidth <= 1024) toggleSidebar();
-      
+
       // Forçar scroll para o topo
       const mainContent = document.querySelector('.main-content');
       if (mainContent) {
         mainContent.scrollTop = 0;
       }
-      // Alternativa para garantir no celular
       window.scrollTo(0, 0);
+
+      // Analytics: registrar acesso ao módulo (fire-and-forget)
+      if (firebaseDb && currentUserId && viewId !== 'view-home') {
+        try {
+          const update = {};
+          update[viewId] = firebase.firestore.FieldValue.increment(1);
+          firebaseDb.collection('admin_analytics').doc('modules').set(update, { merge: true }).catch(() => {});
+        } catch (_) {}
+      }
     }
 
     function voltarPasso1() {
