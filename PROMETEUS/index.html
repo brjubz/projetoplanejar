@@ -4411,7 +4411,8 @@
       }
       miniRankingVGV(vendas, 'corretor',      'home-top-corretores');
       miniRankingVGV(vendas, 'produto',        'home-top-produtos');
-      miniRankingVGV(vendas, 'midiaCruzada',  'home-top-midias');
+      // midiaCruzada só existe no array cruzado (calculado em aplicarFiltrosArea)
+      miniRankingVGV(window._vendasCruzadas || vendas, 'midiaCruzada', 'home-top-midias');
 
       // Label do mes
       const mesNomes = {
