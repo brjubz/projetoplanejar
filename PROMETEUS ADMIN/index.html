@@ -96,6 +96,19 @@
     .foto-preview.visible { display: block; }
     #usuarios_status { padding: 10px; border-radius: 6px; margin-top: 12px; font-size: 14px; font-weight: 600; min-height: 20px; }
     .empty-state { text-align: center; padding: 40px; color: #475569; }
+
+    /* HISTORICO */
+    .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .hist-table th { text-align: left; padding: 10px 14px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .hist-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    .hist-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .hist-online { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; margin-right: 6px; box-shadow: 0 0 6px rgba(16,185,129,0.6); }
+    .hist-offline { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #475569; margin-right: 6px; }
+    .hist-dur { font-size: 11px; color: #64748b; }
+    .hist-filter { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .hist-filter select { padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-size: 13px; cursor: pointer; }
+    .hist-filter button { padding: 8px 16px; background: #3b82f6; border: none; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .hist-filter button:hover { background: #2563eb; }
   </style>
 </head>
 <body>
@@ -126,6 +139,7 @@
       <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
       <button class="tab-btn" onclick="switchTab('prevenda', this)">Pre-Vendas</button>
       <button class="tab-btn" onclick="switchTab('usuarios', this)">Usuarios</button>
+      <button class="tab-btn" onclick="switchTab('historico', this)">Historico</button>
     </div>
 
     <!-- Conteudo -->
@@ -349,6 +363,45 @@
 
         </div><!-- /section-usuarios -->
 
+        <!-- Historico -->
+        <div id="section-historico" class="section">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+            <h2>Historico de Acessos</h2>
+            <button class="btn" style="width:auto; padding:10px 20px;" onclick="carregarHistorico()">Atualizar</button>
+          </div>
+          <p style="color:#64748b; margin-bottom:20px; font-size:13px;">Registro de logins e logouts dos usuarios do dashboard.</p>
+
+          <div class="hist-filter">
+            <select id="hist_filtroUser" onchange="carregarHistorico()">
+              <option value="">Todos os usuarios</option>
+            </select>
+            <select id="hist_limite" onchange="carregarHistorico()">
+              <option value="50">Ultimos 50</option>
+              <option value="100">Ultimos 100</option>
+              <option value="200">Ultimos 200</option>
+            </select>
+          </div>
+
+          <div class="card" style="padding:0; overflow:hidden;">
+            <div id="historicoContainer" style="overflow-x:auto;">
+              <table class="hist-table">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Entrada</th>
+                    <th>Saida</th>
+                    <th>Duracao</th>
+                    <th>Dispositivo</th>
+                  </tr>
+                </thead>
+                <tbody id="historicoBody">
+                  <tr><td colspan="5" class="empty-state">Carregando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /section-historico -->
+
       </div><!-- /admin-body -->
     </div><!-- /admin-content -->
   </div><!-- /admin-container -->
@@ -416,6 +469,9 @@ function switchTab(tab, btnEl) {
   }
   if (tab === 'usuarios') {
     carregarUsuarios();
+  }
+  if (tab === 'historico') {
+    carregarHistorico();
   }
 }
 
@@ -802,6 +858,92 @@ async function toggleAtivo(id, ativoAtual) {
 }
 
 // ============================================================
+// HISTORICO DE ACESSOS
+// ============================================================
+
+async function carregarHistorico() {
+  const tbody   = document.getElementById('historicoBody');
+  const filtroU = document.getElementById('hist_filtroUser');
+  const limite  = parseInt(document.getElementById('hist_limite').value) || 50;
+
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">Carregando...</td></tr>';
+
+  if (!db) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:#ef4444; padding:20px;">Firebase nao conectado.</td></tr>';
+    return;
+  }
+
+  try {
+    // Popula filtro de usuario (apenas na 1a carga)
+    if (filtroU && filtroU.options.length <= 1) {
+      const usersSnap = await db.collection('admin_users').get();
+      usersSnap.docs.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.data().name || d.data().email || d.id;
+        filtroU.appendChild(opt);
+      });
+    }
+
+    let query = db.collection('admin_history').orderBy('loginTime', 'desc').limit(limite);
+    const selectedUser = filtroU ? filtroU.value : '';
+    if (selectedUser) {
+      query = db.collection('admin_history').where('userId', '==', selectedUser).orderBy('loginTime', 'desc').limit(limite);
+    }
+
+    const snap = await query.get();
+
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum registro encontrado.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = snap.docs.map(doc => {
+      const d = doc.data();
+      const entrada   = d.loginTime  ? new Date(d.loginTime)  : null;
+      const saida     = d.logoutTime ? new Date(d.logoutTime) : null;
+      const online    = !d.logoutTime;
+
+      const fmtDate = dt => dt
+        ? dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        : '—';
+
+      let durStr = '—';
+      if (entrada && saida) {
+        const mins = Math.round((saida - entrada) / 60000);
+        if (mins < 60)       durStr = mins + ' min';
+        else if (mins < 1440) durStr = Math.floor(mins/60) + 'h ' + (mins%60) + 'min';
+        else                  durStr = Math.floor(mins/1440) + 'd';
+      }
+
+      // Resumo do dispositivo (simplificado)
+      const ua = d.device || '';
+      let dispositivo = 'Desconhecido';
+      if (/iPhone|iPad/i.test(ua))       dispositivo = '📱 iOS';
+      else if (/Android/i.test(ua))      dispositivo = '📱 Android';
+      else if (/Windows/i.test(ua))      dispositivo = '🖥️ Windows';
+      else if (/Mac/i.test(ua))          dispositivo = '🍎 macOS';
+      else if (/Linux/i.test(ua))        dispositivo = '🐧 Linux';
+
+      return `
+        <tr>
+          <td style="font-weight:600;">${d.userName || '—'}</td>
+          <td>${fmtDate(entrada)}</td>
+          <td>${online
+            ? '<span class="hist-online"></span><span style="color:#10b981; font-weight:600; font-size:12px;">Online agora</span>'
+            : fmtDate(saida)}</td>
+          <td class="hist-dur">${online ? '—' : durStr}</td>
+          <td style="font-size:12px; color:#94a3b8;">${dispositivo}</td>
+        </tr>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Erro ao carregar historico:', err);
+    tbody.innerHTML = `<tr><td colspan="5" style="color:#ef4444; padding:20px;">Erro: ${err.message}</td></tr>`;
+  }
+}
+
+// ============================================================
 // EXPORTS GLOBAIS
 // ============================================================
 window.handleLogin            = handleLogin;
@@ -817,6 +959,7 @@ window.salvarUsuario          = salvarUsuario;
 window.deletarUsuario         = deletarUsuario;
 window.toggleAtivo            = toggleAtivo;
 window.previewFoto            = previewFoto;
+window.carregarHistorico      = carregarHistorico;
 </script>
 
 </body>

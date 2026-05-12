@@ -733,6 +733,15 @@
       </div>
       
       <div style="margin-top: auto;">
+        <!-- Card do usuario logado -->
+        <div id="userProfileCard" style="display:flex; align-items:center; gap:10px; padding:12px 10px; margin-bottom:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px;">
+          <div id="sidebarUserAvatar" style="width:36px; height:36px; border-radius:50%; background:#1e293b; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#94a3b8; overflow:hidden;"></div>
+          <div style="min-width:0; flex:1;">
+            <div id="sidebarUserName" style="font-size:13px; font-weight:700; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+            <div id="sidebarUserRole" style="font-size:10px; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+          </div>
+        </div>
+
         <div class="nav-item" onclick="sair()" style="margin-bottom: 10px; color: var(--color-neg); background: rgba(244, 63, 94, 0.1);">
           <i data-lucide="log-out"></i> Sair
         </div>
@@ -2126,6 +2135,14 @@
               return;
             }
 
+            // Bloquear usuarios desativados pelo admin
+            if (userData.ativo === false) {
+              console.log('Usuario inativo');
+              errorMsg.textContent = 'Acesso desativado. Fale com o administrador.';
+              errorMsg.style.display = 'block';
+              return;
+            }
+
             console.log('Autenticação bem-sucedida!');
             // Credenciais corretas
             currentUserId = userDoc.id;
@@ -2135,6 +2152,7 @@
             localStorage.setItem('currentUserId', userDoc.id);
             localStorage.setItem('userEmail', userData.email);
             localStorage.setItem('userFoto', userData.foto || '');
+            localStorage.setItem('userIsTeamManager', userData.isTeamManager ? 'true' : 'false');
             localStorage.setItem('auth_planejar_v1', 'true');
             
             // Registrar login no Firebase
@@ -2172,6 +2190,7 @@
               localStorage.setItem('auth_planejar_v1', 'true');
               document.getElementById('modal').style.display = 'none';
               document.getElementById('appLayout').classList.add('visible');
+              renderUserProfileCard();
               atualizarLimitesCalendario();
               init();
               initCloudPresence();
@@ -2227,6 +2246,7 @@
       setTimeout(() => {
         document.getElementById('modal').style.display='none';
         document.getElementById('appLayout').classList.add('visible');
+        renderUserProfileCard();
         atualizarLimitesCalendario();
         init();
         initCloudPresence();
@@ -4942,6 +4962,30 @@
         window.location.reload();
     }
 
+    // === CARD DO USUARIO LOGADO NA SIDEBAR ===
+    function renderUserProfileCard() {
+      const name    = localStorage.getItem('nomeUsuario') || '';
+      const foto    = localStorage.getItem('userFoto')    || '';
+      const manager = localStorage.getItem('userIsTeamManager') === 'true';
+
+      const avatarEl = document.getElementById('sidebarUserAvatar');
+      const nameEl   = document.getElementById('sidebarUserName');
+      const roleEl   = document.getElementById('sidebarUserRole');
+
+      if (!avatarEl) return;
+
+      if (foto) {
+        avatarEl.innerHTML = `<img src="${foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      } else {
+        avatarEl.textContent = (name || '?').charAt(0).toUpperCase();
+      }
+
+      nameEl.textContent = name || 'Usuario';
+      roleEl.textContent = manager ? '⭐ Gestor de Equipe' : 'Corretor';
+    }
+
+    window.renderUserProfileCard = renderUserProfileCard;
+
     window.validarPasso1 = validarPasso1; window.finalizarLogin = finalizarLogin; window.voltarPasso1 = voltarPasso1;
     window.toggleSidebar = toggleSidebar; window.switchView = switchView;
     window.toggleTable = toggleTable; window.trocarMes = trocarMes; window.limparData = limparData;
@@ -4993,6 +5037,7 @@
         // Fechar modal e entrar no dashboard
         document.getElementById('modalChangePassword').style.display = 'none';
         document.getElementById('appLayout').classList.add('visible');
+        renderUserProfileCard();
         atualizarLimitesCalendario();
         init();
         initCloudPresence();
@@ -5019,6 +5064,7 @@
         
         document.getElementById('modal').style.display = 'none';
         document.getElementById('appLayout').classList.add('visible');
+        renderUserProfileCard();
         atualizarLimitesCalendario();
         init();
         initCloudPresence();
