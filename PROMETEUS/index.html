@@ -2545,11 +2545,13 @@
       } catch (e) { return []; }
     }
 
-    async function fetchVendasCSV(gid) {
-      if (!VENDAS_SHEET_ID) return [];
-      
-      const { sheetId, gid: extractedGid } = extrairSheetIdEGid(VENDAS_SHEET_ID);
-      if (!sheetId || extractedGid === '0') return [];
+    async function fetchVendasCSV(combinedId) {
+      // Aceita combined "SHEET_ID|GID" direto ou usa o global como fallback
+      const fonte = (combinedId && combinedId.includes('|')) ? combinedId : (VENDAS_SHEET_ID || '');
+      if (!fonte) return [];
+
+      const { sheetId, gid: extractedGid } = extrairSheetIdEGid(fonte);
+      if (!sheetId) return [];
       
       const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${extractedGid}&t=${Date.now()}`;
       try {
@@ -2610,11 +2612,13 @@
       } catch (e) { return []; }
     }
 
-    async function fetchGastosCSV(gid) {
-      if (!GASTOS_SHEET_ID) return [];
-      
-      const { sheetId, gid: extractedGid } = extrairSheetIdEGid(GASTOS_SHEET_ID);
-      if (!sheetId || extractedGid === '0') return [];
+    async function fetchGastosCSV(combinedId) {
+      // Aceita combined "SHEET_ID|GID" direto ou usa o global como fallback
+      const fonte = (combinedId && combinedId.includes('|')) ? combinedId : (GASTOS_SHEET_ID || '');
+      if (!fonte) return [];
+
+      const { sheetId, gid: extractedGid } = extrairSheetIdEGid(fonte);
+      if (!sheetId) return [];
       
       const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${extractedGid}&t=${Date.now()}`;
       try {
@@ -2800,33 +2804,46 @@
         let prevendaConfig = null;
         try {
           const docSnap = await firebaseDb.collection('admin_config').doc('prevenda_julia').get();
-          if (docSnap.exists()) {
+          // CORRECAO: docSnap.exists e propriedade boolean, NAO funcao
+          if (docSnap.exists) {
             prevendaConfig = docSnap.data();
             console.log('✅ Config de Pré-Vendas carregada do Firebase');
           } else {
-            console.warn('⚠️ Documento prevenda_julia não encontrado');
+            console.warn('⚠️ Documento prevenda_julia não encontrado no Firebase');
           }
         } catch (e) {
           console.error('❌ Erro ao carregar config:', e);
         }
 
-        // ===== PUXAR GIDs DO MÊS SELECIONADO =====
-        const gidAtendimento = prevendaConfig?.atendimento?.gids?.[currentMonthId];
-        const gidVendas = prevendaConfig?.vendas?.gids?.[currentMonthId];
-        const gidGastos = prevendaConfig?.gastos?.gids?.[currentMonthId];
+        // ===== PUXAR IDs E GIDs DO MÊS SELECIONADO =====
+        const idAtendimento  = prevendaConfig?.atendimento?.id || '';
+        const idVendas       = prevendaConfig?.vendas?.id      || '';
+        const idGastos       = prevendaConfig?.gastos?.id      || '';
+        const gidAtendimento = prevendaConfig?.atendimento?.gids?.[currentMonthId] || '';
+        const gidVendas      = prevendaConfig?.vendas?.gids?.[currentMonthId]      || '';
+        const gidGastos      = prevendaConfig?.gastos?.gids?.[currentMonthId]      || '';
 
-        console.log(`📋 GIDs do mês ${currentMonthId}:`);
-        console.log(`   Atendimento: ${gidAtendimento || '❌ não configurado'}`);
-        console.log(`   Vendas: ${gidVendas || '❌ não configurado'}`);
-        console.log(`   Gastos: ${gidGastos || '❌ não configurado'}`);
+        // Combinar ID|GID para uso nas funcoes de fetch
+        const combinedAtend = (idAtendimento && gidAtendimento) ? idAtendimento + '|' + gidAtendimento : '';
+        const combinedVend  = (idVendas      && gidVendas)      ? idVendas      + '|' + gidVendas      : '';
+        const combinedGast  = (idGastos      && gidGastos)      ? idGastos      + '|' + gidGastos      : '';
+
+        // Atualizar globais para que as funcoes de fetch usem o mes correto
+        if (combinedVend)  window.VENDAS_SHEET_ID  = combinedVend;
+        if (combinedGast)  window.GASTOS_SHEET_ID  = combinedGast;
+
+        console.log(`📋 Config do mês ${currentMonthId}:`);
+        console.log(`   Atendimento: ${combinedAtend || '❌ não configurado'}`);
+        console.log(`   Vendas:      ${combinedVend  || '❌ não configurado'}`);
+        console.log(`   Gastos:      ${combinedGast  || '❌ não configurado'}`);
 
         // ===== CARREGAR ATENDIMENTO DO MÊS =====
         try {
-          if (gidAtendimento) {
-            window.statusData = await fetchCSV(gidAtendimento);
+          if (combinedAtend) {
+            window.statusData = await fetchCSV(combinedAtend);
             console.log(`✓ Atendimento ${currentMonthId}: ${statusData.length} registros`);
           } else {
-            console.warn(`⚠️ GID não configurado para atendimento/${currentMonthId}`);
+            console.warn(`⚠️ ID/GID não configurado para atendimento/${currentMonthId}`);
             window.statusData = [];
           }
         } catch (e) {
@@ -2836,11 +2853,11 @@
 
         // ===== CARREGAR VENDAS DO MÊS =====
         try {
-          if (gidVendas) {
-            window.allVendas = await fetchVendasCSV(gidVendas);
+          if (combinedVend) {
+            window.allVendas = await fetchVendasCSV(combinedVend);
             console.log(`✓ Vendas ${currentMonthId}: ${allVendas.length} registros`);
           } else {
-            console.warn(`⚠️ GID não configurado para vendas/${currentMonthId}`);
+            console.warn(`⚠️ ID/GID não configurado para vendas/${currentMonthId}`);
             window.allVendas = [];
           }
         } catch (e) {
@@ -2850,11 +2867,11 @@
 
         // ===== CARREGAR GASTOS DO MÊS =====
         try {
-          if (gidGastos) {
-            window.allGastosData = await fetchGastosCSV(gidGastos);
+          if (combinedGast) {
+            window.allGastosData = await fetchGastosCSV(combinedGast);
             console.log(`✓ Gastos ${currentMonthId}: ${allGastosData.length} registros`);
           } else {
-            console.warn(`⚠️ GID não configurado para gastos/${currentMonthId}`);
+            console.warn(`⚠️ ID/GID não configurado para gastos/${currentMonthId}`);
             window.allGastosData = [];
           }
         } catch (e) {
