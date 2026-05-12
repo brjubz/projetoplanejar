@@ -4411,14 +4411,17 @@
       const ano = hoje.getFullYear();
 
       // Agrupar vendas por chave dia
+      // v.data é gravado como "DD/MM" (sem ano) pelo fetchVendasCSV
       const vendasPorDia = {};
       vendas.forEach(v => {
         if (!v.data) return;
         const p = v.data.split('/');
-        if (p.length < 3) return;
-        const d = parseInt(p[0]), m = parseInt(p[1]) - 1, a = parseInt(p[2]);
+        if (p.length < 2) return;
+        const d = parseInt(p[0]);
+        const m = parseInt(p[1]) - 1; // 0-based
+        if (isNaN(d) || isNaN(m)) return;
         if (m !== mes) return; // só do mês selecionado
-        const key = `${a}-${m}-${d}`;
+        const key = `${mes}-${d}`; // ex: "4-15" para 15/Mai
         if (!vendasPorDia[key]) vendasPorDia[key] = [];
         vendasPorDia[key].push(v);
       });
@@ -4441,7 +4444,7 @@
       let sem = { vgv: 0, count: 0, start: 1, end: 0 };
       let diaSem = startDay;
       for (let d = 1; d <= totalDias; d++) {
-        const key = `${ano}-${mes}-${d}`;
+        const key = `${mes}-${d}`;
         const arr = vendasPorDia[key] || [];
         sem.count += arr.length;
         sem.vgv   += arr.reduce((s, v) => s + (v.vgv || 0), 0);
@@ -4458,7 +4461,7 @@
       for (let i = 0; i < startDay; i++) cells.push('<div class="cal-day cal-empty"></div>');
 
       for (let d = 1; d <= totalDias; d++) {
-        const key = `${ano}-${mes}-${d}`;
+        const key = `${mes}-${d}`;
         const arr = vendasPorDia[key] || [];
         const totalVGV  = arr.reduce((s, v) => s + (v.vgv || 0), 0);
         const isToday   = d === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear();
@@ -4538,7 +4541,7 @@
     function abrirDiaVendas(key) {
       const arr = (window._vendasPorDia || {})[key] || [];
       if (!arr.length) return;
-      const [ano, mesStr, diaStr] = key.split('-');
+      const [mesStr, diaStr] = key.split('-');
       const mesesNomes = ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
       const totalVGV = arr.reduce((s, v) => s + (v.vgv || 0), 0);
 
