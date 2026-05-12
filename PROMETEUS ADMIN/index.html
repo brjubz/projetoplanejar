@@ -212,23 +212,8 @@
 
           <!-- ACESSOS HOJE -->
           <div class="section-label">📅 Acessos de Hoje</div>
-          <div class="card" style="padding:0; overflow:hidden; margin-bottom:28px;">
-            <div style="overflow-x:auto;">
-              <table class="users-mini" id="dash_hoje_table">
-                <thead>
-                  <tr>
-                    <th>Usuario</th>
-                    <th>Entrada</th>
-                    <th>Saida</th>
-                    <th>Duracao</th>
-                    <th>Ultimo Modulo</th>
-                  </tr>
-                </thead>
-                <tbody id="dash_hoje_body">
-                  <tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Carregando...</td></tr>
-                </tbody>
-              </table>
-            </div>
+          <div id="dash_hoje" style="display:flex; flex-wrap:wrap; gap:14px; margin-bottom:28px;">
+            <p style="color:#475569; font-size:13px; padding:8px 0;">Carregando...</p>
           </div>
 
           <!-- MODULOS MAIS ACESSADOS -->
@@ -781,35 +766,47 @@ async function carregarDashboard() {
       }).join('');
     }
 
-    // Render "Acessos de Hoje" (todas as sessões, sem duplicar — 1 linha por sessão)
-    const tbody = document.getElementById('dash_hoje_body');
-    if (todasHoje.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Nenhum acesso hoje.</td></tr>';
+    // Render "Acessos de Hoje" — 1 card por usuario (sessão mais recente do dia)
+    const porUsuarioHoje = {};
+    todasHoje.forEach(s => {
+      if (!porUsuarioHoje[s.userId] || s.loginTime > porUsuarioHoje[s.userId].loginTime) {
+        porUsuarioHoje[s.userId] = s;
+      }
+    });
+    const hojeDedup = Object.values(porUsuarioHoje)
+      .sort((a, b) => (b.loginTime || '').localeCompare(a.loginTime || ''));
+
+    const hojeDiv = document.getElementById('dash_hoje');
+    if (hojeDedup.length === 0) {
+      hojeDiv.innerHTML = '<p style="color:#475569; font-size:13px; padding:8px 0;">Nenhum acesso hoje.</p>';
     } else {
-      tbody.innerHTML = todasHoje.map(s => {
+      hojeDiv.innerHTML = hojeDedup.map(s => {
         const u       = userMap[s.userId] || {};
         const name    = u.name || s.userName || '?';
         const inicial = name.charAt(0).toUpperCase();
+        const online  = !s.logoutTime;
         const avatarHtml = u.foto
-          ? `<img src="${u.foto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;">`
-          : `<span style="display:inline-flex;width:28px;height:28px;border-radius:50%;background:#1e293b;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#94a3b8;margin-right:8px;vertical-align:middle;">${inicial}</span>`;
-        const online    = !s.logoutTime;
-        const durMs     = (s.loginTime && s.logoutTime)
+          ? `<img src="${u.foto}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+          : `<div style="width:40px;height:40px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;font-weight:700;color:#94a3b8;flex-shrink:0;">${inicial}</div>`;
+        const durMs  = s.loginTime && s.logoutTime
           ? new Date(s.logoutTime).getTime() - new Date(s.loginTime).getTime()
           : (s.loginTime && online ? Date.now() - new Date(s.loginTime).getTime() : 0);
-        const modulo    = u.lastModule ? (MODULO_LABELS[u.lastModule] || u.lastModule) : '—';
+        const ua     = s.device || '';
+        const dev    = /iPhone|iPad|Android/i.test(ua) ? '📱' : '🖥️';
+        const saidaStr = online
+          ? '<span style="color:#10b981;font-weight:600;">● Online</span>'
+          : `Saiu às ${fmtHora(s.logoutTime)}`;
 
         return `
-          <tr>
-            <td>${avatarHtml}<span style="font-weight:600;">${name}</span></td>
-            <td style="color:#e2e8f0;">${fmtHora(s.loginTime)}</td>
-            <td>${online
-              ? '<span style="color:#10b981;font-weight:600;font-size:12px;">● Online</span>'
-              : `<span style="color:#64748b;">${fmtHora(s.logoutTime)}</span>`}
-            </td>
-            <td style="color:#64748b;font-size:12px;">${fmtDuracao(durMs)}</td>
-            <td style="font-size:12px;color:#60a5fa;">${online ? modulo : '—'}</td>
-          </tr>`;
+          <div class="online-card" style="${online ? '' : 'background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.08);'}">
+            ${avatarHtml}
+            ${online ? '<div class="online-dot"></div>' : ''}
+            <div class="online-info">
+              <div class="online-name">${name}</div>
+              <div class="online-meta">${dev} Entrou às ${fmtHora(s.loginTime)} · ${fmtDuracao(durMs)}</div>
+              <div class="online-meta" style="margin-top:2px;">${saidaStr}</div>
+            </div>
+          </div>`;
       }).join('');
     }
 
