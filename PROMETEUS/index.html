@@ -2328,6 +2328,11 @@
           const update = {};
           update[viewId] = firebase.firestore.FieldValue.increment(1);
           firebaseDb.collection('admin_analytics').doc('modules').set(update, { merge: true }).catch(() => {});
+          // Salva último módulo acessado no perfil do usuário
+          firebaseDb.collection('admin_users').doc(currentUserId).update({
+            lastModule: viewId,
+            lastActive: Date.now()
+          }).catch(() => {});
         } catch (_) {}
       }
     }

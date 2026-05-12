@@ -205,9 +205,30 @@
           </div>
 
           <!-- SESSOES ATIVAS -->
-          <div class="section-label" style="margin-top:0;">🟢 Usuarios Online Agora</div>
+          <div class="section-label" style="margin-top:0;">🟢 Online Agora</div>
           <div id="dash_online" style="display:flex; flex-wrap:wrap; gap:14px; margin-bottom:28px;">
             <p style="color:#475569; font-size:13px; padding:8px 0;">Carregando...</p>
+          </div>
+
+          <!-- ACESSOS HOJE -->
+          <div class="section-label">📅 Acessos de Hoje</div>
+          <div class="card" style="padding:0; overflow:hidden; margin-bottom:28px;">
+            <div style="overflow-x:auto;">
+              <table class="users-mini" id="dash_hoje_table">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Entrada</th>
+                    <th>Saida</th>
+                    <th>Duracao</th>
+                    <th>Ultimo Modulo</th>
+                  </tr>
+                </thead>
+                <tbody id="dash_hoje_body">
+                  <tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Carregando...</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <!-- MODULOS MAIS ACESSADOS -->
@@ -695,43 +716,57 @@ async function carregarDashboard() {
     const totalUsers = allUsers.length;
     document.getElementById('stat_usuarios_val').textContent = totalUsers;
 
-    // ── 2. Sessoes ativas (logoutTime == null) ──────────────────
-    // Sem orderBy para evitar índice composto — ordenamos client-side
-    const limite24h  = new Date(Date.now() - 86400000).toISOString();
-    const activeSess = await db.collection('admin_history')
-      .where('logoutTime', '==', null)
-      .limit(50)
+    // ── 2 + 3. Sessoes de hoje (cobre Online Agora + Acessos Hoje) ──
+    const hojeIso = new Date(); hojeIso.setHours(0,0,0,0);
+    const hojeStr = hojeIso.toISOString();
+
+    const hojeSnap = await db.collection('admin_history')
+      .where('loginTime', '>=', hojeStr)
+      .limit(200)
       .get();
 
-    // Filtra 24h e ordena por loginTime desc no cliente
-    const sessActive = activeSess.docs
+    const todasHoje = hojeSnap.docs
       .map(d => ({ id: d.id, ...d.data() }))
-      .filter(s => s.loginTime >= limite24h)
-      .sort((a, b) => (b.loginTime || '').localeCompare(a.loginTime || ''))
-      .slice(0, 20);
+      .sort((a, b) => (b.loginTime || '').localeCompare(a.loginTime || ''));
 
-    document.getElementById('stat_ativos_val').textContent = sessActive.length;
+    // Stat: logins hoje
+    document.getElementById('stat_logins_val').textContent = todasHoje.length;
 
-    // Render "Online Agora"
+    // Sessoes ainda abertas (sem logoutTime)
+    const abertas = todasHoje.filter(s => !s.logoutTime);
+
+    // Deduplicar Online Agora: 1 card por userId (sessão mais recente)
+    const porUsuario = {};
+    abertas.forEach(s => {
+      if (!porUsuario[s.userId] || s.loginTime > porUsuario[s.userId].loginTime) {
+        porUsuario[s.userId] = s;
+      }
+    });
+    const sessAtivas = Object.values(porUsuario)
+      .sort((a, b) => (b.loginTime || '').localeCompare(a.loginTime || ''));
+
+    document.getElementById('stat_ativos_val').textContent = sessAtivas.length;
+
+    // Mapa userId → dados do usuário (foto, lastModule, etc.)
+    const userMap = {};
+    allUsers.forEach(u => { userMap[u.id] = u; });
+
+    // Render "Online Agora" (1 card por pessoa)
     const onlineDiv = document.getElementById('dash_online');
-    if (sessActive.length === 0) {
+    if (sessAtivas.length === 0) {
       onlineDiv.innerHTML = '<p style="color:#475569; font-size:13px; padding:8px 0;">Nenhum usuario online no momento.</p>';
     } else {
-      const userMap = {};
-      allUsers.forEach(u => { userMap[u.id] = u; });
-
-      onlineDiv.innerHTML = sessActive.map(s => {
+      onlineDiv.innerHTML = sessAtivas.map(s => {
         const u       = userMap[s.userId] || {};
         const name    = u.name || s.userName || '?';
         const inicial = name.charAt(0).toUpperCase();
         const avatarHtml = u.foto
-          ? `<img src="${u.foto}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+          ? `<img src="${u.foto}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border-radius:50%;">`
           : `<div style="width:40px;height:40px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;font-weight:700;color:#94a3b8;flex-shrink:0;">${inicial}</div>`;
-        const durMs  = s.loginTime ? Date.now() - new Date(s.loginTime).getTime() : 0;
-        const ua     = s.device || '';
-        let dev = '🖥️';
-        if (/iPhone|iPad/i.test(ua)) dev = '📱';
-        else if (/Android/i.test(ua)) dev = '📱';
+        const durMs   = s.loginTime ? Date.now() - new Date(s.loginTime).getTime() : 0;
+        const modulo  = u.lastModule ? (MODULO_LABELS[u.lastModule] || u.lastModule) : '—';
+        const ua      = s.device || '';
+        const dev     = /iPhone|iPad|Android/i.test(ua) ? '📱' : '🖥️';
 
         return `
           <div class="online-card">
@@ -740,20 +775,43 @@ async function carregarDashboard() {
             <div class="online-info">
               <div class="online-name">${name}</div>
               <div class="online-meta">${dev} Entrou às ${fmtHora(s.loginTime)} · Há ${fmtDuracao(durMs)}</div>
+              <div class="online-meta" style="margin-top:2px; color:#3b82f6;">📂 ${modulo}</div>
             </div>
           </div>`;
       }).join('');
     }
 
-    // ── 3. Logins Hoje ───────────────────────────────────────
-    // Pega os últimos 200 do dia e filtra cliente-side (sem orderBy = sem índice composto)
-    const hojeIso = new Date(); hojeIso.setHours(0,0,0,0);
-    const hojeStr = hojeIso.toISOString();
-    const loginsHojeSnap = await db.collection('admin_history')
-      .where('loginTime', '>=', hojeStr)
-      .limit(200)
-      .get();
-    document.getElementById('stat_logins_val').textContent = loginsHojeSnap.size;
+    // Render "Acessos de Hoje" (todas as sessões, sem duplicar — 1 linha por sessão)
+    const tbody = document.getElementById('dash_hoje_body');
+    if (todasHoje.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#64748b;">Nenhum acesso hoje.</td></tr>';
+    } else {
+      tbody.innerHTML = todasHoje.map(s => {
+        const u       = userMap[s.userId] || {};
+        const name    = u.name || s.userName || '?';
+        const inicial = name.charAt(0).toUpperCase();
+        const avatarHtml = u.foto
+          ? `<img src="${u.foto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;">`
+          : `<span style="display:inline-flex;width:28px;height:28px;border-radius:50%;background:#1e293b;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#94a3b8;margin-right:8px;vertical-align:middle;">${inicial}</span>`;
+        const online    = !s.logoutTime;
+        const durMs     = (s.loginTime && s.logoutTime)
+          ? new Date(s.logoutTime).getTime() - new Date(s.loginTime).getTime()
+          : (s.loginTime && online ? Date.now() - new Date(s.loginTime).getTime() : 0);
+        const modulo    = u.lastModule ? (MODULO_LABELS[u.lastModule] || u.lastModule) : '—';
+
+        return `
+          <tr>
+            <td>${avatarHtml}<span style="font-weight:600;">${name}</span></td>
+            <td style="color:#e2e8f0;">${fmtHora(s.loginTime)}</td>
+            <td>${online
+              ? '<span style="color:#10b981;font-weight:600;font-size:12px;">● Online</span>'
+              : `<span style="color:#64748b;">${fmtHora(s.logoutTime)}</span>`}
+            </td>
+            <td style="color:#64748b;font-size:12px;">${fmtDuracao(durMs)}</td>
+            <td style="font-size:12px;color:#60a5fa;">${online ? modulo : '—'}</td>
+          </tr>`;
+      }).join('');
+    }
 
     // ── 4. Modulos configurados ──────────────────────────────
     const sheetsSnap    = await db.collection('admin_sheets').get();
