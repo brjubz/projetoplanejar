@@ -8,6 +8,8 @@
   <!-- Firebase COMPAT (obrigatorio para usar firebase.initializeApp + firebase.firestore()) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- CryptoJS para hash SHA-256 de senhas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/crypto-js.min.js"></script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -57,6 +59,43 @@
     /* STATUS */
     #prevenda_status { padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 14px; font-weight: 600; min-height: 20px; }
     .badge-fixas { display: inline-block; background: rgba(139,92,246,0.2); color: #a78bfa; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+
+    /* USUARIOS */
+    .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
+    .user-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .user-card-header { display: flex; align-items: center; gap: 12px; }
+    .user-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background: #1e293b; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #94a3b8; overflow: hidden; }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-email { font-size: 12px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+    .badge-ativo { background: rgba(16,185,129,0.2); color: #10b981; }
+    .badge-inativo { background: rgba(244,63,94,0.2); color: #f43f5e; }
+    .badge-gestor { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .badge-comissao { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .user-actions { display: flex; gap: 8px; margin-top: 4px; }
+    .btn-sm { padding: 6px 14px; font-size: 12px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-edit { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .btn-edit:hover { background: rgba(59,130,246,0.35); }
+    .btn-del { background: rgba(244,63,94,0.15); color: #f43f5e; }
+    .btn-del:hover { background: rgba(244,63,94,0.3); }
+    .btn-toggle { background: rgba(255,255,255,0.07); color: #94a3b8; }
+    .btn-toggle:hover { background: rgba(255,255,255,0.14); }
+    .form-usuarios { display: none; }
+    .form-usuarios.visible { display: block; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-field { display: flex; flex-direction: column; gap: 4px; }
+    .form-field label { font-size: 12px; color: #94a3b8; font-weight: 600; }
+    .form-field-full { grid-column: 1 / -1; }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; }
+    .checkbox-row input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6; }
+    .checkbox-row label { font-size: 13px; color: #e2e8f0; cursor: pointer; }
+    .foto-preview { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: #1e293b; border: 2px solid rgba(255,255,255,0.1); display: none; }
+    .foto-preview.visible { display: block; }
+    #usuarios_status { padding: 10px; border-radius: 6px; margin-top: 12px; font-size: 14px; font-weight: 600; min-height: 20px; }
+    .empty-state { text-align: center; padding: 40px; color: #475569; }
   </style>
 </head>
 <body>
@@ -86,6 +125,7 @@
     <div class="admin-sidebar">
       <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
       <button class="tab-btn" onclick="switchTab('prevenda', this)">Pre-Vendas</button>
+      <button class="tab-btn" onclick="switchTab('usuarios', this)">Usuarios</button>
     </div>
 
     <!-- Conteudo -->
@@ -231,6 +271,84 @@
           <div id="prevenda_status" style="color:#aaa;"></div>
         </div>
 
+        <!-- Usuarios -->
+        <div id="section-usuarios" class="section">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+            <h2>Gerenciamento de Usuarios</h2>
+            <button class="btn" style="width:auto; padding:10px 20px;" onclick="abrirFormUsuario(null)">+ Novo Usuario</button>
+          </div>
+          <p style="color:#64748b; margin-bottom:20px; font-size:13px;">Usuarios com acesso ao dashboard PROMETEUS. A senha e armazenada como hash SHA-256.</p>
+
+          <!-- Lista de usuarios -->
+          <div id="listaUsuarios">
+            <div id="userGrid" class="user-grid"></div>
+          </div>
+
+          <!-- Formulario criar/editar -->
+          <div id="formUsuario" class="form-usuarios">
+            <div class="card" style="max-width:720px;">
+              <h3 id="formUsuarioTitulo">Novo Usuario</h3>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="u_name">Nome completo *</label>
+                  <input type="text" id="u_name" class="form-input" placeholder="Ex: Julia Ferreira">
+                </div>
+                <div class="form-field">
+                  <label for="u_email">Email (login) *</label>
+                  <input type="text" id="u_email" class="form-input" placeholder="Ex: julia@planejar.com">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="u_senha">Senha <span id="u_senha_hint" style="color:#64748b;">(obrigatoria na criacao)</span></label>
+                  <input type="password" id="u_senha" class="form-input" placeholder="Deixe vazio para nao alterar (edicao)">
+                </div>
+                <div class="form-field">
+                  <label for="u_foto">Foto de perfil</label>
+                  <input type="file" id="u_foto" class="form-input" accept="image/*" onchange="previewFoto(this)" style="padding:6px;">
+                </div>
+              </div>
+
+              <div style="margin-bottom:12px;">
+                <img id="u_foto_preview" class="foto-preview" src="" alt="Preview">
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="u_comissao_pct">Percentual de comissao (%)</label>
+                  <input type="number" id="u_comissao_pct" class="form-input" placeholder="Ex: 1.5" step="0.01" min="0">
+                </div>
+                <div class="form-field" style="justify-content:flex-end; padding-bottom:4px;">
+                  <!-- placeholder para alinhar o grid -->
+                </div>
+              </div>
+
+              <div class="checkbox-row">
+                <input type="checkbox" id="u_comissao_hab">
+                <label for="u_comissao_hab">Comissao ativa</label>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="u_isTeamManager">
+                <label for="u_isTeamManager">Gestor de equipe (ve comissoes de todos)</label>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="u_ativo" checked>
+                <label for="u_ativo">Usuario ativo</label>
+              </div>
+
+              <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn" style="background:#10b981;" onclick="salvarUsuario()">Salvar</button>
+                <button class="btn" style="background:rgba(255,255,255,0.08); color:#aaa; width:auto; padding:10px 24px;" onclick="fecharFormUsuario()">Cancelar</button>
+              </div>
+
+              <div id="usuarios_status" style="color:#aaa;"></div>
+            </div>
+          </div>
+
+        </div><!-- /section-usuarios -->
+
       </div><!-- /admin-body -->
     </div><!-- /admin-content -->
   </div><!-- /admin-container -->
@@ -295,6 +413,9 @@ function switchTab(tab, btnEl) {
 
   if (tab === 'prevenda') {
     carregarConfigPreVendas();
+  }
+  if (tab === 'usuarios') {
+    carregarUsuarios();
   }
 }
 
@@ -437,6 +558,250 @@ async function carregarConfigPreVendas() {
 }
 
 // ============================================================
+// USUARIOS — CRUD
+// ============================================================
+
+let _usuariosCache = [];   // lista em memória
+let _editandoId    = null; // null = criação, string = edição
+
+async function carregarUsuarios() {
+  const grid = document.getElementById('userGrid');
+  if (!grid) return;
+  grid.innerHTML = '<p style="color:#64748b; padding:20px;">Carregando usuarios...</p>';
+
+  if (!db) {
+    grid.innerHTML = '<p style="color:#ef4444; padding:20px;">Firebase nao conectado.</p>';
+    return;
+  }
+
+  try {
+    const snap = await db.collection('admin_users').get();
+    _usuariosCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderListaUsuarios(_usuariosCache);
+  } catch (err) {
+    console.error('Erro ao carregar usuarios:', err);
+    grid.innerHTML = '<p style="color:#ef4444; padding:20px;">Erro: ' + err.message + '</p>';
+  }
+}
+
+function renderListaUsuarios(users) {
+  const grid = document.getElementById('userGrid');
+  if (!grid) return;
+
+  if (!users || users.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><p style="font-size:40px; margin-bottom:12px;">👤</p><p>Nenhum usuario cadastrado.</p><p style="font-size:13px; margin-top:6px;">Clique em "+ Novo Usuario" para adicionar.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = users.map(u => {
+    const ativo   = u.ativo !== false;
+    const gestor  = !!u.isTeamManager;
+    const comHab  = u.comissao && u.comissao.habilitado;
+    const comPct  = comHab ? u.comissao.percentual || 0 : 0;
+    const inicial = (u.name || u.email || '?').charAt(0).toUpperCase();
+
+    const avatarHtml = u.foto
+      ? `<div class="user-avatar"><img src="${u.foto}" alt="foto"></div>`
+      : `<div class="user-avatar">${inicial}</div>`;
+
+    const lastStr = u.lastActive
+      ? new Date(u.lastActive).toLocaleDateString('pt-BR')
+      : '—';
+
+    return `
+      <div class="user-card">
+        <div class="user-card-header">
+          ${avatarHtml}
+          <div class="user-info">
+            <div class="user-name">${u.name || '(sem nome)'}</div>
+            <div class="user-email">${u.email || ''}</div>
+          </div>
+        </div>
+        <div class="user-badges">
+          <span class="badge ${ativo ? 'badge-ativo' : 'badge-inativo'}">${ativo ? 'Ativo' : 'Inativo'}</span>
+          ${gestor ? '<span class="badge badge-gestor">Gestor</span>' : ''}
+          ${comHab ? `<span class="badge badge-comissao">Comissao ${comPct}%</span>` : ''}
+        </div>
+        <div style="font-size:11px; color:#475569;">Ultimo acesso: ${lastStr}</div>
+        <div class="user-actions">
+          <button class="btn-sm btn-edit" onclick="abrirFormUsuario('${u.id}')">Editar</button>
+          <button class="btn-sm btn-toggle" onclick="toggleAtivo('${u.id}', ${ativo})">${ativo ? 'Desativar' : 'Ativar'}</button>
+          <button class="btn-sm btn-del" onclick="deletarUsuario('${u.id}', '${(u.name || u.email || '').replace(/'/g,"\\'")}')">Excluir</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function abrirFormUsuario(id) {
+  _editandoId = id;
+
+  // Limpa form
+  document.getElementById('u_name').value       = '';
+  document.getElementById('u_email').value      = '';
+  document.getElementById('u_senha').value      = '';
+  document.getElementById('u_comissao_pct').value = '';
+  document.getElementById('u_comissao_hab').checked = false;
+  document.getElementById('u_isTeamManager').checked = false;
+  document.getElementById('u_ativo').checked    = true;
+  document.getElementById('u_foto_preview').src = '';
+  document.getElementById('u_foto_preview').classList.remove('visible');
+  document.getElementById('u_foto').value       = '';
+  document.getElementById('usuarios_status').textContent = '';
+
+  if (id) {
+    // Modo edição
+    document.getElementById('formUsuarioTitulo').textContent = 'Editar Usuario';
+    document.getElementById('u_senha_hint').textContent = '(opcional — vazio = nao altera)';
+    document.getElementById('u_email').readOnly = true;
+    document.getElementById('u_email').style.opacity = '0.5';
+
+    const u = _usuariosCache.find(x => x.id === id);
+    if (u) {
+      document.getElementById('u_name').value  = u.name  || '';
+      document.getElementById('u_email').value = u.email || '';
+      document.getElementById('u_ativo').checked = u.ativo !== false;
+      document.getElementById('u_isTeamManager').checked = !!u.isTeamManager;
+      if (u.comissao) {
+        document.getElementById('u_comissao_hab').checked = !!u.comissao.habilitado;
+        document.getElementById('u_comissao_pct').value   = u.comissao.percentual || '';
+      }
+      if (u.foto) {
+        document.getElementById('u_foto_preview').src = u.foto;
+        document.getElementById('u_foto_preview').classList.add('visible');
+      }
+    }
+  } else {
+    // Modo criação
+    document.getElementById('formUsuarioTitulo').textContent = 'Novo Usuario';
+    document.getElementById('u_senha_hint').textContent = '(obrigatoria na criacao)';
+    document.getElementById('u_email').readOnly  = false;
+    document.getElementById('u_email').style.opacity = '1';
+  }
+
+  document.getElementById('listaUsuarios').style.display = 'none';
+  document.getElementById('formUsuario').classList.add('visible');
+}
+
+function fecharFormUsuario() {
+  document.getElementById('formUsuario').classList.remove('visible');
+  document.getElementById('listaUsuarios').style.display = '';
+  _editandoId = null;
+}
+
+function previewFoto(input) {
+  const prev = document.getElementById('u_foto_preview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      prev.src = e.target.result;
+      prev.classList.add('visible');
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+async function salvarUsuario() {
+  const statusDiv = document.getElementById('usuarios_status');
+  statusDiv.textContent = 'Salvando...';
+  statusDiv.style.color = '#aaa';
+
+  const name  = document.getElementById('u_name').value.trim();
+  const email = document.getElementById('u_email').value.trim();
+  const senha = document.getElementById('u_senha').value;
+  const ativo = document.getElementById('u_ativo').checked;
+  const isTeamManager   = document.getElementById('u_isTeamManager').checked;
+  const comHab          = document.getElementById('u_comissao_hab').checked;
+  const comPct          = parseFloat(document.getElementById('u_comissao_pct').value) || 0;
+  const fotoInput       = document.getElementById('u_foto');
+
+  // Validação
+  if (!name) { statusDiv.textContent = 'Informe o nome.'; statusDiv.style.color = '#ef4444'; return; }
+  if (!email) { statusDiv.textContent = 'Informe o email.'; statusDiv.style.color = '#ef4444'; return; }
+  if (!_editandoId && !senha) { statusDiv.textContent = 'Informe a senha (obrigatoria na criacao).'; statusDiv.style.color = '#ef4444'; return; }
+
+  if (!db) { statusDiv.textContent = 'Firebase nao conectado.'; statusDiv.style.color = '#ef4444'; return; }
+
+  try {
+    // Resolve foto (base64)
+    let fotoBase64 = null;
+    if (fotoInput.files && fotoInput.files[0]) {
+      fotoBase64 = await new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload  = e => res(e.target.result);
+        reader.onerror = rej;
+        reader.readAsDataURL(fotoInput.files[0]);
+      });
+    }
+
+    const dados = {
+      name,
+      email,
+      ativo,
+      isTeamManager,
+      comissao: { habilitado: comHab, percentual: comPct }
+    };
+
+    if (senha) {
+      dados.senhaHash     = CryptoJS.SHA256(senha).toString();
+      dados.senha_definida = false; // força troca no 1º login se criado pelo admin
+    }
+
+    if (fotoBase64) {
+      dados.foto = fotoBase64;
+    }
+
+    if (_editandoId) {
+      // Edição: não sobrescreve foto se não foi escolhida nova
+      await db.collection('admin_users').doc(_editandoId).update(dados);
+    } else {
+      // Criação: inclui criadoEm
+      dados.criadoEm  = new Date().toISOString();
+      dados.lastActive = null;
+      await db.collection('admin_users').add(dados);
+    }
+
+    statusDiv.textContent = 'Salvo com sucesso!';
+    statusDiv.style.color = '#10b981';
+
+    setTimeout(() => {
+      fecharFormUsuario();
+      carregarUsuarios();
+    }, 900);
+
+  } catch (err) {
+    console.error('Erro ao salvar usuario:', err);
+    statusDiv.textContent = 'Erro: ' + err.message;
+    statusDiv.style.color = '#ef4444';
+  }
+}
+
+async function deletarUsuario(id, nome) {
+  if (!confirm('Excluir o usuario "' + nome + '"? Esta acao nao pode ser desfeita.')) return;
+  if (!db) return;
+  try {
+    await db.collection('admin_users').doc(id).delete();
+    await carregarUsuarios();
+  } catch (err) {
+    alert('Erro ao excluir: ' + err.message);
+  }
+}
+
+async function toggleAtivo(id, ativoAtual) {
+  if (!db) return;
+  try {
+    await db.collection('admin_users').doc(id).update({ ativo: !ativoAtual });
+    // Atualiza cache local e re-renderiza sem ir ao Firestore de novo
+    const idx = _usuariosCache.findIndex(u => u.id === id);
+    if (idx !== -1) {
+      _usuariosCache[idx].ativo = !ativoAtual;
+      renderListaUsuarios(_usuariosCache);
+    }
+  } catch (err) {
+    alert('Erro ao atualizar status: ' + err.message);
+  }
+}
+
+// ============================================================
 // EXPORTS GLOBAIS
 // ============================================================
 window.handleLogin            = handleLogin;
@@ -444,6 +809,14 @@ window.handleLogout           = handleLogout;
 window.switchTab              = switchTab;
 window.salvarConfigPreVendas  = salvarConfigPreVendas;
 window.carregarConfigPreVendas = carregarConfigPreVendas;
+window.carregarUsuarios       = carregarUsuarios;
+window.renderListaUsuarios    = renderListaUsuarios;
+window.abrirFormUsuario       = abrirFormUsuario;
+window.fecharFormUsuario      = fecharFormUsuario;
+window.salvarUsuario          = salvarUsuario;
+window.deletarUsuario         = deletarUsuario;
+window.toggleAtivo            = toggleAtivo;
+window.previewFoto            = previewFoto;
 </script>
 
 </body>
