@@ -3549,56 +3549,73 @@
     function renderTimeline(vendaseConfirmadas, leadsFiltrados) {
       try {
         const eventos = [];
-        
-        // Adicionar eventos de vendas com CORRETOR primeiro
+
+        // Vendas
         vendaseConfirmadas.forEach(v => {
           eventos.push({
-            tipo: 'venda',
-            descricao: `${v.corretor || 'Corretor'} vendeu para ${v.cliente || 'Cliente'} em ${v.empreendimento || 'empreendimento'}`,
-            data: v.data || new Date().toLocaleDateString('pt-BR'),
-            ator: v.corretor || 'Sistema',
+            tipo:          'venda',
+            cliente:       v.cliente       || '—',
+            corretor:      v.corretor      || '—',
+            empreendimento: v.produto      || v.empreendimento || '—',
+            cidade:        v.cidadeCruzada || '—',
+            origem:        v.midiaCruzada  || '—',
+            vgv:           v.vgv           || 0,
+            data:          v.data          || '—',
             timestamp: new Date((v.data || '01/01/2026').split('/').reverse().join('-')).getTime()
           });
         });
-        
-        // Adicionar eventos de atendimentos (últimos)
+
+        // Atendimentos (últimos 5)
         leadsFiltrados.slice(-5).forEach(l => {
           eventos.push({
-            tipo: 'atendimento',
-            descricao: `${l.CLIENTE || 'Cliente'} teve atendimento em ${l.LOTEAMENTO || 'local'}`,
-            data: l.DATA || new Date().toLocaleDateString('pt-BR'),
-            ator: 'Atendimento',
+            tipo:          'atendimento',
+            cliente:       l.CLIENTE   || '—',
+            corretor:      l.CORRETOR  || '—',
+            empreendimento: l.PRODUTO  || '—',
+            cidade:        l.CIDADE    || '—',
+            origem:        l.MIDIA     || '—',
+            vgv:           0,
+            data:          l.DATA      || '—',
             timestamp: new Date((l.DATA || '01/01/2026').split('/').reverse().join('-')).getTime()
           });
         });
-        
-        // Ordenar por data (mais recente primeiro)
+
         eventos.sort((a, b) => b.timestamp - a.timestamp);
-        
-        // Limitar a 10 últimos eventos
-        const timelineHTML = eventos.slice(0, 10).map(evento => {
-          const icone = evento.tipo === 'venda' ? '💰' : '📞';
-          const cor = evento.tipo === 'venda' ? '#22c55e' : '#3b82f6';
-          
+
+        const timelineHTML = eventos.slice(0, 12).map(ev => {
+          const isVenda   = ev.tipo === 'venda';
+          const corFundo  = isVenda ? 'rgba(34,197,94,0.12)'  : 'rgba(59,130,246,0.10)';
+          const corBorda  = isVenda ? 'rgba(34,197,94,0.25)'  : 'rgba(59,130,246,0.22)';
+          const corTexto  = isVenda ? '#22c55e'               : '#60a5fa';
+          const icone     = isVenda ? '💰'                    : '📞';
+          const label     = isVenda ? 'Venda'                 : 'Atendimento';
+
           return `
-            <div style="display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-              <div style="min-width: 32px; height: 32px; background: rgba(${evento.tipo === 'venda' ? '34, 197, 94' : '59, 130, 246'}, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+            <div style="display:flex; gap:12px; margin-bottom:14px; padding:14px; background:${corFundo}; border:1px solid ${corBorda}; border-radius:12px;">
+              <div style="min-width:36px; height:36px; background:${corFundo}; border:1px solid ${corBorda}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">
                 ${icone}
               </div>
-              <div style="flex: 1;">
-                <div style="font-size: 13px; color: var(--text-white); font-weight: 600; margin-bottom: 4px;">${evento.descricao}</div>
-                <div style="font-size: 11px; color: var(--text-gray); display: flex; justify-content: space-between;">
-                  <span>${evento.data}</span>
-                  <span style="color: ${cor};">${evento.ator}</span>
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+                  <span style="font-size:13px; font-weight:700; color:var(--text-white);">${ev.cliente}</span>
+                  <span style="font-size:11px; background:${corFundo}; border:1px solid ${corBorda}; color:${corTexto}; padding:2px 8px; border-radius:20px; font-weight:700;">${label}</span>
+                  ${isVenda ? `<span style="font-size:12px; color:#22c55e; font-weight:800; margin-left:auto;">${formatBRL(ev.vgv)}</span>` : ''}
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; font-size:11px; color:var(--text-gray);">
+                  <span>🏘️ <strong style="color:var(--text-white);">${ev.empreendimento}</strong></span>
+                  <span>📍 <strong style="color:var(--text-white);">${ev.cidade}</strong></span>
+                  <span>📡 ${ev.origem}</span>
+                  <span style="margin-left:auto;">👤 ${ev.corretor}</span>
+                  <span>📅 ${ev.data}</span>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
-        
-        document.getElementById('timeline-container').innerHTML = timelineHTML || '<div style="text-align: center; color: var(--text-gray); padding: 20px;">Nenhum evento registrado</div>';
-        
-        console.log(`📅 Timeline: ${eventos.length} eventos carregados`);
+
+        document.getElementById('timeline-container').innerHTML = timelineHTML
+          || '<div style="text-align:center; color:var(--text-gray); padding:20px;">Nenhum evento registrado</div>';
+
+        console.log(`📅 Timeline: ${eventos.length} eventos`);
       } catch (e) {
         console.log('⚠️ Erro ao renderizar timeline:', e);
       }
@@ -3704,20 +3721,27 @@
           comissao: entry[1] * TAXA_COMISSAO
         }));
       
+      // Guarda cache para o modal de detalhes
+      window._rankingCache    = rankingCompleto;
+      window._vendasCruzadas  = vendas;
+
       document.getElementById('rankingCorretoresCompleto').innerHTML = rankingCompleto.map(r => {
-        // Pega apenas os 2 primeiros termos (nome + sobrenome)
         const nomeAbreviado = r.corretor.split(' ').slice(0, 2).join(' ');
+        const medalha = r.posicao === 1 ? '🥇' : r.posicao === 2 ? '🥈' : r.posicao === 3 ? '🥉' : `#${r.posicao}`;
         return `
-        <tr style="border-bottom: 1px solid var(--border-glass); hover:background: rgba(37, 99, 235, 0.05);">
-          <td style="padding: 12px; font-weight: 700; color: var(--accent-primary);">#${r.posicao}</td>
-          <td style="padding: 12px; font-weight: 600;">${nomeAbreviado}</td>
-          <td style="padding: 12px; text-align: center; font-weight: 600; color: var(--accent-secondary);">${r.lotes}</td>
-          <td style="padding: 12px; text-align: right; color: var(--color-pos); font-weight: 600;">${formatBRL(r.vgv)}</td>
-          <td style="padding: 12px; text-align: right; color: var(--text-gray);">${r.percentual}%</td>
-          <td style="padding: 12px; text-align: right; color: var(--accent-secondary); font-weight: 700;">${formatBRL(r.comissao)}</td>
-        </tr>
-      `;
-      }).join('') || '<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-gray);">Nenhum dado disponível</td></tr>';
+        <tr onclick="abrirRelatorioCorretor('${r.corretor.replace(/'/g,"\\'")}')"
+            style="border-bottom:1px solid var(--border-glass); cursor:pointer; transition:background 0.15s;"
+            onmouseover="this.style.background='rgba(59,130,246,0.07)'"
+            onmouseout="this.style.background='transparent'">
+          <td style="padding:12px; font-weight:700; color:var(--accent-primary); font-size:16px;">${medalha}</td>
+          <td style="padding:12px; font-weight:600;">${nomeAbreviado}</td>
+          <td style="padding:12px; text-align:center; font-weight:600; color:var(--accent-secondary);">${r.lotes}</td>
+          <td style="padding:12px; text-align:right; color:var(--color-pos); font-weight:600;">${formatBRL(r.vgv)}</td>
+          <td style="padding:12px; text-align:right; color:var(--text-gray);">${r.percentual}%</td>
+          <td style="padding:12px; text-align:right; color:var(--accent-secondary); font-weight:700;">${formatBRL(r.comissao)}</td>
+          <td style="padding:12px; text-align:center; color:var(--text-gray); font-size:14px;">›</td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="7" style="padding:20px; text-align:center; color:var(--text-gray);">Nenhum dado disponível</td></tr>';
       
       lucide.createIcons();
 
@@ -4975,6 +4999,95 @@
         window.location.reload();
     }
 
+    // === RELATÓRIO COMPLETO DO CORRETOR ===
+    function abrirRelatorioCorretor(nome) {
+      const vendas   = (window._vendasCruzadas || []).filter(v => v.corretor === nome);
+      const ranking  = window._rankingCache    || [];
+      const rankData = ranking.find(r => r.corretor === nome) || {};
+
+      const modal = document.getElementById('modalRelatorioCorretor');
+      if (!modal) return;
+
+      // --- Header ---
+      const posicao = rankData.posicao || '—';
+      const medalha = posicao === 1 ? '🥇' : posicao === 2 ? '🥈' : posicao === 3 ? '🥉' : `#${posicao}`;
+      document.getElementById('rcHeader').innerHTML = `
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div style="font-size:40px;">${medalha}</div>
+          <div>
+            <div style="font-size:22px; font-weight:800; color:var(--text-white);">${nome}</div>
+            <div style="font-size:13px; color:var(--text-gray); margin-top:4px;">${rankData.lotes || 0} venda${rankData.lotes !== 1 ? 's' : ''} · ${rankData.percentual || 0}% do VGV total do período</div>
+          </div>
+        </div>`;
+
+      // --- Stats cards ---
+      const totalEntradas = vendas.reduce((s, v) => s + (v.entradas || 0), 0);
+      document.getElementById('rcStats').innerHTML = [
+        { label:'VGV Total',    valor: formatBRL(rankData.vgv  || 0),   cor:'#22c55e' },
+        { label:'Entradas',     valor: formatBRL(totalEntradas),          cor:'#0ea5e9' },
+        { label:'Vendas',       valor: rankData.lotes || 0,              cor:'#a78bfa' },
+        { label:'Ticket Médio', valor: formatBRL((rankData.vgv||0)/(rankData.lotes||1)), cor:'#fbbf24' },
+        { label:'Comissão Est.',valor: formatBRL(rankData.comissao || 0), cor:'#f43f5e' }
+      ].map(s => `
+        <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border-glass); border-radius:14px; padding:14px 16px;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-gray); margin-bottom:6px;">${s.label}</div>
+          <div style="font-size:20px; font-weight:800; color:${s.cor};">${s.valor}</div>
+        </div>`).join('');
+
+      // --- Breakdowns helper ---
+      function buildBreakdown(titulo, campo) {
+        const mapa = {};
+        vendas.forEach(v => {
+          const k = v[campo] || '—';
+          mapa[k] = (mapa[k] || 0) + (v.vgv || 0);
+        });
+        const entries = Object.entries(mapa).sort((a,b) => b[1]-a[1]);
+        const maxVal  = entries[0]?.[1] || 1;
+        const rows    = entries.map(([k,val]) => `
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+              <span style="color:var(--text-white); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:65%;">${k}</span>
+              <span style="color:var(--text-gray);">${formatBRL(val)}</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); border-radius:4px; height:6px; overflow:hidden;">
+              <div style="height:100%; border-radius:4px; background:linear-gradient(90deg,#3b82f6,#06b6d4); width:${Math.round(val/maxVal*100)}%;"></div>
+            </div>
+          </div>`).join('');
+        return `
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-glass); border-radius:14px; padding:16px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-gray); margin-bottom:14px;">${titulo}</div>
+            ${rows || '<p style="color:var(--text-gray);font-size:12px;">—</p>'}
+          </div>`;
+      }
+
+      document.getElementById('rcBreakdownGrid').innerHTML =
+        buildBreakdown('🏘️ Por Empreendimento', 'produto') +
+        buildBreakdown('📍 Por Cidade',         'cidadeCruzada') +
+        buildBreakdown('📡 Por Origem',         'midiaCruzada');
+
+      // --- Tabela individual ---
+      const vendasOrdenadas = [...vendas].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+      document.getElementById('rcTableBody').innerHTML = vendasOrdenadas.map((v, i) => `
+        <tr style="border-top:1px solid rgba(255,255,255,0.05); ${i%2===1?'background:rgba(255,255,255,0.02)':''}">
+          <td style="padding:10px 14px; color:var(--text-gray);">${v.data || '—'}</td>
+          <td style="padding:10px 14px; font-weight:600;">${v.cliente || '—'}</td>
+          <td style="padding:10px 14px; color:var(--accent-secondary);">${v.produto || '—'}</td>
+          <td style="padding:10px 14px; color:var(--text-gray);">${v.cidadeCruzada || '—'}</td>
+          <td style="padding:10px 14px; color:var(--accent-primary);">${v.midiaCruzada || '—'}</td>
+          <td style="padding:10px 14px; text-align:right; color:var(--color-pos); font-weight:700;">${formatBRL(v.vgv||0)}</td>
+        </tr>`).join('') || '<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-gray);">Nenhuma venda encontrada</td></tr>';
+
+      modal.style.display = 'flex';
+    }
+
+    function fecharRelatorioCorretor() {
+      const modal = document.getElementById('modalRelatorioCorretor');
+      if (modal) modal.style.display = 'none';
+    }
+
+    window.abrirRelatorioCorretor  = abrirRelatorioCorretor;
+    window.fecharRelatorioCorretor = fecharRelatorioCorretor;
+
     // === CARD DO USUARIO LOGADO NA SIDEBAR ===
     function renderUserProfileCard() {
       const name    = localStorage.getItem('nomeUsuario') || '';
@@ -5089,6 +5202,46 @@
   </script>
 
   <!-- MODAL: ALTERAR SENHA -->
+  <!-- ========================================================
+       MODAL: RELATÓRIO COMPLETO DO CORRETOR
+       ======================================================== -->
+  <div id="modalRelatorioCorretor" onclick="if(event.target===this)fecharRelatorioCorretor()"
+       style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(16px); z-index:99990; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
+    <div style="background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:24px; width:100%; max-width:860px; margin:auto; padding:32px; backdrop-filter:blur(30px); position:relative;">
+
+      <!-- Fechar -->
+      <button onclick="fecharRelatorioCorretor()" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.08); border:1px solid var(--border-glass); border-radius:8px; color:#fff; padding:6px 14px; cursor:pointer; font-size:14px;">✕ Fechar</button>
+
+      <!-- Header -->
+      <div id="rcHeader" style="margin-bottom:24px;"></div>
+
+      <!-- Stats rápidos -->
+      <div id="rcStats" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:28px;"></div>
+
+      <!-- Quebras lado a lado -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:28px;" id="rcBreakdownGrid"></div>
+
+      <!-- Tabela de vendas -->
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-gray); margin-bottom:12px;">📋 Vendas Individuais</div>
+      <div style="overflow-x:auto; border-radius:12px; border:1px solid var(--border-glass);">
+        <table style="width:100%; border-collapse:collapse; font-size:13px;" id="rcTable">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.04);">
+              <th style="padding:10px 14px; text-align:left; color:var(--text-gray); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">Data</th>
+              <th style="padding:10px 14px; text-align:left; color:var(--text-gray); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">Cliente</th>
+              <th style="padding:10px 14px; text-align:left; color:var(--text-gray); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">Empreendimento</th>
+              <th style="padding:10px 14px; text-align:left; color:var(--text-gray); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">Cidade</th>
+              <th style="padding:10px 14px; text-align:left; color:var(--text-gray); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">Origem</th>
+              <th style="padding:10px 14px; text-align:right; color:var(--text-gray); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">VGV</th>
+            </tr>
+          </thead>
+          <tbody id="rcTableBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
   <div id="modalChangePassword" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 99999; align-items: center; justify-content: center;">
     <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 24px; padding: 40px; max-width: 400px; width: 90%; backdrop-filter: blur(30px);">
       <div style="font-size: 22px; font-weight: 800; margin-bottom: 8px;">Defina sua Senha</div>
