@@ -3553,14 +3553,18 @@
 
         const [melhorMidia, melhorVGV] = entries[0];
         const qtdVendas    = qtdPorMidia[melhorMidia] || 0;
-        const leadsNaMidia = leadsFiltrados.filter(l => l.MIDIA === melhorMidia).length;
-        const conversao    = leadsNaMidia > 0 ? (qtdVendas / leadsNaMidia * 100) : 0;
+        // Usa todos os leads históricos (statusData) para não perder leads de meses anteriores
+        const todosLeads   = window.statusData || leadsFiltrados;
+        const leadsNaMidia = melhorMidia === 'Captação Direta/Plantão'
+          ? 0
+          : todosLeads.filter(l => l.MIDIA === melhorMidia).length;
+        const conversao    = leadsNaMidia > 0 ? (qtdVendas / leadsNaMidia * 100) : null;
 
         // Trunca nome longo para caber no card
         const nomeExibido = melhorMidia.length > 22 ? melhorMidia.slice(0, 20) + '…' : melhorMidia;
 
         document.getElementById('roi-top').textContent       = nomeExibido;
-        document.getElementById('roi-conversao').textContent = conversao.toFixed(1) + '%';
+        document.getElementById('roi-conversao').textContent = conversao !== null ? conversao.toFixed(1) + '%' : '—';
         document.getElementById('roi-valor').textContent     = formatBRL(melhorVGV);
 
         console.log(`🎯 Melhor canal: ${melhorMidia} — VGV ${formatBRL(melhorVGV)} | conv. ${conversao.toFixed(1)}%`);
