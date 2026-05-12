@@ -2916,6 +2916,22 @@
           window.allVendas = [];
         }
 
+        // ===== CARREGAR VENDAS DO MÊS ANTERIOR (para comparativo) =====
+        try {
+          const _mesesOrdem = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+          const _idxAtual   = _mesesOrdem.indexOf(currentMonthId);
+          const _mesPrevId  = _idxAtual > 0 ? _mesesOrdem[_idxAtual - 1] : null;
+          const _gidPrev    = _mesPrevId ? prevendaConfig?.vendas?.gids?.[_mesPrevId] : null;
+          if (_mesPrevId && idVendas && _gidPrev) {
+            window.allVendasAnteriorMes = await fetchVendasCSV(idVendas + '|' + _gidPrev);
+            console.log(`✓ Vendas anteriores (${_mesPrevId}): ${window.allVendasAnteriorMes.length} registros`);
+          } else {
+            window.allVendasAnteriorMes = [];
+          }
+        } catch (e) {
+          window.allVendasAnteriorMes = [];
+        }
+
         // ===== CARREGAR GASTOS DO MÊS =====
         try {
           if (combinedGast) {
@@ -3480,76 +3496,74 @@
 
     function renderComparativo(vendas, mesAtual) {
       try {
-        const formatBRL = (n) => new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n);
-        const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-        const mesesNomes = { jan: 'Janeiro', fev: 'Fevereiro', mar: 'Março', abr: 'Abril', mai: 'Maio', jun: 'Junho', 
-                             jul: 'Julho', ago: 'Agosto', set: 'Setembro', out: 'Outubro', nov: 'Novembro', dez: 'Dezembro' };
-        
-        const mesAtualIdx = meses.indexOf(mesAtual);
-        const mesPosterior = mesAtualIdx > 0 ? meses[mesAtualIdx - 1] : meses[11];
-        
-        // VGV mês atual
-        const vgvAtual = vendas.reduce((sum, v) => sum + (v.valor || 0), 0);
-        
-        // VGV mês anterior - puxar de allVendasPreviousMonth (dados reais do Firebase)
-        let vgvAnterior = 0;
-        if (window.allVendasPreviousMonth && window.allVendasPreviousMonth.length > 0) {
-          vgvAnterior = window.allVendasPreviousMonth.reduce((sum, v) => sum + (v.valor || 0), 0);
-          console.log(`📈 VGV ${mesesNomes[mesPosterior]}: ${formatBRL(vgvAnterior)}`);
-        } else {
-          vgvAnterior = vgvAtual * 0.75; // Fallback se não houver dados
-          console.log(`⚠️ Nenhum dado de vendas encontrado para ${mesesNomes[mesPosterior]}, usando estimativa`);
-        }
-        
-        const variacao = vgvAnterior > 0 ? (((vgvAtual - vgvAnterior) / vgvAnterior) * 100).toFixed(1) : 0;
-        const sinal = variacao >= 0 ? '+' : '';
-        
-        document.getElementById('comparativo-atual').textContent = formatBRL(vgvAtual);
-        document.getElementById('comparativo-anterior').textContent = formatBRL(vgvAnterior);
-        document.getElementById('comparativo-variacao').textContent = `${sinal}${variacao}%`;
-        document.getElementById('comparativo-variacao').style.color = variacao >= 0 ? '#22c55e' : '#ef4444';
-        
-        console.log(`📈 Comparativo: ${formatBRL(vgvAtual)} vs ${formatBRL(vgvAnterior)} = ${sinal}${variacao}%`);
+        const mesesNomes = { jan:'Janeiro', fev:'Fevereiro', mar:'Março', abr:'Abril',
+          mai:'Maio', jun:'Junho', jul:'Julho', ago:'Agosto',
+          set:'Setembro', out:'Outubro', nov:'Novembro', dez:'Dezembro' };
+        const mesesOrdem = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+        const mesAtualIdx = mesesOrdem.indexOf(mesAtual);
+        const mesPrevId   = mesAtualIdx > 0 ? mesesOrdem[mesAtualIdx - 1] : null;
+
+        // VGV mês atual — campo correto é vgv (não valor)
+        const vgvAtual = vendas.reduce((s, v) => s + (v.vgv || 0), 0);
+
+        // VGV mês anterior — carregado em carregarDados()
+        const vendasAnt  = window.allVendasAnteriorMes || [];
+        const vgvAnterior = vendasAnt.reduce((s, v) => s + (v.vgv || 0), 0);
+        const temDadosAnt = vendasAnt.length > 0;
+
+        const variacao = (temDadosAnt && vgvAnterior > 0)
+          ? (((vgvAtual - vgvAnterior) / vgvAnterior) * 100).toFixed(1)
+          : null;
+        const sinal = variacao !== null && parseFloat(variacao) >= 0 ? '+' : '';
+
+        document.getElementById('comparativo-atual').textContent    = formatBRL(vgvAtual);
+        document.getElementById('comparativo-anterior').textContent =
+          temDadosAnt ? formatBRL(vgvAnterior) : 'Sem dados';
+        document.getElementById('comparativo-variacao').textContent =
+          variacao !== null ? `${sinal}${variacao}%` : '—';
+        if (variacao !== null)
+          document.getElementById('comparativo-variacao').style.color =
+            parseFloat(variacao) >= 0 ? '#22c55e' : '#ef4444';
+
+        console.log(`📈 Comparativo: ${formatBRL(vgvAtual)} vs ${formatBRL(vgvAnterior)} (${mesAtual} vs ${mesPrevId})`);
       } catch (e) {
         console.log('⚠️ Erro ao calcular comparativo:', e);
       }
     }
 
-    function renderROI(leadsFiltrados, vendaseConfirmadas) {
+    function renderROI(leadsFiltrados, vendasCruzadas) {
       try {
-        // Agrupar leads por mídia
-        const leadsporMidia = {};
-        leadsFiltrados.forEach(lead => {
-          const midia = lead.MIDIA || 'Não Identificado';
-          if (!leadsporMidia[midia]) leadsporMidia[midia] = [];
-          leadsporMidia[midia].push(lead);
+        // Agrupar por midiaCruzada (campo já cruzado no vendasCruzadas)
+        const vgvPorMidia = {};
+        const qtdPorMidia = {};
+        vendasCruzadas.forEach(v => {
+          const midia = v.midiaCruzada || 'Não Identificado';
+          vgvPorMidia[midia] = (vgvPorMidia[midia] || 0) + (v.vgv || 0);
+          qtdPorMidia[midia] = (qtdPorMidia[midia] || 0) + 1;
         });
-        
-        // Calcular conversão por mídia
-        let melhorCanal = null;
-        let melhorROI = 0;
-        let melhorMidia = '-';
-        
-        Object.entries(leadsporMidia).forEach(([midia, leads]) => {
-          const vendasNessaMidia = vendaseConfirmadas.filter(v => 
-            leads.some(l => l.CLIENTE && l.CLIENTE.toLowerCase().includes(v.cliente.toLowerCase()))
-          ).length;
-          
-          const conversao = leads.length > 0 ? (vendasNessaMidia / leads.length) * 100 : 0;
-          const roi = conversao * 1.5; // Fórmula simplificada
-          
-          if (roi > melhorROI) {
-            melhorROI = roi;
-            melhorMidia = midia;
-            melhorCanal = { midia, leads: leads.length, vendas: vendasNessaMidia, conversao };
-          }
-        });
-        
-        document.getElementById('roi-top').textContent = melhorMidia;
-        document.getElementById('roi-conversao').textContent = melhorCanal ? melhorCanal.conversao.toFixed(1) + '%' : '0%';
-        document.getElementById('roi-valor').textContent = melhorROI.toFixed(0) + '%';
-        
-        console.log(`🎯 ROI: Melhor canal = ${melhorMidia} (${melhorROI.toFixed(0)}% ROI)`);
+
+        const entries = Object.entries(vgvPorMidia).sort((a, b) => b[1] - a[1]);
+
+        if (entries.length === 0) {
+          document.getElementById('roi-top').textContent        = 'Sem dados';
+          document.getElementById('roi-conversao').textContent  = '—';
+          document.getElementById('roi-valor').textContent      = '—';
+          return;
+        }
+
+        const [melhorMidia, melhorVGV] = entries[0];
+        const qtdVendas    = qtdPorMidia[melhorMidia] || 0;
+        const leadsNaMidia = leadsFiltrados.filter(l => l.MIDIA === melhorMidia).length;
+        const conversao    = leadsNaMidia > 0 ? (qtdVendas / leadsNaMidia * 100) : 0;
+
+        // Trunca nome longo para caber no card
+        const nomeExibido = melhorMidia.length > 22 ? melhorMidia.slice(0, 20) + '…' : melhorMidia;
+
+        document.getElementById('roi-top').textContent       = nomeExibido;
+        document.getElementById('roi-conversao').textContent = conversao.toFixed(1) + '%';
+        document.getElementById('roi-valor').textContent     = formatBRL(melhorVGV);
+
+        console.log(`🎯 Melhor canal: ${melhorMidia} — VGV ${formatBRL(melhorVGV)} | conv. ${conversao.toFixed(1)}%`);
       } catch (e) {
         console.log('⚠️ Erro ao calcular ROI:', e);
       }
