@@ -703,7 +703,10 @@
       <img src='/assets/logo-planejar.svg?v=1.2.0' style='height: 35px; margin-bottom: 50px; object-fit: contain; width: auto;'>
       
       <span class="nav-label">Módulos</span>
-      <div class="nav-item active" id="nav-atendimento" onclick="switchView('view-atendimento', this)">
+      <div class="nav-item active" id="nav-home" onclick="switchView('view-home', this)">
+        <i data-lucide="home"></i> Panoramica
+      </div>
+      <div class="nav-item" id="nav-atendimento" onclick="switchView('view-atendimento', this)">
         <i data-lucide="layout-dashboard"></i> Atendimento
       </div>
       <div class="nav-item" id="nav-vendas" onclick="switchView('view-vendas', this)">
@@ -768,9 +771,181 @@
         </div>
 
         <!-- ============================================== -->
+        <!-- VIEW HOME: PANORAMICA                          -->
+        <!-- ============================================== -->
+        <div id="view-home" class="view-section active">
+          <div class="welcome-card" style="background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(14,165,233,0.08));">
+            <div class="welcome-content">
+              <div class="live-badge"><span class="pulse-dot"></span> Vista Panoramica</div>
+              <h1 class="welcome-title">Visao <strong>Consolidada</strong></h1>
+              <p class="motivation-text" id="homeMesLabel">Carregando dados do periodo...</p>
+            </div>
+          </div>
+
+          <h2 class="section-title"><i data-lucide="activity"></i> Inteligencia de Marketing</h2>
+          <div class="grid-5">
+            <div class="card card-vendas" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
+              <div class="icon-box-top"><i data-lucide="trending-up"></i></div>
+              <span class="card-label">ROI MKT</span>
+              <div class="card-value" id="home-roi" style="font-size:36px;">--</div>
+              <span class="card-subtitle">VGV / Investimento</span>
+            </div>
+            <div class="card card-destaque" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
+              <div class="icon-box-top"><i data-lucide="user-plus"></i></div>
+              <span class="card-label">CPL</span>
+              <div class="card-value" id="home-cpl" style="font-size:24px;">--</div>
+              <span class="card-subtitle">Custo por Lead</span>
+            </div>
+            <div class="card card-gastos" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
+              <div class="icon-box-top"><i data-lucide="shopping-bag"></i></div>
+              <span class="card-label">CAC</span>
+              <div class="card-value" id="home-cac" style="font-size:24px;">--</div>
+              <span class="card-subtitle">Custo de Aquisicao</span>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
+              <div class="icon-box-top"><i data-lucide="percent"></i></div>
+              <span class="card-label">Conversao</span>
+              <div class="card-value" id="home-conversao">--</div>
+              <span class="card-subtitle">Leads para Vendas</span>
+            </div>
+            <div class="card card-vendas" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
+              <div class="icon-box-top"><i data-lucide="dollar-sign"></i></div>
+              <span class="card-label">Ticket Medio</span>
+              <div class="card-value" id="home-ticket" style="font-size:24px;">--</div>
+              <span class="card-subtitle">Por contrato</span>
+            </div>
+          </div>
+
+          <h2 class="section-title">
+            <i data-lucide="users"></i> Atendimento
+            <span style="font-size:13px;font-weight:500;color:var(--text-gray);margin-left:auto;cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">Ver modulo &rarr;</span>
+          </h2>
+          <div class="grid-main">
+            <div class="card card-destaque" style="cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">
+              <div class="icon-box-top"><i data-lucide="users"></i></div>
+              <span class="card-label">Total Leads (Mes)</span>
+              <div class="card-value" id="home-leads-total">0</div>
+              <span class="card-subtitle">Periodo selecionado</span>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">
+              <div class="icon-box-top"><i data-lucide="user-check"></i></div>
+              <span class="card-label">Direcionados</span>
+              <div class="card-value" id="home-leads-dir">0</div>
+              <span class="card-subtitle">Com corretor</span>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">
+              <div class="icon-box-top"><i data-lucide="clock"></i></div>
+              <span class="card-label">Fila de Espera</span>
+              <div class="card-value" id="home-leads-fila">0</div>
+              <span class="card-subtitle">Sem corretor</span>
+            </div>
+          </div>
+
+          <h2 class="section-title">
+            <i data-lucide="bar-chart-2"></i> Vendas e Gastos
+            <span style="font-size:13px;font-weight:500;color:var(--text-gray);margin-left:auto;cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">Ver modulo &rarr;</span>
+          </h2>
+          <div class="grid-5">
+            <div class="card card-vendas" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
+              <div class="icon-box-top"><i data-lucide="dollar-sign"></i></div>
+              <span class="card-label">VGV do Periodo</span>
+              <div class="card-value" id="home-vgv" style="font-size:22px;">R$ 0</div>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
+              <div class="icon-box-top"><i data-lucide="landmark"></i></div>
+              <span class="card-label">Entradas</span>
+              <div class="card-value" id="home-entradas" style="font-size:22px;">R$ 0</div>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
+              <div class="icon-box-top"><i data-lucide="file-text"></i></div>
+              <span class="card-label">Contratos</span>
+              <div class="card-value" id="home-contratos">0</div>
+            </div>
+            <div class="card card-gastos" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
+              <div class="icon-box-top"><i data-lucide="receipt"></i></div>
+              <span class="card-label">Invest. MKT</span>
+              <div class="card-value" id="home-gastos" style="font-size:22px;">R$ 0</div>
+            </div>
+            <div class="card card-gastos" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
+              <div class="icon-box-top"><i data-lucide="check-circle"></i></div>
+              <span class="card-label">Lancamentos MKT</span>
+              <div class="card-value" id="home-gastos-qtd">0</div>
+            </div>
+          </div>
+
+          <h2 class="section-title"><i data-lucide="award"></i> Rankings do Periodo</h2>
+          <div class="grid-main">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <span class="card-label" style="margin-bottom:0;">Top Corretores (Leads)</span>
+                <span style="font-size:11px;color:var(--accent-primary);cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">ver tudo</span>
+              </div>
+              <div id="home-top-corretores"></div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <span class="card-label" style="margin-bottom:0;">Top Produtos (Leads)</span>
+                <span style="font-size:11px;color:var(--accent-primary);cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">ver tudo</span>
+              </div>
+              <div id="home-top-produtos"></div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <span class="card-label" style="margin-bottom:0;">Top Midias (Leads)</span>
+                <span style="font-size:11px;color:var(--accent-primary);cursor:pointer;" onclick="switchView('view-atendimento', document.getElementById('nav-atendimento'))">ver tudo</span>
+              </div>
+              <div id="home-top-midias"></div>
+            </div>
+          </div>
+
+          <div class="grid-charts">
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-obras', document.getElementById('nav-obras'))">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <span class="card-label" style="margin-bottom:0;"><i data-lucide="hard-hat" style="width:14px;height:14px;"></i> Obras</span>
+                <span style="font-size:11px;color:var(--text-gray);">ver modulo &rarr;</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
+                <div>
+                  <div style="font-size:32px;font-weight:800;color:var(--accent-primary);" id="home-obras-andamento">0</div>
+                  <div style="font-size:11px;color:var(--text-gray);font-weight:600;">Em Obras</div>
+                </div>
+                <div>
+                  <div style="font-size:32px;font-weight:800;color:#10b981;" id="home-obras-entregues">0</div>
+                  <div style="font-size:11px;color:var(--text-gray);font-weight:600;">Entregues</div>
+                </div>
+                <div>
+                  <div style="font-size:32px;font-weight:800;" id="home-obras-total">0</div>
+                  <div style="font-size:11px;color:var(--text-gray);font-weight:600;">Total</div>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="switchView('view-veiculacoes', document.getElementById('nav-veiculacoes'))">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <span class="card-label" style="margin-bottom:0;"><i data-lucide="tv" style="width:14px;height:14px;"></i> Veiculacoes</span>
+                <span style="font-size:11px;color:var(--text-gray);">ver modulo &rarr;</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
+                <div>
+                  <div style="font-size:32px;font-weight:800;color:#10b981;" id="home-veic-ativas">0</div>
+                  <div style="font-size:11px;color:var(--text-gray);font-weight:600;">Ativas</div>
+                </div>
+                <div>
+                  <div style="font-size:32px;font-weight:800;color:#f43f5e;" id="home-veic-inativas">0</div>
+                  <div style="font-size:11px;color:var(--text-gray);font-weight:600;">Inativas</div>
+                </div>
+                <div>
+                  <div style="font-size:22px;font-weight:800;" id="home-veic-custo">R$ 0</div>
+                  <div style="font-size:11px;color:var(--text-gray);font-weight:600;">Custo/Mes</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
         <!-- VIEW 1: ATENDIMENTO / LEADS                    -->
         <!-- ============================================== -->
-        <div id="view-atendimento" class="view-section active">
+        <div id="view-atendimento" class="view-section">
           <button class="btn-sync-discrete" onclick="carregarDados()" title="Sincronizar dados">
             <i data-lucide="refresh-cw"></i> Sync
           </button>
@@ -2081,7 +2256,10 @@
       const filterSec = document.getElementById('globalFilterSection');
       
       // Carregar dados automaticamente ao entrar em cada view
-      if(viewId === 'view-atendimento') {
+      if(viewId === 'view-home') {
+        filterSec.style.display = 'none';
+        carregarDados(); // carregarDados chama renderAreaHome no final
+      } else if(viewId === 'view-atendimento') {
         document.getElementById('filterAnchorAtendimento').appendChild(filterSec);
         filterSec.style.display = 'flex';
         carregarDados(); // Auto-carregar dados
@@ -2714,9 +2892,12 @@
             filtrarObras(); 
         }
         if(document.getElementById('view-veiculacoes') && document.getElementById('view-veiculacoes').classList.contains('active')) {
-            filtrarVeiculacoes(); 
+            filtrarVeiculacoes();
         }
-        
+
+        // Atualizar panoramica sempre (ela verifica internamente se ha dados)
+        renderAreaHome();
+
         console.log(`✅ carregarDados concluído (${currentMonthId})\n`);
       } catch (e) { 
         console.error("❌ Erro geral na carga de dados:", e); 
@@ -4028,6 +4209,113 @@
         renderAreaObras(obrasFiltradas);
     }
     window.filtrarObras = filtrarObras;
+
+    // === RENDER: PANORAMICA (HOME) ===
+    function renderAreaHome() {
+      const leads  = window.allDataFiltered    || window.statusData      || [];
+      const vendas = window.allVendasFiltered  || window.allVendas       || [];
+      const gastos = window.allGastosFiltered  || window.allGastosData   || [];
+      const obras  = window.allObrasData       || [];
+      const veic   = window.allVeiculacoesData || [];
+
+      // KPIs basicos
+      const totalLeads   = leads.length;
+      const dirigidos    = leads.filter(r => r.CORRETOR && r.CORRETOR.trim()).length;
+      const fila         = totalLeads - dirigidos;
+      const vgvTotal     = vendas.reduce((a, c) => a + (c.vgv || 0), 0);
+      const entradas     = vendas.reduce((a, c) => a + (c.entradas || 0), 0);
+      const qtdContratos = vendas.length;
+      const gastoTotal   = gastos.reduce((a, c) => a + (c.negociado || 0), 0);
+
+      // Metricas cruzadas
+      const roi    = gastoTotal > 0 ? (vgvTotal / gastoTotal).toFixed(1) + 'x' : '--';
+      const cpl    = totalLeads > 0 ? formatBRL(gastoTotal / totalLeads) : '--';
+      const cac    = qtdContratos > 0 ? formatBRL(gastoTotal / qtdContratos) : '--';
+      const conv   = totalLeads > 0 ? (qtdContratos / totalLeads * 100).toFixed(1) + '%' : '--';
+      const ticket = qtdContratos > 0 ? formatBRL(vgvTotal / qtdContratos) : '--';
+
+      // Obras
+      const obrasEntregues = obras.filter(o => (o.progresso || 0) >= 100).length;
+      const obrasAndamento = obras.length - obrasEntregues;
+
+      // Veiculacoes
+      const veicAtivas  = veic.filter(v => (v.status || '').toLowerCase().startsWith('ativ')).length;
+      const custoAtivo  = veic
+        .filter(v => (v.status || '').toLowerCase().startsWith('ativ'))
+        .reduce((a, c) => a + (c.custo || 0), 0);
+
+      // Helper DOM
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      // Metricas cruzadas
+      set('home-roi',       roi);
+      set('home-cpl',       cpl);
+      set('home-cac',       cac);
+      set('home-conversao', conv);
+      set('home-ticket',    ticket);
+
+      // Atendimento
+      set('home-leads-total', totalLeads);
+      set('home-leads-dir',   dirigidos);
+      set('home-leads-fila',  fila);
+
+      // Vendas + Gastos
+      set('home-vgv',        formatBRL(vgvTotal));
+      set('home-entradas',   formatBRL(entradas));
+      set('home-contratos',  qtdContratos);
+      set('home-gastos',     formatBRL(gastoTotal));
+      set('home-gastos-qtd', gastos.length);
+
+      // Obras
+      set('home-obras-andamento', obrasAndamento);
+      set('home-obras-entregues', obrasEntregues);
+      set('home-obras-total',     obras.length);
+
+      // Veiculacoes
+      set('home-veic-ativas',   veicAtivas);
+      set('home-veic-inativas', veic.length - veicAtivas);
+      set('home-veic-custo',    formatBRL(custoAtivo));
+
+      // Rankings Top 3
+      function miniRanking(data, campo, containerId) {
+        const counts = {};
+        data.forEach(r => {
+          const k = r[campo];
+          if (k && k.trim()) counts[k] = (counts[k] || 0) + 1;
+        });
+        const top3  = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+        const icons = ['#1', '#2', '#3'];
+        const el    = document.getElementById(containerId);
+        if (!el) return;
+        if (top3.length === 0) {
+          el.innerHTML = '<div style="opacity:0.4;font-size:12px;padding:10px 0;">Sem dados para o periodo</div>';
+          return;
+        }
+        el.innerHTML = top3.map(([nome, qtd], i) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:11px;font-weight:800;opacity:0.5;width:20px;flex-shrink:0;">${icons[i]}</span>
+            <span style="flex:1;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${nome}</span>
+            <span style="font-size:13px;font-weight:800;flex-shrink:0;">${qtd}</span>
+          </div>`).join('');
+      }
+      miniRanking(leads, 'CORRETOR', 'home-top-corretores');
+      miniRanking(leads, 'PRODUTO',  'home-top-produtos');
+      miniRanking(leads, 'MIDIA',    'home-top-midias');
+
+      // Label do mes
+      const mesNomes = {
+        jan:'Janeiro', fev:'Fevereiro', mar:'Marco', abr:'Abril',
+        mai:'Maio',    jun:'Junho',     jul:'Julho', ago:'Agosto',
+        set:'Setembro',out:'Outubro',   nov:'Novembro', dez:'Dezembro'
+      };
+      set('homeMesLabel', 'Dados consolidados de ' + (mesNomes[currentMonthId] || currentMonthId));
+
+      if (window.lucide) lucide.createIcons();
+    }
+    window.renderAreaHome = renderAreaHome;
 
     // === CONTROLE DE REDES SOCIAIS (EXPANSÃO V11.11 / CLEAN V11.12) ===
     function changeNetwork(network) {
