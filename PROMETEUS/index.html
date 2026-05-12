@@ -787,9 +787,10 @@
         <div id="view-home" class="view-section active">
           <div class="welcome-card" style="background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(14,165,233,0.08));">
             <div class="welcome-content">
-              <div class="live-badge"><span class="pulse-dot"></span> Vista Panoramica</div>
-              <h1 class="welcome-title">Visao <strong>Consolidada</strong></h1>
-              <p class="motivation-text" id="homeMesLabel">Carregando dados do periodo...</p>
+              <div class="live-badge"><span class="pulse-dot"></span> Monitoramento Ativo</div>
+              <h1 class="welcome-title" id="welcomeMsg">Carregando...</h1>
+              <p class="motivation-text" id="motivationMsg">Sincronizando dados com o servidor...</p>
+              <p id="homeMesLabel" style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:18px;font-weight:500;letter-spacing:0.3px;">Carregando dados do periodo...</p>
             </div>
           </div>
 
@@ -862,31 +863,36 @@
               <div class="icon-box-top"><i data-lucide="trending-up"></i></div>
               <span class="card-label">ROI MKT</span>
               <div class="card-value" id="home-roi" style="font-size:36px;">--</div>
-              <span class="card-subtitle">VGV / Investimento</span>
+              <span class="card-subtitle">Retorno sobre investimento</span>
+              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">VGV total do periodo dividido pelo investimento em marketing. Quanto cada R$1 investido gerou em vendas.</span>
             </div>
             <div class="card card-destaque" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
               <div class="icon-box-top"><i data-lucide="user-plus"></i></div>
               <span class="card-label">CPL</span>
               <div class="card-value" id="home-cpl" style="font-size:24px;">--</div>
               <span class="card-subtitle">Custo por Lead</span>
+              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">Investimento em MKT dividido pelo total de leads captados no periodo.</span>
             </div>
             <div class="card card-gastos" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
               <div class="icon-box-top"><i data-lucide="shopping-bag"></i></div>
               <span class="card-label">CAC</span>
               <div class="card-value" id="home-cac" style="font-size:24px;">--</div>
               <span class="card-subtitle">Custo de Aquisicao</span>
+              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">Investimento em MKT dividido pela quantidade de contratos assinados no periodo.</span>
             </div>
             <div class="card" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
               <div class="icon-box-top"><i data-lucide="percent"></i></div>
               <span class="card-label">Conversao</span>
               <div class="card-value" id="home-conversao">--</div>
-              <span class="card-subtitle">Leads para Vendas</span>
+              <span class="card-subtitle">Leads → Contratos</span>
+              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">Percentual de leads do periodo que resultaram em contrato assinado.</span>
             </div>
             <div class="card card-vendas" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
               <div class="icon-box-top"><i data-lucide="dollar-sign"></i></div>
               <span class="card-label">Ticket Medio</span>
               <div class="card-value" id="home-ticket" style="font-size:24px;">--</div>
               <span class="card-subtitle">Por contrato</span>
+              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">VGV total dividido pelo numero de contratos assinados no periodo.</span>
             </div>
           </div>
 
@@ -969,9 +975,9 @@
           </button>
           <div class="welcome-card">
             <div class="welcome-content">
-              <div class="live-badge"><span class="pulse-dot"></span> Monitoramento Ativo</div>
-              <h1 class="welcome-title" id="welcomeMsg">Carregando...</h1>
-              <p class="motivation-text" id="motivationMsg">Sincronizando dados com o servidor...</p>
+              <div class="live-badge"><span class="pulse-dot"></span> Pre-Atendimento</div>
+              <h1 class="welcome-title">Modulo de <strong>Atendimento</strong></h1>
+              <p class="motivation-text">Leads, direcionamentos e funil de pre-atendimento em tempo real.</p>
             </div>
           </div>
 
