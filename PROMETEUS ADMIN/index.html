@@ -695,18 +695,20 @@ async function carregarDashboard() {
     const totalUsers = allUsers.length;
     document.getElementById('stat_usuarios_val').textContent = totalUsers;
 
-    // ── 2. Sessoes ativas (logoutTime == null, login últimas 24h) ──
+    // ── 2. Sessoes ativas (logoutTime == null) ──────────────────
+    // Sem orderBy para evitar índice composto — ordenamos client-side
     const limite24h  = new Date(Date.now() - 86400000).toISOString();
     const activeSess = await db.collection('admin_history')
       .where('logoutTime', '==', null)
-      .orderBy('loginTime', 'desc')
-      .limit(30)
+      .limit(50)
       .get();
 
-    // filtra pelo limite de 24h localmente (evita índice composto)
+    // Filtra 24h e ordena por loginTime desc no cliente
     const sessActive = activeSess.docs
-      .filter(d => d.data().loginTime >= limite24h)
-      .map(d => ({ id: d.id, ...d.data() }));
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(s => s.loginTime >= limite24h)
+      .sort((a, b) => (b.loginTime || '').localeCompare(a.loginTime || ''))
+      .slice(0, 20);
 
     document.getElementById('stat_ativos_val').textContent = sessActive.length;
 
@@ -744,9 +746,12 @@ async function carregarDashboard() {
     }
 
     // ── 3. Logins Hoje ───────────────────────────────────────
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    // Pega os últimos 200 do dia e filtra cliente-side (sem orderBy = sem índice composto)
+    const hojeIso = new Date(); hojeIso.setHours(0,0,0,0);
+    const hojeStr = hojeIso.toISOString();
     const loginsHojeSnap = await db.collection('admin_history')
-      .where('loginTime', '>=', hoje.toISOString())
+      .where('loginTime', '>=', hojeStr)
+      .limit(200)
       .get();
     document.getElementById('stat_logins_val').textContent = loginsHojeSnap.size;
 
