@@ -3846,8 +3846,9 @@
           lotes:     corretoresLotes[entry[0]]    || 0,
           vgv:       entry[1],
           entradas:  corretoresEntradas[entry[0]] || 0,
-          percentual: totalVGV > 0 ? (entry[1] / totalVGV * 100).toFixed(1) : 0,
-          comissao:  entry[1] * (COMISSOES_ESPECIAIS[entry[0]] || TAXA_COMISSAO)
+          percentual:    totalVGV > 0 ? (entry[1] / totalVGV * 100).toFixed(1) : 0,
+          taxaComissao:  COMISSOES_ESPECIAIS[entry[0]] || TAXA_COMISSAO,
+          comissao:      entry[1] * (COMISSOES_ESPECIAIS[entry[0]] || TAXA_COMISSAO)
         }));
 
       // Guarda cache para o modal de detalhes e para o re-sort
@@ -4449,7 +4450,14 @@
           <td style="padding:12px; text-align:right; ${vgvStyle}">${formatBRL(r.vgv)}</td>
           <td style="padding:12px; text-align:right; ${entStyle}">${formatBRL(r.entradas)}</td>
           <td style="padding:12px; text-align:right; color:var(--text-gray);">${r.percentual}%</td>
-          <td style="padding:12px; text-align:right; color:var(--accent-secondary); font-weight:700;">${formatBRL(r.comissao)}</td>
+          <td style="padding:12px; text-align:right;">
+            <span style="color:var(--accent-secondary); font-weight:700;">${formatBRL(r.comissao)}</span>
+            <span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:8px;vertical-align:middle;
+              ${r.taxaComissao > 0.022
+                ? 'background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);'
+                : 'background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.08);'}"
+            >${(r.taxaComissao * 100).toFixed(1)}%</span>
+          </td>
           <td style="padding:12px; text-align:center; color:var(--text-gray); font-size:14px;">›</td>
         </tr>`;
       }).join('') || '<tr><td colspan="8" style="padding:20px; text-align:center; color:var(--text-gray);">Nenhum dado disponível</td></tr>';
