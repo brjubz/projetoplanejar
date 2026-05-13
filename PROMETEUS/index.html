@@ -3829,7 +3829,10 @@
       });
 
       const totalVGV = Object.values(corretoresVGV).reduce((a, b) => a + b, 0);
-      const TAXA_COMISSAO = 0.022; // 2.2%
+      const TAXA_COMISSAO = 0.022; // padrão 2.2%
+      const COMISSOES_ESPECIAIS = {
+        'PAIXAO & SOUZA NEGOCIOS IMOBILIARIOS LTDA': 0.024 // 2.4%
+      };
 
       const rankingCompleto = Object.entries(corretoresVGV)
         .sort((a, b) => b[1] - a[1])
@@ -3840,7 +3843,7 @@
           vgv:       entry[1],
           entradas:  corretoresEntradas[entry[0]] || 0,
           percentual: totalVGV > 0 ? (entry[1] / totalVGV * 100).toFixed(1) : 0,
-          comissao:  entry[1] * TAXA_COMISSAO
+          comissao:  entry[1] * (COMISSOES_ESPECIAIS[entry[0]] || TAXA_COMISSAO)
         }));
 
       // Guarda cache para o modal de detalhes e para o re-sort
