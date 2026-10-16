@@ -1,0 +1,11 @@
+# Backups locais
+*.bak
+*.bak_*
+*.bak2_*
+index.html.bak*
+# Pastas de ferramentas/sessão
+.claude/
+# Sistema
+.DS_Store
+Thumbs.db
+node_modules/
