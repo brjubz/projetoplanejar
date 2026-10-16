@@ -8786,17 +8786,38 @@
     }
     window._homeRenderKPIMoM = _homeRenderKPIMoM;
 
+    let _homeVSOLastVendas = [];
+    function _homeVSONorm(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+    function _homeVSOKey(s){ return _homeVSONorm(s).replace(/^(PLAN|LOTEAMENTO|RESIDENCIAL|CONDOMINIO|PARQUE) /,'').replace(/ /g,''); }
     function _homeRenderVSOEmpreendimentos(vendas) {
+      _homeVSOLastVendas = vendas || [];
       const estoque = window.allEstoqueData || [];
-      const dispByEmp = {};
-      estoque.forEach(e => { const k=(e.empreendimento||'').trim(); if(k){ dispByEmp[k]=(dispByEmp[k]||0)+(parseInt(e.unidades)||0); } });
-      const soldByEmp = {};
-      (vendas||[]).forEach(v => { const k=(v.produto||'').trim(); if(k){ soldByEmp[k]=(soldByEmp[k]||0)+1; } });
-      const keys = new Set([...Object.keys(dispByEmp), ...Object.keys(soldByEmp)]);
-      _homeVSOData = [...keys].map(k => {
-        const sold = soldByEmp[k]||0, disp = dispByEmp[k]||0, total = sold+disp;
-        return { nome:k, sold, disp, pct: total>0 ? Math.round(sold/total*100) : 0 };
-      }).filter(e => e.sold>0 || e.disp>0).sort((a,b)=> b.sold - a.sold || b.pct - a.pct);
+      if (!estoque.length && typeof _preloadEstoque === 'function') {
+        const box = document.getElementById('home-vso-emp');
+        if (box) box.innerHTML = '<div class="hv-empty">Carregando estoque...</div>';
+        _preloadEstoque().catch(()=>{}).then(() => _homeRenderVSOEmpreendimentosNow(_homeVSOLastVendas));
+        return;
+      }
+      _homeRenderVSOEmpreendimentosNow(vendas);
+    }
+    function _homeRenderVSOEmpreendimentosNow(vendas) {
+      const estoque = window.allEstoqueData || [];
+      const map = {}; // key -> {nome, sold, disp}
+      estoque.forEach(e => {
+        const k = _homeVSOKey(e.empreendimento); if (!k) return;
+        if (!map[k]) map[k] = { nome:(e.empreendimento||'').trim(), sold:0, disp:0 };
+        map[k].disp += (parseInt(e.unidades) || 0);
+      });
+      (vendas||[]).forEach(v => {
+        const k = _homeVSOKey(v.produto); if (!k) return;
+        if (!map[k]) map[k] = { nome:(v.produto||'').trim(), sold:0, disp:0 };
+        map[k].sold += 1;
+      });
+      _homeVSOData = Object.values(map).map(e => {
+        const total = e.sold + e.disp;
+        return { nome:e.nome, sold:e.sold, disp:e.disp, pct: total>0 ? Math.round(e.sold/total*100) : 0 };
+      }).filter(e => e.sold>0 || e.disp>0).sort((a,b) => (b.sold+b.disp)-(a.sold+a.disp) || b.sold-a.sold);
+      console.log('[VSO] empreendimentos:', _homeVSOData.length, '| estoque linhas:', estoque.length);
       _homeVSOPageIdx = 0;
       _homeVSORender();
     }
