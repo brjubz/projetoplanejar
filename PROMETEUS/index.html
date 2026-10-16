@@ -261,7 +261,8 @@
     .sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
     .sidebar-bottom { flex-shrink: 0; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4px; }
 
-    .nav-label { font-size: 11px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px 10px; }
+    .nav-label { font-size: 10px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1.8px; margin: 18px 0 8px 12px; opacity: 0.65; }
+    .sidebar-nav > .nav-label:first-child { margin-top: 2px; }
     .nav-item { display: flex; align-items: center; gap: 13px; padding: 11px 14px; border-radius: 12px; color: var(--text-gray); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 3px; }
     .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .nav-item.active { color: #fff; background: linear-gradient(100deg, rgba(79,70,229,0.24), rgba(79,70,229,0.03)); font-weight: 700; box-shadow: inset 2px 0 0 var(--accent-tertiary); }
@@ -1687,9 +1688,11 @@
 
       <!-- Área de navegação — scrollável quando não cabe tudo na tela -->
       <div class="sidebar-nav">
+        <div class="nav-label">Geral</div>
         <div class="nav-item active" id="nav-home" onclick="switchView('view-home', this)">
           <i data-lucide="home"></i> Panoramica
         </div>
+        <div class="nav-label">Comercial</div>
         <div class="nav-item" id="nav-lancamento" onclick="switchView('view-lancamento', this, false, 'lancamento')">
           <i data-lucide="rocket"></i> Lançamento
         </div>
@@ -1708,6 +1711,7 @@
         <div class="nav-item" id="nav-premiacaojulia" onclick="switchView('view-premiacaojulia', this)">
           <i data-lucide="award"></i> Premiação Pré-Venda
         </div>
+        <div class="nav-label">Mídia & Operação</div>
         <div class="nav-item" id="nav-veiculacoes" onclick="switchView('view-veiculacoes', this)">
           <i data-lucide="tv"></i> Veiculações
         </div>
@@ -1717,12 +1721,14 @@
         <div class="nav-item" id="nav-demandastrello" onclick="switchView('view-demandastrello', this, false, 'demandastrello')">
           <i data-lucide="kanban"></i> Demandas Trello
         </div>
+        <div class="nav-label">Marketing Digital</div>
         <div class="nav-item" id="nav-sociais" onclick="switchView('view-sociais', this, true)">
           <i data-lucide="share-2"></i> Redes Sociais
         </div>
         <div class="nav-item" id="nav-email" onclick="switchView('view-email', this, false, 'email')">
           <i data-lucide="mail"></i> E-mail Marketing
         </div>
+        <div class="nav-label">Inteligência</div>
         <div class="nav-item" id="nav-news" onclick="switchView('view-news', this, false, 'news')">
           <i data-lucide="newspaper"></i> News
         </div>
