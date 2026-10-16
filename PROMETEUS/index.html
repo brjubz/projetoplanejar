@@ -8820,7 +8820,7 @@
       _homeVSOData = Object.values(map).map(e => {
         const total = e.sold + e.disp;
         return { nome:e.nome, sold:e.sold, disp:e.disp, pct: total>0 ? Math.round(e.sold/total*100) : 0 };
-      }).filter(e => e.sold>0 || e.disp>0).sort((a,b) => (b.sold+b.disp)-(a.sold+a.disp) || b.sold-a.sold);
+      }).filter(e => e.sold>0 || e.disp>0).sort((a,b) => b.pct - a.pct || b.sold - a.sold);
       console.log('[VSO] empreendimentos:', _homeVSOData.length, '| estoque linhas:', estoque.length);
       _homeVSOPageIdx = 0;
       _homeVSORender();
