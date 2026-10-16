@@ -821,6 +821,68 @@
     @media (max-width:980px){ .hv-grid { grid-template-columns:1fr; } .hv-kpis { grid-template-columns:repeat(3,1fr); } }
     @media (max-width:560px){ .hv-kpis { grid-template-columns:repeat(2,1fr); } }
 
+    /* === HOME v6 === */
+    .sens { transition: filter .25s; }
+    body.priv .sens { filter: blur(9px); user-select:none; pointer-events:none; }
+    .wc { display:flex; align-items:center; justify-content:space-between; gap:16px; background:linear-gradient(120deg,rgba(79,70,229,.1),rgba(14,6,165,.03)); border:1px solid var(--border-glass); border-radius:18px; padding:16px 20px; margin-bottom:6px; flex-wrap:wrap; }
+    .wc-l { display:flex; align-items:center; gap:14px; }
+    .wc-av { width:46px; height:46px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; color:#fff; background:linear-gradient(140deg,#0E06A5,#4f46e5 70%,#6d5efc); box-shadow:0 10px 24px -10px rgba(79,70,229,.7), inset 0 1px 2px rgba(255,255,255,.3); overflow:hidden; }
+    .wc-av img { width:100%; height:100%; object-fit:cover; }
+    .wc-hi { font-size:12px; color:var(--text-gray); font-weight:400; line-height:1; }
+    .wc-name { font-size:19px; font-weight:700; letter-spacing:-.5px; line-height:1.15; margin:2px 0 3px; color:#fff; }
+    .wc-name strong { font-weight:800; }
+    .wc-phrase { font-size:11.5px; color:#a9a4f5; font-weight:500; }
+    .wc-r { display:flex; align-items:center; gap:10px; }
+    .eye { width:38px; height:38px; border-radius:11px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.022); color:var(--text-gray); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.2s; }
+    .eye:hover { color:#fff; border-color:var(--border-light); }
+    .eye svg { width:18px; height:18px; }
+    .mtag { display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:600; color:#a9a4f5; background:rgba(79,70,229,.1); border:1px solid rgba(129,140,248,.25); padding:8px 13px; border-radius:11px; white-space:nowrap; }
+    .mtag i { width:14px; height:14px; }
+    .hero6 { display:grid; grid-template-columns:1fr 1.25fr; gap:14px; margin-bottom:14px; }
+    .vgv-blue { background:linear-gradient(140deg,#4f46e5 0%,#0E06A5 100%); border-radius:20px; padding:22px; position:relative; overflow:hidden; color:#fff; box-shadow:0 18px 44px -20px rgba(14,6,165,.8); cursor:pointer; }
+    .vgv-blue::after { content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,.08); }
+    .vb-top { display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; }
+    .vb-lbl { font-size:11px; font-weight:600; opacity:.85; }
+    .vb-ic { width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,.16); display:flex; align-items:center; justify-content:center; }
+    .vb-ic i { width:17px; height:17px; }
+    .vb-v { font-size:34px; font-weight:800; letter-spacing:-1.8px; margin:14px 0 6px; position:relative; z-index:1; }
+    .vb-delta { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; background:rgba(255,255,255,.18) !important; color:#fff !important; padding:3px 10px; border-radius:20px; position:relative; z-index:1; }
+    .vb-bar { height:7px; background:rgba(255,255,255,.22); border-radius:99px; margin-top:18px; overflow:hidden; position:relative; z-index:1; }
+    .vb-bar>div { height:100%; background:#fff; border-radius:99px; transition:width 1s cubic-bezier(.4,0,.2,1); }
+    .vb-meta { display:flex; justify-content:space-between; font-size:10.5px; opacity:.85; margin-top:8px; position:relative; z-index:1; }
+    .ac-h { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:6px; gap:10px; }
+    .ac-t { font-size:14px; font-weight:700; color:#fff; }
+    .ac-num { display:flex; align-items:baseline; gap:9px; margin:2px 0; }
+    .ac-num .v { font-size:24px; font-weight:800; letter-spacing:-1.2px; color:#fff; }
+    .ac-num .d { font-size:11.5px; font-weight:700; color:var(--color-pos); }
+    .ac-s { font-size:11px; color:var(--text-gray); margin-bottom:6px; }
+    .xax { display:flex; justify-content:space-between; margin-top:7px; font-size:9.5px; color:var(--text-gray); }
+    .hv-kpis4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:14px; }
+    .hv-kpis4 .hv-k { padding:18px; }
+    .k-bot { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+    .k-bot-l { min-width:0; }
+    .k-bot .hv-k-v { font-size:21px; }
+    .k-bot .hv-delta { margin-top:7px; }
+    .mom { display:flex; align-items:flex-end; gap:5px; height:34px; flex-shrink:0; }
+    .mom .mb { width:10px; border-radius:3px 3px 0 0; background:rgba(129,140,248,.3); min-height:4px; }
+    .mom .mb.cur { background:linear-gradient(180deg,#6d5efc,#4f46e5); }
+    .vso6 { margin-bottom:14px; }
+    .vso-h { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .vso-nav { display:flex; gap:6px; }
+    .vso-nav button { width:28px; height:28px; border-radius:8px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.022); color:var(--text-gray); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .vso-nav button:hover { color:#fff; border-color:var(--border-light); }
+    .vso-nav i { width:15px; height:15px; }
+    .vso-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+    .emp { background:rgba(255,255,255,.015); border:1px solid var(--border-glass); border-radius:16px; padding:16px; display:flex; align-items:center; gap:14px; }
+    .emp-donut { position:relative; width:66px; height:66px; flex-shrink:0; }
+    .emp-donut svg { width:66px; height:66px; }
+    .emp-donut .ev { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; }
+    .emp-nm { font-size:13px; font-weight:700; margin-bottom:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .emp-sub { font-size:10px; color:var(--text-gray); }
+    .emp-sub b { color:#a9a4f5; }
+    .home-news-wide { margin-bottom:4px; }
+    @media (max-width:980px){ .hero6 { grid-template-columns:1fr; } .hv-kpis4 { grid-template-columns:repeat(2,1fr); } .vso-grid { grid-template-columns:1fr; } }
+
     /* === CALENDÁRIO DE VENDAS === */
     .cal-wrapper { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
     @media (max-width: 900px) { .cal-wrapper { grid-template-columns: 1fr; } }
@@ -1840,20 +1902,83 @@
         <!-- VIEW HOME: PANORAMICA                          -->
         <!-- ============================================== -->
         <div id="view-home" class="view-section active">
-          <div class="home-top-row">
-          <div class="welcome-card welcome-home" style="background: linear-gradient(135deg, rgba(79,70,229,0.12), rgba(14,6,165,0.05));">
-            <div class="welcome-content welcome-home-row">
-              <div class="home-greet-avatar" id="homeGreetAvatar"></div>
-              <div class="welcome-home-text">
-                <div class="live-badge"><span class="pulse-dot"></span> Monitoramento Ativo</div>
-                <h1 class="welcome-title" id="welcomeMsg">Carregando...</h1>
-                <p class="welcome-home-role" id="homeGreetRole"></p>
-                <p class="motivation-text" id="motivationMsg">Sincronizando dados com o servidor...</p>
-                <p id="homeMesLabel" style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:18px;font-weight:500;letter-spacing:0.3px;">Carregando dados do periodo...</p>
+          <!-- WELCOME compacto (v6) -->
+          <div class="wc">
+            <div class="wc-l">
+              <div class="wc-av" id="homeGreetAvatar"></div>
+              <div class="wc-txt">
+                <div class="wc-hi" id="homeGreetHi">Boa tarde,</div>
+                <div class="wc-name" id="welcomeMsg">Carregando...</div>
+                <div class="wc-phrase sens" id="motivationMsg">Sincronizando dados...</div>
+              </div>
+            </div>
+            <div class="wc-r">
+              <button class="eye" id="eyeBtn" onclick="togglePriv()" title="Ocultar/mostrar dados sensiveis"><span id="eyeIcon"></span></button>
+              <span class="mtag"><i data-lucide="calendar"></i> <span id="homeMesLabel">--</span></span>
+            </div>
+          </div>
+          <p id="homeGreetRole" style="display:none;"></p>
+
+          <!-- 1. VENDAS & INVESTIMENTO (v6) -->
+          <div class="slbl"><span class="slbl-n">01</span><span class="slbl-t">VENDAS &amp; INVESTIMENTO</span><span class="slbl-ln"></span><span class="slbl-mr" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">Ver modulo &rarr;</span></div>
+
+          <div class="hero6">
+            <div class="vgv-blue" onclick="abrirDetalhePanoramica('vgv')">
+              <div class="vb-top"><span class="vb-lbl">VGV do periodo</span><span class="vb-ic"><i data-lucide="dollar-sign"></i></span></div>
+              <div class="vb-v sens" id="home-vgv">R$ 0</div>
+              <span id="home-vgv-delta" class="vb-delta" style="display:none;"></span>
+              <div id="home-vgv-metawrap" style="display:none;">
+                <div class="vb-bar"><div id="home-vgv-metabar" style="width:0%"></div></div>
+                <div class="vb-meta"><span id="home-vgv-metapct">--</span><span class="sens" id="home-vgv-metaval">--</span></div>
+              </div>
+            </div>
+            <div class="card hv-card">
+              <div class="ac-h"><div class="ac-t">Evolucao de VGV</div><span class="hv-cs" id="home-vgv-chart-sub">acumulado no periodo</span></div>
+              <div class="ac-num"><span class="v sens" id="home-vgv-chart-num">R$ 0</span><span class="d" id="home-vgv-chart-delta"></span></div>
+              <div class="hv-area" id="home-vgv-chart"><div class="hv-empty">Carregando...</div></div>
+            </div>
+          </div>
+
+          <div class="hv-kpis4">
+            <div class="hv-k" onclick="abrirDetalhePanoramica('entradas')">
+              <div class="hv-k-top"><span class="hv-k-lbl">ENTRADAS</span><span class="hv-k-ic"><i data-lucide="landmark"></i></span></div>
+              <div class="k-bot">
+                <div class="k-bot-l"><div class="hv-k-v sens" id="home-entradas">R$ 0</div><span id="home-entradas-delta" class="hv-delta" style="display:none;"></span></div>
+                <div class="mom" id="home-entradas-mom"></div>
+              </div>
+            </div>
+            <div class="hv-k" onclick="abrirDetalhePanoramica('gastos')">
+              <div class="hv-k-top"><span class="hv-k-lbl">INVEST. MKT</span><span class="hv-k-ic"><i data-lucide="receipt"></i></span></div>
+              <div class="k-bot">
+                <div class="k-bot-l"><div class="hv-k-v sens" id="home-gastos">R$ 0</div><span id="home-gastos-delta" class="hv-delta" style="display:none;"></span></div>
+                <div class="mom" id="home-gastos-mom"></div>
+              </div>
+            </div>
+            <div class="hv-k" onclick="abrirDetalhePanoramica('contratos')">
+              <div class="hv-k-top"><span class="hv-k-lbl">CONTRATOS</span><span class="hv-k-ic"><i data-lucide="file-text"></i></span></div>
+              <div class="k-bot">
+                <div class="k-bot-l"><div class="hv-k-v sens" id="home-contratos">0</div><span id="home-contratos-delta" class="hv-delta" style="display:none;"></span></div>
+                <div class="mom" id="home-contratos-mom"></div>
+              </div>
+            </div>
+            <div class="hv-k" onclick="abrirDetalhePanoramica('pre')">
+              <div class="hv-k-top"><span class="hv-k-lbl">PRE-ATEND.</span><span class="hv-k-ic"><i data-lucide="handshake"></i></span></div>
+              <div class="k-bot">
+                <div class="k-bot-l"><div class="hv-k-v" id="home-leads-pre">0</div><span id="home-leads-pre-fonte" class="hv-fonte"></span><span id="home-leads-pre-delta" class="hv-delta" style="display:none;"></span></div>
+                <div class="mom" id="home-leads-pre-mom"></div>
               </div>
             </div>
           </div>
-          <div class="home-news-card">
+
+          <div class="card vso6">
+            <div class="vso-h">
+              <div><div class="hv-ct">VSO &middot; Velocidade por empreendimento</div><div class="ac-s" style="margin:3px 0 0;" id="home-vso-periodo">vendas &divide; estoque disponivel</div></div>
+              <div class="vso-nav"><button onclick="_homeVSOPage(-1)" aria-label="anterior"><i data-lucide="chevron-left"></i></button><button onclick="_homeVSOPage(1)" aria-label="proximo"><i data-lucide="chevron-right"></i></button></div>
+            </div>
+            <div class="vso-grid" id="home-vso-emp"><div class="hv-empty">Carregando...</div></div>
+          </div>
+
+          <div class="home-news-card home-news-wide">
             <div class="home-news-head">
               <div class="home-news-ic"><i data-lucide="newspaper"></i></div>
               <div>
@@ -1866,68 +1991,8 @@
             </div>
             <div class="home-news-foot"><span onclick="switchView('view-news', document.getElementById('nav-news'), false, 'news')">Ver todas as noticias &rarr;</span></div>
           </div>
-          </div>
 
-          <!-- 1. VISAO GERAL (v4) -->
-          <div class="slbl"><span class="slbl-n">01</span><span class="slbl-t">VENDAS &amp; INVESTIMENTO</span><span class="slbl-ln"></span><span class="slbl-mr" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">Ver modulo &rarr;</span></div>
-
-          <div class="hv-kpis">
-            <div class="hv-k" onclick="abrirDetalhePanoramica('vgv')">
-              <div class="hv-k-top"><span class="hv-k-lbl">VGV DO PERIODO</span><span class="hv-k-ic"><i data-lucide="dollar-sign"></i></span></div>
-              <div class="hv-k-v" id="home-vgv">R$ 0</div>
-              <span id="home-vgv-delta" class="hv-delta" style="display:none;"></span>
-            </div>
-            <div class="hv-k" onclick="abrirDetalhePanoramica('entradas')">
-              <div class="hv-k-top"><span class="hv-k-lbl">ENTRADAS</span><span class="hv-k-ic"><i data-lucide="landmark"></i></span></div>
-              <div class="hv-k-v" id="home-entradas">R$ 0</div>
-              <span id="home-entradas-delta" class="hv-delta" style="display:none;"></span>
-            </div>
-            <div class="hv-k" onclick="abrirDetalhePanoramica('gastos')">
-              <div class="hv-k-top"><span class="hv-k-lbl">INVEST. MKT</span><span class="hv-k-ic"><i data-lucide="receipt"></i></span></div>
-              <div class="hv-k-v" id="home-gastos">R$ 0</div>
-              <span id="home-gastos-delta" class="hv-delta" style="display:none;"></span>
-            </div>
-            <div class="hv-k" onclick="abrirDetalhePanoramica('contratos')">
-              <div class="hv-k-top"><span class="hv-k-lbl">CONTRATOS</span><span class="hv-k-ic"><i data-lucide="file-text"></i></span></div>
-              <div class="hv-k-v" id="home-contratos">0</div>
-              <span id="home-contratos-delta" class="hv-delta" style="display:none;"></span>
-            </div>
-            <div class="hv-k" onclick="abrirDetalhePanoramica('pre')">
-              <div class="hv-k-top"><span class="hv-k-lbl">PRE-ATEND.</span><span class="hv-k-ic"><i data-lucide="handshake"></i></span></div>
-              <div class="hv-k-v" id="home-leads-pre">0</div>
-              <span id="home-leads-pre-fonte" class="hv-fonte"></span>
-              <span id="home-leads-pre-delta" class="hv-delta" style="display:none;"></span>
-            </div>
-          </div>
-
-          <div class="hv-grid">
-            <div class="hv-col">
-              <div class="card hv-card">
-                <div class="hv-ch"><div class="hv-ct">Evolucao de VGV</div><span class="hv-cs">acumulado no periodo</span></div>
-                <div class="hv-area" id="home-vgv-chart"><div class="hv-empty">Carregando...</div></div>
-              </div>
-            </div>
-            <div class="hv-col">
-              <div class="hv-solid" id="home-meta-card" style="display:none;"></div>
-              <div class="card hv-card">
-                <div class="hv-ch"><div class="hv-ct">VSO &middot; Velocidade de vendas</div><span class="hv-cs" id="home-vso-periodo"></span></div>
-                <div class="hv-donut-wrap">
-                  <div class="hv-donut">
-                    <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="12"/><circle id="home-vso-donut" cx="60" cy="60" r="50" fill="none" stroke="#6d5efc" stroke-width="12" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1);"/></svg>
-                    <div class="hv-dc"><div class="hv-dv" id="home-vso-pct">&mdash;</div><div class="hv-dl">do estoque</div></div>
-                  </div>
-                  <div class="hv-leg">
-                    <div class="hv-leg-i"><span class="hv-leg-d" style="background:#6d5efc"></span> Vendas <b id="home-vso-vendas">0</b></div>
-                    <div class="hv-leg-i"><span class="hv-leg-d" style="background:rgba(255,255,255,.14)"></span> Disponivel <b id="home-vso-disp">0</b></div>
-                    <div class="hv-leg-i" style="color:var(--text-gray)">Projecao <b id="home-vso-total" style="color:#a9a4f5">&mdash;</b></div>
-                    <div id="home-vso-badge" class="hv-vso-badge"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- METAS MENSAIS -->
+                    <!-- METAS MENSAIS -->
           <div id="home-metas-section" style="display:none;margin-top:4px;"></div>
 
           <!-- 2. RANKINGS POR VENDAS -->
@@ -1965,21 +2030,21 @@
             <div class="card card-vendas" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
               <div class="icon-box-top"><i data-lucide="trending-up"></i></div>
               <span class="card-label">ROI MKT</span>
-              <div class="card-value" id="home-roi" style="font-size:36px;">--</div>
+              <div class="card-value sens" id="home-roi" style="font-size:36px;">--</div>
               <span class="card-subtitle">Retorno sobre investimento</span>
               <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">VGV total do periodo dividido pelo investimento em marketing. Quanto cada R$1 investido gerou em vendas.</span>
             </div>
             <div class="card card-destaque" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
               <div class="icon-box-top"><i data-lucide="user-plus"></i></div>
               <span class="card-label">CPL</span>
-              <div class="card-value" id="home-cpl" style="font-size:24px;">--</div>
+              <div class="card-value sens" id="home-cpl" style="font-size:24px;">--</div>
               <span class="card-subtitle">Custo por Lead</span>
               <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">Investimento em MKT dividido pelo total de leads captados no periodo.</span>
             </div>
             <div class="card card-gastos" style="cursor:pointer;" onclick="switchView('view-gastos', document.getElementById('nav-gastos'))">
               <div class="icon-box-top"><i data-lucide="shopping-bag"></i></div>
               <span class="card-label">CAC</span>
-              <div class="card-value" id="home-cac" style="font-size:24px;">--</div>
+              <div class="card-value sens" id="home-cac" style="font-size:24px;">--</div>
               <span class="card-subtitle">Custo de Aquisicao</span>
               <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">Investimento em MKT dividido pela quantidade de contratos assinados no periodo.</span>
             </div>
@@ -1993,7 +2058,7 @@
             <div class="card card-vendas" style="cursor:pointer;" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">
               <div class="icon-box-top"><i data-lucide="dollar-sign"></i></div>
               <span class="card-label">Ticket Medio</span>
-              <div class="card-value" id="home-ticket" style="font-size:24px;">--</div>
+              <div class="card-value sens" id="home-ticket" style="font-size:24px;">--</div>
               <span class="card-subtitle">Por contrato</span>
               <span style="display:block;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.4;">VGV total dividido pelo numero de contratos assinados no periodo.</span>
             </div>
@@ -4621,6 +4686,7 @@
 
       atualizarSaudacao();
       _homeNewsLoad();
+      _homeInitPriv();
       carregarPlanidasDoFirebase();
       documentarAtividadeAcesso();
       carregarComissaoDoUsuario(); // Carregar comissão ao entrar no dashboard
@@ -8542,7 +8608,7 @@
             <span style="font-size:14px;width:20px;flex-shrink:0;">${medals[i]}</span>
             ${avatarHtml}
             <span style="flex:1;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${displayNome}</span>
-            <span style="font-size:12px;font-weight:800;color:var(--color-pos);flex-shrink:0;">${formatBRL(vgv)}</span>
+            <span class="sens" style="font-size:12px;font-weight:800;color:var(--color-pos);flex-shrink:0;">${formatBRL(vgv)}</span>
           </div>`;
         }).join('');
       }
@@ -8564,73 +8630,168 @@
 
       // Metas mensais (carrega do Firestore na primeira vez, depois usa cache)
       _homeRenderVGVArea(vendas);
-      _loadMetasMensais().then(() => { _renderMetasMensais(vendas); _homeRenderMetaCard(vgvTotal); });
+      _homeRenderKPIMoM();
+      _homeRenderVSOEmpreendimentos(vendas);
+      _homeSetPhraseAndMonth(vgvTotal);
+      _loadMetasMensais().then(() => { _renderMetasMensais(vendas); _homeRenderVGVBlueMeta(vgvTotal); });
 
       if (window.lucide) lucide.createIcons();
     }
     window.renderAreaHome = renderAreaHome;
 
-    // === HOME v4: gráficos alimentados por dados reais ===
-    function _homeRenderVSODonut(pct) {
-      const el = document.getElementById('home-vso-donut');
-      if (!el) return;
-      const C = 2 * Math.PI * 50;
-      const fill = Math.min(Math.max((pct || 0) * 5, 0), 100); // mesma escala visual do bar antigo
-      el.setAttribute('stroke-dasharray', C.toFixed(1));
-      el.setAttribute('stroke-dashoffset', (C * (1 - fill / 100)).toFixed(1));
+    // === HOME v6: graficos + privacidade (dados reais) ===
+    let _homeVSOData = [];
+    let _homeVSOPageIdx = 0;
+
+    function togglePriv() {
+      const on = !document.body.classList.contains('priv');
+      document.body.classList.toggle('priv', on);
+      try { localStorage.setItem('homePriv', on ? '1' : '0'); } catch(e){}
+      _homeSetEyeIcon(on);
     }
+    window.togglePriv = togglePriv;
+    function _homeSetEyeIcon(on) {
+      const el = document.getElementById('eyeIcon'); if (!el) return;
+      el.innerHTML = on
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7c2 0 3.8.6 5.3 1.5M22 12s-3.5 7-10 7c-2 0-3.8-.6-5.3-1.5"/><path d="M4 4l16 16"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    }
+    function _homeInitPriv() {
+      let on = false;
+      try { on = localStorage.getItem('homePriv') === '1'; } catch(e){}
+      document.body.classList.toggle('priv', on);
+      _homeSetEyeIcon(on);
+    }
+    window._homeInitPriv = _homeInitPriv;
+
+    function _homeSetPhraseAndMonth(vgvTotal) {
+      // tag do mes
+      const mesNomes = { jan:'Janeiro',fev:'Fevereiro',mar:'Marco',abr:'Abril',mai:'Maio',jun:'Junho',jul:'Julho',ago:'Agosto',set:'Setembro',out:'Outubro',nov:'Novembro',dez:'Dezembro' };
+      const tag = document.getElementById('homeMesLabel');
+      if (tag) tag.textContent = (mesNomes[currentMonthId] || currentMonthId || '') + ' de ' + new Date().getFullYear();
+      // frase em tempo real
+      const ph = document.getElementById('motivationMsg');
+      if (!ph) return;
+      const vAnt = (window.allVendasAnteriorMes || []).reduce((a,c)=>a+(c.vgv||0),0);
+      let txt;
+      if (vgvTotal > 0 && vAnt > 0) {
+        const d = Math.round((vgvTotal - vAnt) / vAnt * 100);
+        txt = d >= 0 ? ('VGV ' + d + '% acima de ' + _homeMesAnt() + ' — ritmo positivo.')
+                     : ('VGV ' + Math.abs(d) + '% abaixo de ' + _homeMesAnt() + ' — atencao ao ritmo.');
+      } else if (vgvTotal > 0) {
+        txt = 'VGV de ' + formatBRL(vgvTotal) + ' consolidado no periodo.';
+      } else {
+        txt = 'Acompanhe os indicadores do periodo em tempo real.';
+      }
+      ph.textContent = txt;
+    }
+    function _homeMesAnt() {
+      const ord = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+      const nm = { jan:'janeiro',fev:'fevereiro',mar:'marco',abr:'abril',mai:'maio',jun:'junho',jul:'julho',ago:'agosto',set:'setembro',out:'outubro',nov:'novembro',dez:'dezembro' };
+      const i = ord.indexOf(currentMonthId);
+      return i > 0 ? nm[ord[i-1]] : 'o mes anterior';
+    }
+
+    function _homeRenderVGVBlueMeta(vgvTotal) {
+      const wrap = document.getElementById('home-vgv-metawrap');
+      if (!wrap) return;
+      const m = (_metasMensaisCache || {}).vgv;
+      if (!m || !m.ativo || !(Number(m.valor) > 0)) { wrap.style.display = 'none'; return; }
+      const meta = Number(m.valor);
+      const pct = meta > 0 ? Math.min(vgvTotal / meta * 100, 100) : 0;
+      wrap.style.display = 'block';
+      const bar = document.getElementById('home-vgv-metabar'); if (bar) bar.style.width = pct.toFixed(0) + '%';
+      const pe = document.getElementById('home-vgv-metapct'); if (pe) pe.textContent = pct.toFixed(0) + '% da meta';
+      const ve = document.getElementById('home-vgv-metaval'); if (ve) ve.textContent = 'de ' + formatBRL(meta);
+    }
+    window._homeRenderVGVBlueMeta = _homeRenderVGVBlueMeta;
+    function _homeRenderMetaCard(){} // legado (no-op)
+    function _homeRenderVSODonut(){} // legado (no-op)
+
     function _homeRenderVGVArea(vendas) {
       const box = document.getElementById('home-vgv-chart');
       if (!box) return;
-      const pts = (vendas || []).map(v => {
-        const p = String(v.data || '').split('/');
-        return { day: parseInt(p[0]) || 0, vgv: v.vgv || 0 };
-      }).filter(p => p.day > 0);
-      if (!pts.length) { box.innerHTML = '<div class="hv-empty">Sem vendas no período</div>'; return; }
-      const byDay = {};
-      pts.forEach(p => { byDay[p.day] = (byDay[p.day] || 0) + p.vgv; });
+      const pts = (vendas || []).map(v => { const p=String(v.data||'').split('/'); return { day: parseInt(p[0])||0, vgv: v.vgv||0 }; }).filter(p => p.day > 0);
+      const numEl = document.getElementById('home-vgv-chart-num');
+      const subEl = document.getElementById('home-vgv-chart-sub');
+      if (!pts.length) { box.innerHTML = '<div class="hv-empty">Sem vendas no período</div>'; if(numEl)numEl.textContent='R$ 0'; return; }
+      const byDay = {}; pts.forEach(p => { byDay[p.day]=(byDay[p.day]||0)+p.vgv; });
       const days = Object.keys(byDay).map(Number).sort((a,b)=>a-b);
-      let acc = 0; const series = days.map(d => { acc += byDay[d]; return { d, v: acc }; });
-      const W = 580, H = 132, maxV = series[series.length-1].v || 1;
-      const minD = series[0].d, maxD = series[series.length-1].d;
-      const X = d => (maxD === minD) ? W : ((d - minD) / (maxD - minD)) * W;
-      const Y = v => H - (v / maxV) * (H - 16) - 8;
-      const line = series.map((p,i)=>(i?'L':'M') + X(p.d).toFixed(1) + ' ' + Y(p.v).toFixed(1)).join(' ');
-      const area = 'M' + X(series[0].d).toFixed(1) + ' ' + H + ' ' + series.map(p=>'L'+X(p.d).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ') + ' L' + W + ' ' + H + ' Z';
-      const last = series[series.length-1];
+      let acc=0; const series = days.map(d => { acc+=byDay[d]; return { d, v:acc }; });
+      const W=560,H=124,maxV=series[series.length-1].v||1,minD=series[0].d,maxD=series[series.length-1].d;
+      const X=d => (maxD===minD)?W:((d-minD)/(maxD-minD))*W;
+      const Y=v => H-(v/maxV)*(H-16)-8;
+      const line=series.map((p,i)=>(i?'L':'M')+X(p.d).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ');
+      const area='M'+X(series[0].d).toFixed(1)+' '+H+' '+series.map(p=>'L'+X(p.d).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ')+' L'+W+' '+H+' Z';
+      const last=series[series.length-1];
+      const mesNomes={jan:'jan',fev:'fev',mar:'mar',abr:'abr',mai:'mai',jun:'jun',jul:'jul',ago:'ago',set:'set',out:'out',nov:'nov',dez:'dez'};
+      const mAbrev=mesNomes[currentMonthId]||'';
       box.innerHTML =
         '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
-        + '<defs><linearGradient id="hvArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b50f0" stop-opacity=".32"/><stop offset="1" stop-color="#5b50f0" stop-opacity="0"/></linearGradient></defs>'
-        + '<line x1="0" y1="20" x2="'+W+'" y2="20" stroke="rgba(255,255,255,.05)"/>'
-        + '<line x1="0" y1="70" x2="'+W+'" y2="70" stroke="rgba(255,255,255,.05)"/>'
-        + '<line x1="0" y1="118" x2="'+W+'" y2="118" stroke="rgba(255,255,255,.05)"/>'
-        + '<path d="'+area+'" fill="url(#hvArea)"/>'
-        + '<path d="'+line+'" fill="none" stroke="#6d5efc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
-        + '<circle cx="'+X(last.d).toFixed(1)+'" cy="'+Y(last.v).toFixed(1)+'" r="4.5" fill="#6d5efc"/>'
-        + '</svg>';
+        +'<defs><linearGradient id="hvArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b50f0" stop-opacity=".32"/><stop offset="1" stop-color="#5b50f0" stop-opacity="0"/></linearGradient></defs>'
+        +'<line x1="0" y1="8" x2="'+W+'" y2="8" stroke="rgba(255,255,255,.05)"/><line x1="0" y1="60" x2="'+W+'" y2="60" stroke="rgba(255,255,255,.05)"/><line x1="0" y1="112" x2="'+W+'" y2="112" stroke="rgba(255,255,255,.05)"/>'
+        +'<path d="'+area+'" fill="url(#hvArea)"/>'
+        +'<path d="'+line+'" fill="none" stroke="#6d5efc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
+        +'<circle cx="'+X(last.d).toFixed(1)+'" cy="'+Y(last.v).toFixed(1)+'" r="4.5" fill="#6d5efc"/>'
+        +'</svg>'
+        +'<div class="xax"><span>'+minD+'/'+mAbrev+'</span><span>'+Math.round((minD+maxD)/2)+'/'+mAbrev+'</span><span>'+maxD+'/'+mAbrev+'</span></div>';
+      if (numEl) numEl.textContent = formatBRL(last.v);
+      if (subEl) subEl.textContent = 'Acumulado até ' + maxD + ' de ' + (({jan:'janeiro',fev:'fevereiro',mar:'março',abr:'abril',mai:'maio',jun:'junho',jul:'julho',ago:'agosto',set:'setembro',out:'outubro',nov:'novembro',dez:'dezembro'})[currentMonthId]||'');
     }
-    function _homeRenderMetaCard(vgvTotal) {
-      const el = document.getElementById('home-meta-card');
-      if (!el) return;
-      const metas = _metasMensaisCache || {};
-      const m = metas.vgv;
-      if (!m || !m.ativo || !(Number(m.valor) > 0)) { el.style.display = 'none'; return; }
-      const meta = Number(m.valor);
-      const pct = meta > 0 ? Math.min(vgvTotal / meta * 100, 100) : 0;
-      const hoje = new Date();
-      const diasNoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
-      const faltam = Math.max(diasNoMes - hoje.getDate(), 0);
-      el.style.display = 'block';
-      el.innerHTML =
-        '<div class="hv-s-lbl">Meta de VGV do mês</div>'
-        + '<div class="hv-s-v">' + formatBRL(vgvTotal) + '</div>'
-        + '<div class="hv-s-sub">de ' + formatBRL(meta) + ' planejados</div>'
-        + '<div class="hv-s-bar"><div style="width:' + pct.toFixed(0) + '%"></div></div>'
-        + '<div class="hv-s-meta"><span>' + pct.toFixed(0) + '% atingido</span><span>' + faltam + ' dias restantes</span></div>';
-    }
-    window._homeRenderVSODonut = _homeRenderVSODonut;
     window._homeRenderVGVArea = _homeRenderVGVArea;
-    window._homeRenderMetaCard = _homeRenderMetaCard;
+
+    function _homeRenderKPIMoM() {
+      const vA = window.allVendasFiltered || window.allVendas || [];
+      const vP = window.allVendasAnteriorMes || [];
+      const gA = window.allGastosData || [];
+      const gP = window.allGastosAnteriorMes || [];
+      const sum = (arr,f)=>arr.reduce((a,c)=>a+(f(c)||0),0);
+      const bars = (id, cur, prev) => {
+        const el = document.getElementById(id); if (!el) return;
+        const mx = Math.max(cur, prev, 1);
+        const h = v => Math.max(Math.round(v/mx*100), 8);
+        el.innerHTML = '<div class="mb" style="height:'+h(prev)+'%" title="mês anterior"></div><div class="mb cur" style="height:'+h(cur)+'%" title="mês atual"></div>';
+      };
+      bars('home-entradas-mom', sum(vA,c=>c.entradas), sum(vP,c=>c.entradas));
+      bars('home-gastos-mom',   sum(gA,c=>c.negociado), sum(gP,c=>c.negociado));
+      bars('home-contratos-mom', vA.length, vP.length);
+      bars('home-leads-pre-mom', vA.length, vP.length);
+    }
+    window._homeRenderKPIMoM = _homeRenderKPIMoM;
+
+    function _homeRenderVSOEmpreendimentos(vendas) {
+      const estoque = window.allEstoqueData || [];
+      const dispByEmp = {};
+      estoque.forEach(e => { const k=(e.empreendimento||'').trim(); if(k){ dispByEmp[k]=(dispByEmp[k]||0)+(parseInt(e.unidades)||0); } });
+      const soldByEmp = {};
+      (vendas||[]).forEach(v => { const k=(v.produto||'').trim(); if(k){ soldByEmp[k]=(soldByEmp[k]||0)+1; } });
+      const keys = new Set([...Object.keys(dispByEmp), ...Object.keys(soldByEmp)]);
+      _homeVSOData = [...keys].map(k => {
+        const sold = soldByEmp[k]||0, disp = dispByEmp[k]||0, total = sold+disp;
+        return { nome:k, sold, disp, pct: total>0 ? Math.round(sold/total*100) : 0 };
+      }).filter(e => e.sold>0 || e.disp>0).sort((a,b)=> b.sold - a.sold || b.pct - a.pct);
+      _homeVSOPageIdx = 0;
+      _homeVSORender();
+    }
+    window._homeRenderVSOEmpreendimentos = _homeRenderVSOEmpreendimentos;
+    function _homeVSORender() {
+      const box = document.getElementById('home-vso-emp'); if (!box) return;
+      if (!_homeVSOData.length) { box.innerHTML = '<div class="hv-empty">Sem dados de estoque/vendas por empreendimento</div>'; return; }
+      const per = 3, start = _homeVSOPageIdx*per;
+      const slice = _homeVSOData.slice(start, start+per);
+      const C = 2*Math.PI*28;
+      box.innerHTML = slice.map(e => {
+        const off = (C*(1 - e.pct/100)).toFixed(1);
+        return '<div class="emp"><div class="emp-donut"><svg viewBox="0 0 66 66"><circle cx="33" cy="33" r="28" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="8"/><circle cx="33" cy="33" r="28" fill="none" stroke="#6d5efc" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off+'" transform="rotate(-90 33 33)"/></svg><div class="ev">'+e.pct+'%</div></div><div style="min-width:0"><div class="emp-nm">'+_lancEscSafe(e.nome)+'</div><div class="emp-sub sens">'+e.sold+' vend. &middot; <b>'+e.disp+'</b> disp.</div></div></div>';
+      }).join('');
+    }
+    function _lancEscSafe(s){ return String(s||'').replace(/[<>&"]/g, m=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m])); }
+    function _homeVSOPage(dir) {
+      const per=3, pages=Math.max(Math.ceil(_homeVSOData.length/per),1);
+      _homeVSOPageIdx = ((_homeVSOPageIdx + dir) % pages + pages) % pages;
+      _homeVSORender();
+    }
+    window._homeVSOPage = _homeVSOPage;
 
     // ============================================================
     // METAS MENSAIS — Carregamento + Renderização
@@ -13167,7 +13328,8 @@
 
       // ── Saudação base ─────────────────────────────────────────────────────
       let saudacao = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
-      document.getElementById('welcomeMsg').innerHTML = `<span class="wh-hi">${saudacao},</span><strong>${nome}</strong>`;
+      { const _hi=document.getElementById('homeGreetHi'); if(_hi)_hi.textContent = saudacao + ','; }
+      document.getElementById('welcomeMsg').innerHTML = `<strong>${nome}</strong>`;
 
       // ── Performance vs mês anterior ──────────────────────────────────────
       const vendasAtual = window.allVendasFiltered || window.allVendas || [];
