@@ -746,6 +746,31 @@
     .welcome-home-role { font-size: 12px; color: #a9a4f5; font-weight: 600; letter-spacing: 0.2px; margin: 2px 0 14px; }
     @media (max-width: 640px) { .welcome-home-row { gap: 16px; } .home-greet-avatar { width: 54px; height: 54px; border-radius: 15px; font-size: 21px; } }
 
+    /* === HOME TOP ROW: welcome + mercado em foco === */
+    .home-top-row { display: grid; grid-template-columns: 1.55fr 1fr; gap: 20px; align-items: stretch; }
+    .home-top-row .welcome-home { min-height: 0; }
+    .home-news-card { background: rgba(255,255,255,0.022); border: 1px solid var(--border-glass); border-radius: 20px; padding: 22px 22px 16px; display: flex; flex-direction: column; }
+    .home-news-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .home-news-ic { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(79,70,229,0.14); border: 1px solid rgba(129,140,248,0.22); color: #a9a4f5; }
+    .home-news-ic i { width: 18px; height: 18px; }
+    .home-news-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .home-news-sub { font-size: 11.5px; color: var(--text-gray); margin-top: 1px; }
+    .home-news-list { display: flex; flex-direction: column; flex: 1; }
+    .home-news-item { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 12px 6px; border-top: 1px solid rgba(255,255,255,0.05); transition: background 0.2s; }
+    .home-news-item:first-child { border-top: none; }
+    .home-news-item:hover { background: rgba(255,255,255,0.025); }
+    .home-news-num { font-size: 11px; font-weight: 800; color: var(--text-gray); min-width: 16px; font-variant-numeric: tabular-nums; }
+    .home-news-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+    .home-news-tag { font-size: 9px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; background: rgba(79,70,229,0.1); color: #a9a4f5; border: 1px solid rgba(129,140,248,0.25); }
+    .home-news-src { font-size: 10px; color: var(--text-gray); }
+    .home-news-time { font-size: 10px; color: var(--text-gray); margin-left: auto; }
+    .home-news-h { font-size: 12.5px; font-weight: 600; line-height: 1.4; color: rgba(255,255,255,0.78); }
+    .home-news-item:hover .home-news-h { color: #fff; }
+    .home-news-loading, .home-news-empty { font-size: 12px; color: var(--text-gray); padding: 24px 6px; text-align: center; }
+    .home-news-foot { margin-top: auto; padding-top: 12px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+    .home-news-foot span { font-size: 11.5px; color: #a9a4f5; font-weight: 700; cursor: pointer; }
+    @media (max-width: 1000px) { .home-top-row { grid-template-columns: 1fr; } }
+
     /* === CALENDÁRIO DE VENDAS === */
     .cal-wrapper { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
     @media (max-width: 900px) { .cal-wrapper { grid-template-columns: 1fr; } }
@@ -1760,6 +1785,7 @@
         <!-- VIEW HOME: PANORAMICA                          -->
         <!-- ============================================== -->
         <div id="view-home" class="view-section active">
+          <div class="home-top-row">
           <div class="welcome-card welcome-home" style="background: linear-gradient(135deg, rgba(79,70,229,0.12), rgba(14,6,165,0.05));">
             <div class="welcome-content welcome-home-row">
               <div class="home-greet-avatar" id="homeGreetAvatar"></div>
@@ -1771,6 +1797,20 @@
                 <p id="homeMesLabel" style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:18px;font-weight:500;letter-spacing:0.3px;">Carregando dados do periodo...</p>
               </div>
             </div>
+          </div>
+          <div class="home-news-card">
+            <div class="home-news-head">
+              <div class="home-news-ic"><i data-lucide="newspaper"></i></div>
+              <div>
+                <div class="home-news-title">Mercado em foco</div>
+                <div class="home-news-sub">Noticias que impactam loteamentos</div>
+              </div>
+            </div>
+            <div id="homeNewsList" class="home-news-list">
+              <div class="home-news-loading">Carregando noticias...</div>
+            </div>
+            <div class="home-news-foot"><span onclick="switchView('view-news', document.getElementById('nav-news'), false, 'news')">Ver todas as noticias &rarr;</span></div>
+          </div>
           </div>
 
           <!-- 1. VENDAS E GASTOS -->
@@ -4539,6 +4579,7 @@
       atualizarLimitesCalendario();
 
       atualizarSaudacao();
+      _homeNewsLoad();
       carregarPlanidasDoFirebase();
       documentarAtividadeAcesso();
       carregarComissaoDoUsuario(); // Carregar comissão ao entrar no dashboard
@@ -9637,6 +9678,35 @@
       console.log(`[News] gnews ${cat}: ${parsed.length} itens`);
       return parsed;
     }
+
+    // ── Home: card "Mercado em foco" (3 noticias de loteamento) ──
+    let _homeNewsLoaded = false;
+    async function _homeNewsLoad(force) {
+      const box = document.getElementById('homeNewsList');
+      if (!box) return;
+      if (_homeNewsLoaded && !force) return;
+      try {
+        const items = await _newsFetchGNews({ cat: 'loteamentos', q: 'loteamento OR loteamentos OR "lotes urbanizados" OR "venda de lotes"' });
+        const relevantes = (items || []).filter(it => _newsCategorize(it.title, it.summary) !== null);
+        const base = (relevantes.length ? relevantes : (items || [])).slice(0, 3);
+        if (!base.length) { box.innerHTML = '<div class="home-news-empty">Sem noticias no momento.</div>'; return; }
+        box.innerHTML = base.map((it, i) => _homeNewsItemHTML(it, i)).join('');
+        _homeNewsLoaded = true;
+      } catch (e) {
+        box.innerHTML = '<div class="home-news-empty">Nao foi possivel carregar as noticias.</div>';
+      }
+    }
+    function _homeNewsItemHTML(it, i) {
+      const num = String(i + 1).padStart(2, '0');
+      const src = (it.source || '').toString().slice(0, 28);
+      const rel = (typeof _newsRelDate === 'function') ? _newsRelDate(it.pubDate) : '';
+      const realCat = _newsCategorize(it.title, it.summary) || it.cat;
+      const catLbl = (NEWS_CATS.find(c => c.id === realCat) || {}).label || 'Loteamentos';
+      const safe = s => String(s || '').replace(/[<>&"]/g, m => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m]));
+      const href = it.link ? ` href="${safe(it.link)}" target="_blank" rel="noopener"` : '';
+      return `<a class="home-news-item"${href}><span class="home-news-num">${num}</span><div style="flex:1;min-width:0;"><div class="home-news-meta"><span class="home-news-tag">${safe(catLbl)}</span><span class="home-news-src">${safe(src)}</span><span class="home-news-time">${safe(rel)}</span></div><div class="home-news-h">${safe(it.title)}</div></div></a>`;
+    }
+    window._homeNewsLoad = _homeNewsLoad;
 
     // Busca feed RSS direto e filtra por relevância setorial
     async function _newsFetchDirect({ url, skipFilter = false, defaultCat = 'economia', label = null }) {
