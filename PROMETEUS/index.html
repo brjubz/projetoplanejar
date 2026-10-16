@@ -881,6 +881,19 @@
     .emp-sub { font-size:10px; color:var(--text-gray); }
     .emp-sub b { color:#a9a4f5; }
     .home-news-wide { margin-bottom:4px; }
+    .wc2 { display:flex; flex-direction:column; background:linear-gradient(135deg, rgba(79,70,229,0.12), rgba(14,6,165,0.05)); border:1px solid var(--border-glass); border-radius:20px; padding:26px 28px; }
+    .wc2-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .wc2-actions { display:flex; align-items:center; gap:10px; }
+    .wc2-body { display:flex; align-items:center; gap:22px; margin-top:auto; padding-top:26px; }
+    .wc2-av { width:96px; height:96px; border-radius:24px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:38px; font-weight:800; color:#fff; background:linear-gradient(140deg,#0E06A5,#4f46e5 70%,#6d5efc); box-shadow:0 16px 38px -12px rgba(79,70,229,.75), inset 0 2px 6px rgba(255,255,255,.28); overflow:hidden; }
+    .wc2-av img { width:100%; height:100%; object-fit:cover; }
+    .wc2-txt { min-width:0; }
+    .wc2 .wc-hi { font-size:14px; }
+    .wc2-name { font-size:30px; font-weight:300; letter-spacing:-1.2px; line-height:1.05; margin:3px 0 10px; color:#fff; }
+    .wc2-name strong { font-weight:800; }
+    .wc2 .wc-phrase { font-size:13.5px; line-height:1.5; }
+    .wc2-role { font-size:12px; color:#a9a4f5; font-weight:600; margin-top:8px; }
+    @media (max-width:1000px){ .wc2-av { width:74px; height:74px; border-radius:19px; font-size:29px; } .wc2-name { font-size:24px; } .wc2-body { padding-top:20px; } }
     @media (max-width:980px){ .hero6 { grid-template-columns:1fr; } .hv-kpis4 { grid-template-columns:repeat(2,1fr); } .vso-grid { grid-template-columns:1fr; } }
 
     /* === CALENDÁRIO DE VENDAS === */
@@ -1857,7 +1870,7 @@
         </div>
 
         <!-- Card do usuario logado -->
-        <div id="userProfileCard" style="display:flex; align-items:center; gap:10px; padding:10px; margin-bottom:6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px;">
+        <div id="userProfileCard" style="display:none; align-items:center; gap:10px; padding:10px; margin-bottom:6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px;">
           <div id="sidebarUserAvatar" style="width:34px; height:34px; border-radius:50%; background:#1e293b; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#94a3b8; overflow:hidden;"></div>
           <div style="min-width:0; flex:1;">
             <div id="sidebarUserName" style="font-size:13px; font-weight:700; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
@@ -1902,22 +1915,39 @@
         <!-- VIEW HOME: PANORAMICA                          -->
         <!-- ============================================== -->
         <div id="view-home" class="view-section active">
-          <!-- WELCOME compacto (v6) -->
-          <div class="wc">
-            <div class="wc-l">
-              <div class="wc-av" id="homeGreetAvatar"></div>
-              <div class="wc-txt">
-                <div class="wc-hi" id="homeGreetHi">Boa tarde,</div>
-                <div class="wc-name" id="welcomeMsg">Carregando...</div>
-                <div class="wc-phrase sens" id="motivationMsg">Sincronizando dados...</div>
+          <div class="home-top-row">
+            <div class="wc2">
+              <div class="wc2-head">
+                <span class="live-badge"><span class="pulse-dot"></span> Monitoramento Ativo</span>
+                <div class="wc2-actions">
+                  <button class="eye" id="eyeBtn" onclick="togglePriv()" title="Ocultar/mostrar dados sensiveis"><span id="eyeIcon"></span></button>
+                  <span class="mtag"><i data-lucide="calendar"></i> <span id="homeMesLabel">--</span></span>
+                </div>
+              </div>
+              <div class="wc2-body">
+                <div class="wc2-av" id="homeGreetAvatar"></div>
+                <div class="wc2-txt">
+                  <div class="wc-hi" id="homeGreetHi">Boa tarde,</div>
+                  <div class="wc2-name" id="welcomeMsg">Carregando...</div>
+                  <div class="wc-phrase sens" id="motivationMsg">Sincronizando dados...</div>
+                  <div class="wc2-role" id="homeGreetRole"></div>
+                </div>
               </div>
             </div>
-            <div class="wc-r">
-              <button class="eye" id="eyeBtn" onclick="togglePriv()" title="Ocultar/mostrar dados sensiveis"><span id="eyeIcon"></span></button>
-              <span class="mtag"><i data-lucide="calendar"></i> <span id="homeMesLabel">--</span></span>
+            <div class="home-news-card">
+              <div class="home-news-head">
+                <div class="home-news-ic"><i data-lucide="newspaper"></i></div>
+                <div>
+                  <div class="home-news-title">Mercado em foco</div>
+                  <div class="home-news-sub">Noticias que impactam loteamentos</div>
+                </div>
+              </div>
+              <div id="homeNewsList" class="home-news-list">
+                <div class="home-news-loading">Carregando noticias...</div>
+              </div>
+              <div class="home-news-foot"><span onclick="switchView('view-news', document.getElementById('nav-news'), false, 'news')">Ver todas as noticias &rarr;</span></div>
             </div>
           </div>
-          <p id="homeGreetRole" style="display:none;"></p>
 
           <!-- 1. VENDAS & INVESTIMENTO (v6) -->
           <div class="slbl"><span class="slbl-n">01</span><span class="slbl-t">VENDAS &amp; INVESTIMENTO</span><span class="slbl-ln"></span><span class="slbl-mr" onclick="switchView('view-vendas', document.getElementById('nav-vendas'))">Ver modulo &rarr;</span></div>
@@ -1978,21 +2008,7 @@
             <div class="vso-grid" id="home-vso-emp"><div class="hv-empty">Carregando...</div></div>
           </div>
 
-          <div class="home-news-card home-news-wide">
-            <div class="home-news-head">
-              <div class="home-news-ic"><i data-lucide="newspaper"></i></div>
-              <div>
-                <div class="home-news-title">Mercado em foco</div>
-                <div class="home-news-sub">Noticias que impactam loteamentos</div>
-              </div>
-            </div>
-            <div id="homeNewsList" class="home-news-list">
-              <div class="home-news-loading">Carregando noticias...</div>
-            </div>
-            <div class="home-news-foot"><span onclick="switchView('view-news', document.getElementById('nav-news'), false, 'news')">Ver todas as noticias &rarr;</span></div>
-          </div>
-
-                    <!-- METAS MENSAIS -->
+          <!-- METAS MENSAIS -->
           <div id="home-metas-section" style="display:none;margin-top:4px;"></div>
 
           <!-- 2. RANKINGS POR VENDAS -->
