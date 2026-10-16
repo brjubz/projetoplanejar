@@ -695,6 +695,21 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">Cargo</label>
+      <input type="text" class="form-input" id="userCargo" placeholder="Ex: Diretor Comercial" list="cargoOptions">
+      <datalist id="cargoOptions">
+        <option value="Diretor Comercial"></option>
+        <option value="Diretor de Marketing"></option>
+        <option value="Diretor Executivo"></option>
+        <option value="Gerente Comercial"></option>
+        <option value="Gerente de Marketing"></option>
+        <option value="Coordenador de Marketing"></option>
+        <option value="Coordenador Comercial"></option>
+      </datalist>
+      <p style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">Aparece no card de boas-vindas do dashboard do gestor.</p>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">Senha</label>
       <input type="password" class="form-input" id="userPassword" placeholder="Mínimo 6 caracteres">
     </div>
@@ -858,6 +873,7 @@ function openCreateUserModal() {
   document.getElementById('commissionPercent').value = '';
   document.getElementById('commissionFields').style.display = 'none';
   document.getElementById('isTeamManager').checked = false;
+  document.getElementById('userCargo').value = '';
   photoBase64 = null;
   document.getElementById('photoInput').value = '';
   document.getElementById('photoPreview').style.display = 'none';
@@ -898,6 +914,7 @@ async function saveUser() {
   const enableComm = document.getElementById('enableCommission').checked;
   const commPercent = parseFloat(document.getElementById('commissionPercent').value) || 0;
   const isTeamManager = document.getElementById('isTeamManager').checked;
+  const cargo = document.getElementById('userCargo').value.trim();
 
   if (!name || !email) {
     alert('Preencha nome e email');
@@ -922,7 +939,8 @@ async function saveUser() {
         habilitado: enableComm,
         percentual: enableComm ? commPercent : 0
       },
-      isTeamManager: isTeamManager
+      isTeamManager: isTeamManager,
+      cargo: cargo
     };
 
     if (password) {
@@ -1003,6 +1021,7 @@ async function editUser(id) {
     document.getElementById('commissionPercent').value = data.comissao?.percentual || '';
     document.getElementById('commissionFields').style.display = data.comissao?.habilitado ? 'block' : 'none';
     document.getElementById('isTeamManager').checked = data.isTeamManager || false;
+    document.getElementById('userCargo').value = data.cargo || '';
     
     if (data.foto) {
       photoBase64 = data.foto;

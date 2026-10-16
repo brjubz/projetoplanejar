@@ -4332,6 +4332,7 @@
             localStorage.setItem('currentUserId', userDoc.id);
             localStorage.setItem('userEmail', userData.email);
             localStorage.setItem('userFoto', userData.foto || '');
+            localStorage.setItem('userCargo', userData.cargo || '');
             localStorage.setItem('userIsTeamManager', userData.isTeamManager ? 'true' : 'false');
             localStorage.setItem('auth_planejar_v1', 'true');
             
@@ -4599,7 +4600,9 @@
       try {
         if (!window.firebaseDb || !currentUserId) { navEl.style.display = 'none'; return; }
         const snap = await firebaseDb.collection('admin_users').doc(currentUserId).get();
-        const liberado = snap.exists && snap.data().realidadeAcesso === true;
+        const _ud = snap.exists ? snap.data() : {};
+        const liberado = _ud.realidadeAcesso === true;
+        try { localStorage.setItem('userCargo', _ud.cargo || ''); if (window.renderUserProfileCard) renderUserProfileCard(); } catch (e) {}
         navEl.style.display = liberado ? 'flex' : 'none';
         // Se o acesso foi revogado enquanto o usuário estava dentro da view, volta pra Home
         if (!liberado) {
