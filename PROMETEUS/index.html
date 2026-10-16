@@ -158,6 +158,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Bibliotecas Base e Criptografia (LGPD) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -209,7 +210,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Poppins', 'Inter', sans-serif;
       background-color: var(--bg-body);
       color: var(--text-white);
       min-height: 100vh;
@@ -861,9 +862,9 @@
     .hv-kpis4 .hv-k { padding:18px; }
     .k-bot { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
     .k-bot-l { min-width:0; }
-    .k-bot .hv-k-v { font-size:21px; }
+    .k-bot .hv-k-v { font-size:19px; white-space:nowrap; }
     .k-bot .hv-delta { margin-top:7px; }
-    .mom { display:flex; align-items:flex-end; gap:5px; height:34px; flex-shrink:0; }
+    .mom { width:58px; height:30px; flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; }
     .mom .mb { width:10px; border-radius:3px 3px 0 0; background:rgba(129,140,248,.3); min-height:4px; }
     .mom .mb.cur { background:linear-gradient(180deg,#6d5efc,#4f46e5); }
     .vso6 { margin-bottom:14px; }
@@ -889,10 +890,10 @@
     .wc2-av img { width:100%; height:100%; object-fit:cover; }
     .wc2-txt { min-width:0; }
     .wc2 .wc-hi { font-size:14px; }
-    .wc2-name { font-size:30px; font-weight:300; letter-spacing:-1.2px; line-height:1.05; margin:3px 0 10px; color:#fff; }
+    .wc2-name { font-size:30px; font-weight:300; letter-spacing:-1.2px; line-height:1.05; margin:3px 0 6px; color:#fff; }
     .wc2-name strong { font-weight:800; }
     .wc2 .wc-phrase { font-size:13.5px; line-height:1.5; }
-    .wc2-role { font-size:12px; color:#a9a4f5; font-weight:600; margin-top:8px; }
+    .wc2-role { font-size:12px; color:#a9a4f5; font-weight:600; margin:0 0 10px; }
     @media (max-width:1000px){ .wc2-av { width:74px; height:74px; border-radius:19px; font-size:29px; } .wc2-name { font-size:24px; } .wc2-body { padding-top:20px; } }
     @media (max-width:980px){ .hero6 { grid-template-columns:1fr; } .hv-kpis4 { grid-template-columns:repeat(2,1fr); } .vso-grid { grid-template-columns:1fr; } }
 
@@ -1929,8 +1930,8 @@
                 <div class="wc2-txt">
                   <div class="wc-hi" id="homeGreetHi">Boa tarde,</div>
                   <div class="wc2-name" id="welcomeMsg">Carregando...</div>
-                  <div class="wc-phrase sens" id="motivationMsg">Sincronizando dados...</div>
                   <div class="wc2-role" id="homeGreetRole"></div>
+                  <div class="wc-phrase sens" id="motivationMsg">Sincronizando dados...</div>
                 </div>
               </div>
             </div>
@@ -8756,22 +8757,32 @@
     }
     window._homeRenderVGVArea = _homeRenderVGVArea;
 
+    function _homeDailyCumulative(items, dateField, valueFn) {
+      const byDay = {};
+      (items||[]).forEach(it => { const p=String(it[dateField]||'').split('/'); const d=parseInt(p[0])||0; if(d>0) byDay[d]=(byDay[d]||0)+(valueFn(it)||0); });
+      const days = Object.keys(byDay).map(Number).sort((a,b)=>a-b);
+      let acc=0; return days.map(d => { acc+=byDay[d]; return acc; });
+    }
+    function _homeSparkSVG(series) {
+      if (!series || !series.length) return '<span style="font-size:9px;color:var(--text-gray);">sem dados</span>';
+      if (series.length === 1) series = [0, series[0]];
+      const W=58,H=30,mx=Math.max(...series),mn=Math.min(...series),rng=(mx-mn)||1;
+      const X=i=>(i/(series.length-1))*W, Y=v=>H-3-((v-mn)/rng)*(H-6);
+      const line=series.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+      const area='M0 '+H+' '+series.map((v,i)=>'L'+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ')+' L'+W+' '+H+' Z';
+      return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:58px;height:30px;overflow:visible">'
+        +'<path d="'+area+'" fill="rgba(109,94,252,0.16)"/>'
+        +'<path d="'+line+'" fill="none" stroke="#6d5efc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+        +'<circle cx="'+X(series.length-1).toFixed(1)+'" cy="'+Y(series[series.length-1]).toFixed(1)+'" r="2.6" fill="#6d5efc"/></svg>';
+    }
     function _homeRenderKPIMoM() {
       const vA = window.allVendasFiltered || window.allVendas || [];
-      const vP = window.allVendasAnteriorMes || [];
       const gA = window.allGastosData || [];
-      const gP = window.allGastosAnteriorMes || [];
-      const sum = (arr,f)=>arr.reduce((a,c)=>a+(f(c)||0),0);
-      const bars = (id, cur, prev) => {
-        const el = document.getElementById(id); if (!el) return;
-        const mx = Math.max(cur, prev, 1);
-        const h = v => Math.max(Math.round(v/mx*100), 8);
-        el.innerHTML = '<div class="mb" style="height:'+h(prev)+'%" title="mês anterior"></div><div class="mb cur" style="height:'+h(cur)+'%" title="mês atual"></div>';
-      };
-      bars('home-entradas-mom', sum(vA,c=>c.entradas), sum(vP,c=>c.entradas));
-      bars('home-gastos-mom',   sum(gA,c=>c.negociado), sum(gP,c=>c.negociado));
-      bars('home-contratos-mom', vA.length, vP.length);
-      bars('home-leads-pre-mom', vA.length, vP.length);
+      const spark = (id, series) => { const el=document.getElementById(id); if(el) el.innerHTML=_homeSparkSVG(series); };
+      spark('home-entradas-mom', _homeDailyCumulative(vA,'data',v=>v.entradas));
+      spark('home-gastos-mom',   _homeDailyCumulative(gA,'data',g=>g.negociado));
+      spark('home-contratos-mom',_homeDailyCumulative(vA,'data',()=>1));
+      spark('home-leads-pre-mom',_homeDailyCumulative(vA,'data',()=>1));
     }
     window._homeRenderKPIMoM = _homeRenderKPIMoM;
 
