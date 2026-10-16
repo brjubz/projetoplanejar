@@ -9358,13 +9358,11 @@
       catch(e) { return null; }
     }
     const NEWS_PROXY_FNS = [
-      // 0) Proxy do Netlify (server-side, same-origin) -- principal, sem CORS
+      // 0) Netlify Function (server-side: segue redirects + adiciona CORS) -- principal
       async url => {
-        const p = _newsPx(url);
-        if (!p) throw new Error('netlify-px: host nao mapeado');
-        const r = await fetch(p, { signal: _newsSignal(12000) });
-        if (!r.ok) throw new Error(`netlify-px ${r.status}`);
-        return _newsAssertXML(await r.text(), 'netlify-px');
+        const r = await fetch(`/.netlify/functions/rss?url=${encodeURIComponent(url)}`, { signal: _newsSignal(15000) });
+        if (!r.ok) throw new Error(`nf-rss ${r.status}`);
+        return _newsAssertXML(await r.text(), 'nf-rss');
       },
       // allorigins /get modo JSON (evita ERR_HTTP2_PROTOCOL_ERROR do /raw)
       async url => {
