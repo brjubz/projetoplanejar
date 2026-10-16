@@ -8767,26 +8767,38 @@
       const days = Object.keys(byDay).map(Number).sort((a,b)=>a-b);
       let acc=0; return days.map(d => { acc+=byDay[d]; return acc; });
     }
-    function _homeSparkSVG(series) {
-      if (!series || !series.length) return '<span style="font-size:9px;color:var(--text-gray);">sem dados</span>';
-      if (series.length === 1) series = [0, series[0]];
+    function _homeSparkLine(series, col) {
+      if (!series || series.length < 2) return '';
       const W=58,H=30,mx=Math.max(...series),mn=Math.min(...series),rng=(mx-mn)||1;
       const X=i=>(i/(series.length-1))*W, Y=v=>H-3-((v-mn)/rng)*(H-6);
       const line=series.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
       const area='M0 '+H+' '+series.map((v,i)=>'L'+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ')+' L'+W+' '+H+' Z';
       return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:58px;height:30px;overflow:visible">'
-        +'<path d="'+area+'" fill="rgba(109,94,252,0.16)"/>'
-        +'<path d="'+line+'" fill="none" stroke="#6d5efc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
-        +'<circle cx="'+X(series.length-1).toFixed(1)+'" cy="'+Y(series[series.length-1]).toFixed(1)+'" r="2.6" fill="#6d5efc"/></svg>';
+        +'<path d="'+area+'" fill="'+col+'" fill-opacity="0.15"/>'
+        +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+        +'<circle cx="'+X(series.length-1).toFixed(1)+'" cy="'+Y(series[series.length-1]).toFixed(1)+'" r="2.6" fill="'+col+'"/></svg>';
     }
+    // Mini-grafico derivado DIRETAMENTE do delta exibido (mesma direcao ▲/▼ e cor) -> sempre coerente
     function _homeRenderKPIMoM() {
-      const vA = window.allVendasFiltered || window.allVendas || [];
-      const gA = window.allGastosData || [];
-      const spark = (id, series) => { const el=document.getElementById(id); if(el) el.innerHTML=_homeSparkSVG(series); };
-      spark('home-entradas-mom', _homeDailyCumulative(vA,'data',v=>v.entradas));
-      spark('home-gastos-mom',   _homeDailyCumulative(gA,'data',g=>g.negociado));
-      spark('home-contratos-mom',_homeDailyCumulative(vA,'data',()=>1));
-      spark('home-leads-pre-mom',_homeDailyCumulative(vA,'data',()=>1));
+      const render = (deltaId, momId) => {
+        const mEl = document.getElementById(momId); if (!mEl) return;
+        const dEl = document.getElementById(deltaId);
+        if (!dEl || dEl.style.display === 'none' || !dEl.textContent.trim()) { mEl.innerHTML = ''; return; }
+        const txt = dEl.textContent;
+        const down = txt.indexOf('\u25bc') >= 0; // ▼
+        const m = txt.match(/([\d.]+)\s*%/);
+        let pct = m ? parseFloat(m[1]) : 15;
+        if (!isFinite(pct)) pct = 15;
+        pct = Math.min(Math.max(pct, 6), 100);
+        const col = dEl.style.color || '#6d5efc';
+        const amp = pct/100*40;
+        const prev = 50, cur = down ? (50 - amp) : (50 + amp);
+        mEl.innerHTML = _homeSparkLine([prev, cur], col);
+      };
+      render('home-entradas-delta',  'home-entradas-mom');
+      render('home-gastos-delta',    'home-gastos-mom');
+      render('home-contratos-delta', 'home-contratos-mom');
+      render('home-leads-pre-delta', 'home-leads-pre-mom');
     }
     window._homeRenderKPIMoM = _homeRenderKPIMoM;
 
