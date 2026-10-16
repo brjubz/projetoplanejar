@@ -862,9 +862,9 @@
     .hv-kpis4 .hv-k { padding:18px; }
     .k-bot { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
     .k-bot-l { min-width:0; }
-    .k-bot .hv-k-v { font-size:19px; white-space:nowrap; }
+    .k-bot .hv-k-v { font-size:21px; }
     .k-bot .hv-delta { margin-top:7px; }
-    .mom { width:58px; height:30px; flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; }
+    .mom { display:none; }
     .mom .mb { width:10px; border-radius:3px 3px 0 0; background:rgba(129,140,248,.3); min-height:4px; }
     .mom .mb.cur { background:linear-gradient(180deg,#6d5efc,#4f46e5); }
     .vso6 { margin-bottom:14px; }
@@ -8780,25 +8780,7 @@
     }
     // Mini-grafico derivado DIRETAMENTE do delta exibido (mesma direcao ▲/▼ e cor) -> sempre coerente
     function _homeRenderKPIMoM() {
-      const render = (deltaId, momId) => {
-        const mEl = document.getElementById(momId); if (!mEl) return;
-        const dEl = document.getElementById(deltaId);
-        if (!dEl || dEl.style.display === 'none' || !dEl.textContent.trim()) { mEl.innerHTML = ''; return; }
-        const txt = dEl.textContent;
-        const down = txt.indexOf('\u25bc') >= 0; // ▼
-        const m = txt.match(/([\d.]+)\s*%/);
-        let pct = m ? parseFloat(m[1]) : 15;
-        if (!isFinite(pct)) pct = 15;
-        pct = Math.min(Math.max(pct, 6), 100);
-        const col = dEl.style.color || '#6d5efc';
-        const amp = pct/100*40;
-        const prev = 50, cur = down ? (50 - amp) : (50 + amp);
-        mEl.innerHTML = _homeSparkLine([prev, cur], col);
-      };
-      render('home-entradas-delta',  'home-entradas-mom');
-      render('home-gastos-delta',    'home-gastos-mom');
-      render('home-contratos-delta', 'home-contratos-mom');
-      render('home-leads-pre-delta', 'home-leads-pre-mom');
+      ['home-entradas-mom','home-gastos-mom','home-contratos-mom','home-leads-pre-mom'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
     }
     window._homeRenderKPIMoM = _homeRenderKPIMoM;
 
