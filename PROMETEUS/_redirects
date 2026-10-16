@@ -1,0 +1,6 @@
+# Proxies server-side para o modulo de Noticias (evitam CORS de terceiros)
+/px/gnews/*   https://news.google.com/:splat           200
+/px/abr/*     https://agenciabrasil.ebc.com.br/:splat  200
+/px/cbic/*    https://cbic.org.br/:splat               200
+/px/vgv/*     https://www.portalvgv.com.br/:splat      200
+/px/imobi/*   https://www.imobireport.com.br/:splat    200

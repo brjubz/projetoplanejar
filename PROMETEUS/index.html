@@ -9345,7 +9345,27 @@
     }
 
     // Proxies CORS — retornam o XML diretamente ou lançam erro
+    // Mapa de proxy server-side do Netlify (same-origin, sem CORS) -- ver arquivo _redirects
+    const _NEWS_PX_MAP = {
+      'news.google.com': '/px/gnews',
+      'agenciabrasil.ebc.com.br': '/px/abr',
+      'cbic.org.br': '/px/cbic',
+      'www.portalvgv.com.br': '/px/vgv',
+      'www.imobireport.com.br': '/px/imobi',
+    };
+    function _newsPx(url) {
+      try { const u = new URL(url); const b = _NEWS_PX_MAP[u.hostname]; return b ? (b + u.pathname + u.search) : null; }
+      catch(e) { return null; }
+    }
     const NEWS_PROXY_FNS = [
+      // 0) Proxy do Netlify (server-side, same-origin) -- principal, sem CORS
+      async url => {
+        const p = _newsPx(url);
+        if (!p) throw new Error('netlify-px: host nao mapeado');
+        const r = await fetch(p, { signal: _newsSignal(12000) });
+        if (!r.ok) throw new Error(`netlify-px ${r.status}`);
+        return _newsAssertXML(await r.text(), 'netlify-px');
+      },
       // allorigins /get modo JSON (evita ERR_HTTP2_PROTOCOL_ERROR do /raw)
       async url => {
         const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { signal: _newsSignal(12000) });
@@ -9399,6 +9419,7 @@
       { id:'economia',     label:'Economia',               color:'#f59e0b' },
       { id:'construcao',   label:'Construção Civil',       color:'#ef4444' },
       { id:'habitacao',    label:'Habitação',              color:'#06b6d4' },
+      { id:'politica',     label:'Política',               color:'#a855f7' },
     ];
 
     // Feeds Google News por categoria — buscas específicas do setor imobiliário e economia
@@ -9419,6 +9440,10 @@
       { cat:'imobiliario', q:'"Valor Econômico" OR InfoMoney OR Exame OR "Estadão" imobiliário OR incorporadora OR "mercado de imóveis" OR lançamento Brasil' },
       // Entidades do setor — FGV, FIPE, Imobi, CBIC nota
       { cat:'imobiliario', q:'FGV OR "FIPE ZAP" OR "Imobi Report" OR "CNN Brasil" imobiliário OR "mercado de imóveis" OR loteamento' },
+      // Politica do setor -- habitacao, marco legal, regularizacao, tributacao imobiliaria
+      { cat:'politica',    q:'"política habitacional" OR "marco legal" OR "regularização fundiária" OR "reforma tributária" OR "Ministério das Cidades" OR "Casa Verde e Amarela" habitação OR imóveis OR loteamento Brasil' },
+      // Decisoes de governo/Congresso que afetam o setor
+      { cat:'politica',    q:'Congresso OR Senado OR "Câmara dos Deputados" OR "projeto de lei" OR "medida provisória" OR decreto habitação OR imóveis OR "construção civil" OR "crédito imobiliário" Brasil' },
     ];
 
     // ── Fontes RSS diretas ────────────────────────────────────────
@@ -9447,7 +9472,7 @@
     // Ordem importa: primeiro match ganha. Regras mais específicas primeiro.
     const NEWS_CAT_RULES = [
       // 1. Loteamentos e mercado de lotes
-      { cat:'loteamentos', re:/loteamento|lotes?\b|loteadora|condom[íi]nio.{0,12}(?:fechado|horizontal)|parcelamento.{0,8}solo|urbaniza[cç][aã]o.{0,10}(?:lote|terreno)/ },
+      { cat:'loteamentos', re:/loteamento|loteadora|parcelamento.{0,8}solo|condom[íi]nio.{0,12}(?:fechado|horizontal)|\blotes?\b.{0,22}(?:resid|urban|terreno|condom|venda|comerci|industri|[áa]rea|empreend|metros|\bm[²2]\b)|(?:venda|compra|mercado|parcelament|loteament|[áa]rea|terreno|lan[cç]ament)s?.{0,15}\blotes?\b|urbaniza[cç][aã]o.{0,10}(?:lote|terreno)/ },
       // 2. Crédito e financiamento imobiliário (inclui MCMV, CEF, FGTS)
       { cat:'credito',     re:/cr[eé]dito.{0,10}imobili[áa]rio|financiamento.{0,10}imobili[áa]rio|minha.{0,8}casa.{0,8}minha.{0,8}vida|\bmcmv\b|casa.{0,8}verde.{0,8}amarela|caixa.{0,8}econ[oô]mica.{0,10}(?:imóv|habita|financ|emprés)|fgts.{0,15}(?:imóv|habita|saqu|saque|financ|retira)|lci\b|cri\b|taxa.{0,8}financiamento.{0,8}imobili/ },
       // 3. Habitação e programas habitacionais
@@ -9459,10 +9484,15 @@
       // 6. Economia de impacto direto no setor (conforme lista do gestor)
       //    NÃO inclui: desemprego geral, salário, Petrobras, câmbio/dólar isolados
       { cat:'economia',    re:/taxa.{0,6}selic|selic\b|ipca\b|infla[cç][aã]o|banco.{0,8}central|taxa.{0,8}juros?|pib\b|poupan[cç]a|renda.{0,6}fixa|tesouro.{0,6}(?:direto|nacional)|cdi\b|indicadores?.{0,8}econ[oô]mico|mercado.{0,8}financeiro|fundo.{0,8}imobili[áa]rio|\bfii\b|bolsa.{0,6}valores?/ },
+      // 7. Politica (governo, Congresso, leis e marcos que afetam o setor)
+      { cat:'politica',    re:/\bcongresso\b|senado.{0,8}federal|c[aâ]mara.{0,10}deputados|minist[eé]rio.{0,8}(?:das.{0,4}cidades|cidades|fazenda|trabalho|desenvolvimento)|governo.{0,8}federal|projeto.{0,6}de.{0,4}lei|medida.{0,8}provis[óo]ria|marco.{0,8}legal|reforma.{0,8}(?:tribut[áa]ria|administrativa|urbana)|pol[íi]tica.{0,10}(?:habitacional|urbana|fundi[áa]ria)|or[cç]amento.{0,8}(?:federal|da.{0,4}uni[aã]o)|\bstf\b|supremo.{0,8}tribunal|decreto.{0,8}(?:federal|presidencial)|sancion(?:a|ou|ado)/ },
     ];
 
+    // Bloqueia falsos positivos comuns (ex.: "lote" de abono/loteria, nao de loteamento)
+    const NEWS_BLOCK = /abono.{0,4}salarial|pis\/?pasep|\bloteria\b|mega-?sena|sorteio|lote.{0,10}(?:de.{0,4})?(?:vacina|medicament|rem[eé]dio|carne|alimento|produto|importa[cç])|leil[aã]o.{0,10}(?:ve[íi]culo|carro|celular|apreendid)|resultado.{0,8}(?:do.{0,4})?lote/;
     function _newsCategorize(title, summary) {
       const text = ((title||'') + ' ' + (summary||'')).toLowerCase();
+      if (NEWS_BLOCK.test(text)) return null;
       for (const rule of NEWS_CAT_RULES) {
         if (rule.re.test(text)) return rule.cat;
       }
