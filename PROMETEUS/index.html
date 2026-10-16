@@ -4814,6 +4814,7 @@
         setTimeout(() => {
           console.log('Iniciando carregamento de dados...');
           carregarDados();
+          setTimeout(_garantirDados, 4000);
         }, 500);
       } catch (e) {
         console.error('Erro ao carregar planilhas do Firebase:', e);
@@ -4821,6 +4822,7 @@
         setTimeout(() => {
           console.log('Carregando dados mesmo com erro de Firebase...');
           carregarDados();
+          setTimeout(_garantirDados, 4000);
         }, 1000);
       }
     }
@@ -5418,6 +5420,7 @@
 
     async function carregarDados() {
       showSync(true);
+      window._carregandoDados = true;
       let _overlayAtivo = false;
       try {
         console.log(`📥 carregarDados iniciado (mês: ${currentMonthId})...`);
@@ -5675,6 +5678,7 @@
       } catch (e) {
         console.error("❌ Erro geral na carga de dados:", e);
       } finally {
+        window._carregandoDados = false;
         showSync(false);
         esconderLoadingApp();
       }
@@ -8822,6 +8826,35 @@
       _homeVSORender();
     }
     window._homeRenderVSOEmpreendimentos = _homeRenderVSOEmpreendimentos;
+
+    // === CONFERENCIA DE CARGA: garante que os dados foram puxados ===
+    let _garantirTent = 0;
+    async function _garantirDados() {
+      if (window._carregandoDados) { setTimeout(_garantirDados, 2000); return; } // ainda carregando
+      const idsOk = !!(window.VENDAS_SHEET_ID || window.LEADS_SHEET_ID || window.GASTOS_SHEET_ID);
+      if (!idsOk) {
+        if (_garantirTent < 5) {
+          _garantirTent++;
+          console.log('[Conferência] IDs das planilhas ausentes — rebuscando (tentativa ' + _garantirTent + ')');
+          try { carregarPlanidasDoFirebase(); } catch(e){}
+          setTimeout(_garantirDados, 2500);
+        }
+        return;
+      }
+      const n = (window.allVendas||[]).length + (window.statusData||[]).length + (window.allGastosData||[]).length;
+      if (n > 0) { _garantirTent = 0; console.log('[Conferência] Dados OK (' + n + ' registros).'); return; }
+      if (_garantirTent < 4) {
+        _garantirTent++;
+        console.log('[Conferência] Nenhum dado carregado — limpando cache e re-puxando (tentativa ' + _garantirTent + ')');
+        try { window._sheetDataCache = {}; window._anualCache = null; window._fixosCache = null; } catch(e){}
+        try { await carregarDados(); } catch(e){ console.warn('[Conferência] erro no re-pull:', e && e.message); }
+        setTimeout(_garantirDados, 3500);
+      } else {
+        console.warn('[Conferência] Dados não vieram após várias tentativas. Verifique as planilhas no Admin ou a conexão.');
+        try { showSync(false); } catch(e){}
+      }
+    }
+    window._garantirDados = _garantirDados;
     function _homeVSORender() {
       const box = document.getElementById('home-vso-emp'); if (!box) return;
       if (!_homeVSOData.length) { box.innerHTML = '<div class="hv-empty">Sem dados de estoque/vendas por empreendimento</div>'; return; }
