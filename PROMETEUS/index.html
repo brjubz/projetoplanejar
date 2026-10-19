@@ -1282,6 +1282,24 @@
     }
     @keyframes lancGridShift { from { background-position: 0 0; } to { background-position: 34px 34px; } }
     @keyframes lancHeroGlow { 0%,100% { opacity:.55; } 50% { opacity:.9; } }
+    /* === Previsao do tempo (Lancamento) === */
+    .lanc-weather-card { margin-bottom: 20px; }
+    .lanc-weather-card-inner { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 18px; padding: 20px; }
+    .lw-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .lw-ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 23px; background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.25); flex-shrink: 0; }
+    .lw-title { font-size: 14px; font-weight: 700; color: #fff; }
+    .lw-sub { font-size: 11.5px; color: var(--text-gray); margin-top: 2px; }
+    .lw-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+    .lw-day { background: rgba(255,255,255,.022); border: 1px solid var(--border-glass); border-radius: 14px; padding: 12px 6px; text-align: center; }
+    .lw-day.today { border-color: rgba(79,70,229,.45); background: rgba(79,70,229,.1); }
+    .lw-dow { font-size: 10px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: .5px; }
+    .lw-emoji { font-size: 27px; margin: 9px 0; line-height: 1; }
+    .lw-temp b { font-size: 14px; font-weight: 800; color: #fff; }
+    .lw-temp span { font-size: 12px; color: var(--text-gray); }
+    .lw-rain { font-size: 10px; color: #38bdf8; margin-top: 6px; font-weight: 600; }
+    .lw-msg { font-size: 12px; color: var(--text-gray); padding: 10px 2px; }
+    @media (max-width: 760px) { .lw-days { grid-template-columns: repeat(4, 1fr); } }
+
     .lanc-hero-banner {
       position: relative; overflow: hidden; border-radius: 20px; padding: 26px 30px; min-height: 172px;
       margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
@@ -3891,6 +3909,9 @@
 
           <!-- Perfil dos cadastros (demografia) -->
           <div id="lanc-demografia"></div>
+
+          <!-- Previsao do tempo semanal da cidade do lancamento -->
+          <div id="lanc-weather" class="lanc-weather-card" style="display:none;"></div>
 
           <!-- Canal + Evolução 30 dias -->
           <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:20px;">
@@ -16763,6 +16784,7 @@
       _lancRenderHeatmap(leads);
       _lancRenderTabela(leads);
       _lancRenderDemografia(leads);
+      _lancLoadWeather(_lancCidadeNome);
 
       if (window.lucide) lucide.createIcons();
     }
@@ -16951,6 +16973,75 @@
         </div>`;
       }).join('');
     }
+
+    // === Previsao do tempo (Open-Meteo: grátis, sem chave, com CORS) ===
+    let _lancWeatherCidade = null;
+    function _wmoIcon(code) {
+      if (code === 0) return ['☀️','Céu limpo'];
+      if (code === 1) return ['🌤️','Predom. limpo'];
+      if (code === 2) return ['⛅','Parc. nublado'];
+      if (code === 3) return ['☁️','Nublado'];
+      if (code === 45 || code === 48) return ['🌫️','Névoa'];
+      if (code >= 51 && code <= 57) return ['🌦️','Garoa'];
+      if (code >= 61 && code <= 67) return ['🌧️','Chuva'];
+      if (code >= 71 && code <= 77) return ['🌨️','Neve'];
+      if (code >= 80 && code <= 82) return ['🌧️','Pancadas'];
+      if (code >= 85 && code <= 86) return ['🌨️','Neve'];
+      if (code >= 95) return ['⛈️','Tempestade'];
+      return ['🌡️','—'];
+    }
+    async function _lancLoadWeather(cidade) {
+      const box = document.getElementById('lanc-weather');
+      if (!box) return;
+      cidade = (cidade || '').trim();
+      if (!cidade) { box.style.display = 'none'; return; }
+      if (_lancWeatherCidade === cidade && box.innerHTML.indexOf('lw-days') >= 0) { box.style.display = 'block'; return; }
+      _lancWeatherCidade = cidade;
+      box.style.display = 'block';
+      box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando previsão do tempo…</div></div>';
+      try {
+        const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(cidade) + '&count=1&language=pt&country=BR').then(r => r.json());
+        const loc = geo && geo.results && geo.results[0];
+        if (!loc) { box.style.display = 'none'; return; }
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + loc.latitude + '&longitude=' + loc.longitude +
+          '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=7';
+        const f = await fetch(url).then(r => r.json());
+        const dd = f && f.daily;
+        if (!dd || !dd.time) { box.style.display = 'none'; return; }
+        const dias = dd.time.map((t, i) => ({
+          data: t, code: dd.weather_code[i],
+          max: Math.round(dd.temperature_2m_max[i]), min: Math.round(dd.temperature_2m_min[i]),
+          chuva: dd.precipitation_probability_max ? dd.precipitation_probability_max[i] : null
+        }));
+        box.innerHTML = _lancWeatherHTML(cidade, loc, dias);
+      } catch (e) {
+        console.warn('[Previsão] falhou:', e && e.message);
+        box.style.display = 'none';
+      }
+    }
+    function _lancWeatherHTML(cidade, loc, dias) {
+      const esc = s => String(s || '').replace(/[<>&"]/g, m => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m]));
+      const DOW = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+      const hojeStr = new Date().toISOString().slice(0, 10);
+      const daysHTML = dias.map(d => {
+        const dt = new Date(d.data + 'T00:00:00');
+        const isHoje = d.data === hojeStr;
+        const ic = _wmoIcon(d.code);
+        const dow = isHoje ? 'Hoje' : DOW[dt.getDay()];
+        const chuva = (d.chuva != null) ? ('<div class="lw-rain">💧 ' + d.chuva + '%</div>') : '';
+        return '<div class="lw-day' + (isHoje ? ' today' : '') + '"><div class="lw-dow">' + dow + '</div>' +
+          '<div class="lw-emoji" title="' + esc(ic[1]) + '">' + ic[0] + '</div>' +
+          '<div class="lw-temp"><b>' + d.max + '°</b> <span>' + d.min + '°</span></div>' + chuva + '</div>';
+      }).join('');
+      const regiao = [loc.admin1, 'Brasil'].filter(Boolean).join(', ');
+      const hIc = _wmoIcon(dias[0].code);
+      return '<div class="lanc-weather-card-inner">' +
+        '<div class="lw-head"><div class="lw-ic">' + hIc[0] + '</div><div>' +
+        '<div class="lw-title">Previsão do tempo — ' + esc(cidade) + '</div>' +
+        '<div class="lw-sub">' + esc(regiao) + ' · próximos 7 dias</div></div></div>' +
+        '<div class="lw-days">' + daysHTML + '</div></div>';
+    }
+    window._lancLoadWeather = _lancLoadWeather;
 
     function _lancRenderDemografia(leads) {
       const el = document.getElementById('lanc-demografia');
