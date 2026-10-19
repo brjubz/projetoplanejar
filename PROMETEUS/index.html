@@ -16990,6 +16990,14 @@
       if (code >= 95) return ['⛈️','Tempestade'];
       return ['🌡️','—'];
     }
+    function _lancCidadeQuery(cidade) {
+      const UF = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+      let q = String(cidade || '').trim();
+      q = q.replace(/\s*[-\/\u2013,]\s*([A-Za-z]{2})\s*$/, (m, uf) => UF.indexOf(uf.toUpperCase()) >= 0 ? '' : m);
+      const m2 = q.match(/^(.*\S)\s+([A-Za-z]{2})$/);
+      if (m2 && UF.indexOf(m2[2].toUpperCase()) >= 0) q = m2[1];
+      return q.trim();
+    }
     async function _lancLoadWeather(cidade) {
       const box = document.getElementById('lanc-weather');
       if (!box) return;
@@ -17000,9 +17008,14 @@
       box.style.display = 'block';
       box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando previsão do tempo…</div></div>';
       try {
-        const geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(cidade) + '&count=1&language=pt&country=BR').then(r => r.json());
-        const loc = geo && geo.results && geo.results[0];
-        if (!loc) { box.style.display = 'none'; return; }
+        const q = _lancCidadeQuery(cidade) || cidade;
+        let geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=1&language=pt&country=BR').then(r => r.json()).catch(() => null);
+        let loc = geo && geo.results && geo.results[0];
+        if (!loc) {
+          geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=1&language=pt').then(r => r.json()).catch(() => null);
+          loc = geo && geo.results && geo.results[0];
+        }
+        if (!loc) { console.warn('[Previsão] cidade não encontrada:', cidade, '->', q); box.style.display = 'none'; return; }
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + loc.latitude + '&longitude=' + loc.longitude +
           '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=7';
         const f = await fetch(url).then(r => r.json());
