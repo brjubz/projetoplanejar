@@ -8800,22 +8800,30 @@
     }
     function _homeRenderVSOEmpreendimentosNow(vendas) {
       const estoque = window.allEstoqueData || [];
-      const map = {}; // key -> {nome, sold, disp}
+      // Disponivel vem SEMPRE do estoque (fonte da verdade)
+      const emap = {}; // estoqueKey -> { nome, disp, sold }
       estoque.forEach(e => {
         const k = _homeVSOKey(e.empreendimento); if (!k) return;
-        if (!map[k]) map[k] = { nome:(e.empreendimento||'').trim(), sold:0, disp:0 };
-        map[k].disp += (parseInt(e.unidades) || 0);
+        if (!emap[k]) emap[k] = { nome:(e.empreendimento||'').trim(), disp:0, sold:0 };
+        emap[k].disp += (parseInt(e.unidades) || 0);
       });
+      const ekeys = Object.keys(emap);
+      const extra = {}; // vendas sem correspondencia no estoque
+      const semMatch = [];
       (vendas||[]).forEach(v => {
-        const k = _homeVSOKey(v.produto); if (!k) return;
-        if (!map[k]) map[k] = { nome:(v.produto||'').trim(), sold:0, disp:0 };
-        map[k].sold += 1;
+        const vk = _homeVSOKey(v.produto); if (!vk) return;
+        let mk = emap[vk] ? vk : null;
+        if (!mk) { // match aproximado: um nome contem o outro
+          for (const ek of ekeys) { if (ek.length >= 4 && (vk.indexOf(ek) >= 0 || ek.indexOf(vk) >= 0)) { mk = ek; break; } }
+        }
+        if (mk) { emap[mk].sold += 1; }
+        else { if (!extra[vk]) { extra[vk] = { nome:(v.produto||'').trim(), disp:0, sold:0 }; semMatch.push(v.produto); } extra[vk].sold += 1; }
       });
-      _homeVSOData = Object.values(map).map(e => {
-        const total = e.sold + e.disp;
-        return { nome:e.nome, sold:e.sold, disp:e.disp, pct: total>0 ? Math.round(e.sold/total*100) : 0 };
-      }).filter(e => e.sold>0 || e.disp>0).sort((a,b) => b.pct - a.pct || b.sold - a.sold);
-      console.log('[VSO] empreendimentos:', _homeVSOData.length, '| estoque linhas:', estoque.length);
+      _homeVSOData = [...Object.values(emap), ...Object.values(extra)]
+        .filter(e => e.sold > 0 || e.disp > 0)
+        .map(e => { const total = e.sold + e.disp; return { nome:e.nome, sold:e.sold, disp:e.disp, pct: total>0 ? Math.round(e.sold/total*100) : 0 }; })
+        .sort((a,b) => b.pct - a.pct || b.sold - a.sold);
+      console.log('[VSO] empreendimentos:', _homeVSOData.length, '| estoque linhas:', estoque.length, (semMatch.length ? ('| vendas SEM match no estoque: ' + [...new Set(semMatch)].join(' | ')) : '| todas as vendas casaram com o estoque'));
       _homeVSOPageIdx = 0;
       _homeVSORender();
     }
