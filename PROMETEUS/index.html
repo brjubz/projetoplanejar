@@ -1287,27 +1287,31 @@
     .lanc-forms-divider { display:flex; align-items:center; gap:9px; margin:4px 0 16px; padding-top:20px; border-top:1px solid var(--border-glass); font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.6px; }
     .lanc-forms-divider i { color:#38bdf8; }
     .crm-section-h { font-size:13px; font-weight:700; color:#f1f5f9; margin:24px 0 14px; display:flex; align-items:center; gap:10px; letter-spacing:.2px; }
-    .crm-section-h::before { content:''; width:4px; height:17px; border-radius:3px; background:linear-gradient(180deg,#6d5efc,#0E06A5); flex-shrink:0; }
-    .crm-podium { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; margin-bottom:14px; }
-    .crm-pod { position:relative; border-radius:16px; padding:20px 12px 16px; text-align:center; border:1px solid rgba(255,255,255,.06); background:#16161b; transition:transform .22s, border-color .22s; }
-    .crm-pod:hover { transform:translateY(-3px); border-color:rgba(84,104,255,.4); }
-    .crm-pod-1 { border-color:rgba(251,191,36,.38); background:linear-gradient(180deg,rgba(245,158,11,.1),#16161b); }
-    .crm-pod-2 { border-color:rgba(148,163,184,.4); background:linear-gradient(180deg,rgba(148,163,184,.12),rgba(255,255,255,.03)); }
-    .crm-pod-3 { border-color:rgba(180,83,9,.4); background:linear-gradient(180deg,rgba(180,83,9,.12),rgba(255,255,255,.03)); }
+    .crm-section-h::before { content:''; width:4px; height:17px; border-radius:3px; background:linear-gradient(180deg,#6d8bff,#0E06A5); flex-shrink:0; }
+    .crm-section-h svg { width:16px; height:16px; color:#8b9bff; }
+    .crm-podium { display:flex; align-items:flex-end; gap:12px; margin-bottom:18px; }
+    .crm-pod { flex:1; position:relative; text-align:center; display:flex; flex-direction:column; }
+    .crm-pod:hover .crm-pod-top { border-color:rgba(84,104,255,.45); }
+    .crm-pod-1 { order:2; } .crm-pod-2 { order:1; } .crm-pod-3 { order:3; }
+    .crm-pod-top { min-height:158px; background:#16161b; border:1px solid rgba(255,255,255,.06); border-bottom:none; border-radius:16px 16px 0 0; padding:16px 10px 14px; transition:border-color .2s; }
+    .crm-pod-1 .crm-pod-top { background:linear-gradient(180deg, rgba(84,104,255,.12), #16161b); border-color:rgba(84,104,255,.3); }
+    .crm-pod-base { display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; letter-spacing:.5px; border-radius:0 0 12px 12px; }
+    .crm-pod-1 .crm-pod-base { height:54px; background:linear-gradient(180deg,#6d8bff,#5468ff); color:#fff; box-shadow:0 10px 24px -10px rgba(84,104,255,.6); }
+    .crm-pod-2 .crm-pod-base { height:40px; background:linear-gradient(180deg,#5468ff,#3a4ad6); color:#e4e8ff; }
+    .crm-pod-3 .crm-pod-base { height:28px; background:linear-gradient(180deg,#3a4ad6,#2a3598); color:#c7cfff; }
     .crm-pod-medal { font-size:24px; line-height:1; margin-bottom:6px; }
-    .crm-pod-av { width:56px; height:56px; border-radius:50%; margin:0 auto 11px; display:flex; align-items:center; justify-content:center; background:rgba(14,6,165,.2); border:1.5px solid rgba(255,255,255,.12); box-shadow:inset 0 1px 0 rgba(255,255,255,.12); }
-    .crm-pod-av svg { width:28px; height:28px; stroke-width:2; }
-    .crm-pod-1 .crm-pod-av { background:radial-gradient(circle at 50% 35%, rgba(245,158,11,.38), rgba(245,158,11,.08)); border-color:rgba(251,191,36,.6); box-shadow:0 0 20px -2px rgba(245,158,11,.4), inset 0 1px 0 rgba(255,255,255,.18); }
-    .crm-pod-1 .crm-pod-av svg { color:#fbbf24; }
-    .crm-pod-2 .crm-pod-av { background:radial-gradient(circle at 50% 35%, rgba(148,163,184,.34), rgba(148,163,184,.06)); border-color:rgba(203,213,225,.55); }
-    .crm-pod-2 .crm-pod-av svg { color:#e2e8f0; }
-    .crm-pod-3 .crm-pod-av { background:radial-gradient(circle at 50% 35%, rgba(217,119,6,.34), rgba(180,83,9,.06)); border-color:rgba(217,119,6,.55); }
-    .crm-pod-3 .crm-pod-av svg { color:#f59e42; }
-    .crm-pod-nome { font-size:12px; font-weight:600; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:6px; }
-    .crm-pod-n { font-size:30px; font-weight:800; line-height:1; color:#fff; }
-    .crm-pod-1 .crm-pod-n { color:#fbbf24; }
+    .crm-pod-av { width:50px; height:50px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; background:rgba(84,104,255,.12); border:1.5px solid rgba(84,104,255,.3); }
+    .crm-pod-av svg { width:25px; height:25px; stroke-width:2; color:#8b9bff; }
+    .crm-pod-1 .crm-pod-av { width:58px; height:58px; background:radial-gradient(circle at 50% 35%, rgba(84,104,255,.5), rgba(84,104,255,.12)); border-color:rgba(167,184,255,.65); box-shadow:0 0 22px -2px rgba(84,104,255,.6); }
+    .crm-pod-1 .crm-pod-av svg { color:#d4dbff; width:30px; height:30px; }
+    .crm-pod-2 .crm-pod-av svg { color:#9fb0ff; }
+    .crm-pod-3 .crm-pod-av svg { color:#6d8bff; }
+    .crm-pod-nome { font-size:12px; font-weight:600; color:#e8ebf5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:6px; }
+    .crm-pod-n { font-size:27px; font-weight:800; line-height:1; color:#fff; }
+    .crm-pod-1 .crm-pod-n { font-size:34px; color:#d4dbff; }
     .crm-pod-pct { font-size:10.5px; color:#64748b; margin-top:3px; }
-    .crm-pod-badge { display:inline-block; margin-top:9px; font-size:10px; font-weight:700; color:#8b9bff; background:rgba(84,104,255,.12); border:1px solid rgba(84,104,255,.28); padding:3px 8px; border-radius:20px; }
+    .crm-pod-badge { display:inline-flex; align-items:center; gap:3px; margin-top:9px; font-size:10px; font-weight:700; color:#9fb0ff; background:rgba(84,104,255,.14); border:1px solid rgba(84,104,255,.3); padding:3px 8px; border-radius:20px; }
+    .crm-pod-badge svg { width:11px; height:11px; }
     .crm-pod-badge-wk { color:#38bdf8; background:rgba(56,189,248,.1); border-color:rgba(56,189,248,.22); }
     .crm-rank { display:flex; flex-direction:column; gap:8px; }
     .crm-rank-row { display:flex; align-items:center; gap:11px; }
@@ -1320,24 +1324,39 @@
     .crm-rank-bar { height:6px; background:rgba(255,255,255,.06); border-radius:5px; overflow:hidden; }
     .crm-rank-fill { height:100%; background:repeating-linear-gradient(45deg,#5468ff,#5468ff 6px,#3b4ad1 6px,#3b4ad1 12px); border-radius:5px; }
     .crm-rank-n { font-size:14px; font-weight:800; color:#6d8bff; width:40px; text-align:right; flex-shrink:0; }
-    .crm-day-best .crm-day-bar { background:linear-gradient(180deg,#8b9bff,#5468ff) !important; }
-    .crm-day-best .crm-day-n { color:#8b9bff; }
-    .crm-ritmo-stats { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:#64748b; }
-    .crm-ritmo-stats b { color:#cbd5e1; }
+    .crm-day-best .crm-day-bar { background:linear-gradient(180deg,#c7d0ff,#6d8bff) !important; box-shadow:0 0 14px rgba(84,104,255,.6); }
+    .crm-day-best .crm-day-n { color:#c7d0ff; }
+    .crm-ritmo-stats { display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; font-size:11px; color:#8a93a8; }
+    .crm-ritmo-stats span { display:inline-flex; align-items:center; gap:5px; }
+    .crm-ritmo-stats svg { width:13px; height:13px; color:#8b9bff; }
+    .crm-ritmo-stats b { color:#e8ebf5; }
+    .crm-trend { font-weight:700; }
+    .crm-trend.up, .crm-trend.up svg { color:#6d8bff; }
+    .crm-trend.down, .crm-trend.down svg { color:#f87171; }
+    .crm-trend.flat, .crm-trend.flat svg { color:#8a93a8; }
+    .crm-ritmo-chart { position:relative; }
+    .crm-media-line { position:absolute; left:0; right:0; border-top:1px dashed rgba(139,155,255,.45); z-index:2; pointer-events:none; }
+    .crm-media-line span { position:absolute; right:0; top:-7px; font-size:8.5px; font-weight:700; color:#8b9bff; background:#16161b; padding:0 5px; }
+    .crm-days-x { display:flex; gap:7px; margin-top:7px; }
+    .crm-day-x { flex:1; min-width:26px; text-align:center; font-size:8.5px; color:#64748b; }
     @media (max-width:640px){ .crm-podium { grid-template-columns:1fr; } }
     .crm-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px; }
     .crm-kpi { position:relative; overflow:hidden; background:#16161b; border:1px solid rgba(255,255,255,.055); border-radius:16px; padding:15px 16px; transition:transform .18s, border-color .18s; }
     .crm-kpi:hover { transform:translateY(-2px); border-color:rgba(84,104,255,.45); }
-    .crm-kpi-l { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
-    .crm-kpi-v { font-size:26px; font-weight:800; line-height:1; }
+    .crm-kpi-top { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .crm-kpi-ic { width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:rgba(84,104,255,.12); border:1px solid rgba(84,104,255,.22); }
+    .crm-kpi-ic svg { width:15px; height:15px; color:#8b9bff; }
+    .crm-kpi-l { font-size:10px; font-weight:700; color:#8a93a8; text-transform:uppercase; letter-spacing:.4px; line-height:1.2; }
+    .crm-kpi-v { font-size:26px; font-weight:800; line-height:1; color:#f1f5f9; }
     .crm-kpi-s { font-size:10.5px; color:#475569; margin-top:5px; }
     .crm-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
     .crm-panel { background:#16161b; border:1px solid rgba(255,255,255,.055); border-radius:16px; padding:18px; }
-    .crm-panel-h { font-size:12px; font-weight:700; color:#e2e8f0; margin-bottom:14px; }
-    .crm-days { display:flex; align-items:flex-end; gap:7px; height:94px; overflow-x:auto; padding-bottom:2px; }
-    .crm-day { flex:1; min-width:30px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
-    .crm-day-bar { width:100%; max-width:22px; background:linear-gradient(180deg,#6d5efc,#0E06A5); border-radius:5px 5px 0 0; min-height:3px; box-shadow:0 0 10px -2px rgba(109,94,252,.5); }
-    .crm-day-n { font-size:9px; color:#94a3b8; font-weight:700; margin-bottom:3px; }
+    .crm-panel-h { font-size:12px; font-weight:700; color:#e8ebf5; margin-bottom:14px; display:flex; align-items:center; gap:7px; }
+    .crm-panel-h svg { width:14px; height:14px; color:#8b9bff; }
+    .crm-days { display:flex; align-items:flex-end; gap:7px; height:120px; }
+    .crm-day { flex:1; min-width:26px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
+    .crm-day-bar { width:100%; max-width:22px; background:linear-gradient(180deg,#6d8bff,#5468ff); border-radius:5px 5px 0 0; min-height:3px; }
+    .crm-day-n { font-size:9.5px; color:#9aa3b8; font-weight:700; margin-bottom:4px; }
     .crm-day-lbl { font-size:8px; color:#475569; margin-top:3px; white-space:nowrap; }
     @media (max-width:860px){ .crm-kpis { grid-template-columns:repeat(2,1fr); } .crm-cols { grid-template-columns:1fr; } }
     .lanc-weather-card-inner { position:relative; background:#111117; border: 1px solid rgba(255,255,255,.06); border-radius: 20px; padding: 24px; }
@@ -17368,7 +17387,7 @@
       if (!series.length) { el.innerHTML = '<div style="color:#475569;font-size:12px;">Sem dados.</div>'; return; }
       if (!window.ApexCharts) { el.innerHTML = _lancBarras((origens || []).slice(0, 8), '#38bdf8', totalBase); return; }
       try { if (window._lancCrmDonut) { window._lancCrmDonut.destroy(); window._lancCrmDonut = null; } } catch (e) {}
-      const cores = ['#5468ff', '#38bdf8', '#a855f7', '#f59e0b', '#f43f5e', '#8b9bff', '#64748b'];
+      const cores = ['#5468ff', '#6d8bff', '#8b9bff', '#a9b8ff', '#c7d0ff', '#3a4ad6', '#4a5578'];
       const opt = {
         chart: { type: 'donut', height: 250, background: 'transparent', fontFamily: 'Poppins, Inter, sans-serif' },
         series: series, labels: labels, colors: cores,
@@ -17387,72 +17406,96 @@
 
     function _lancCrmHTML(d) {
       const nf = v => (v == null) ? '—' : v.toLocaleString('pt-BR');
-      const kpi = (val, label, sub, cor) =>
-        '<div class="crm-kpi"><div class="crm-kpi-l">' + label + '</div><div class="crm-kpi-v" style="color:' + (cor || '#e2e8f0') + '">' + val + '</div>' + (sub ? '<div class="crm-kpi-s">' + sub + '</div>' : '') + '</div>';
+      const ic = n => '<i data-lucide="' + n + '"></i>';
+
+      // KPIs monocromáticos (número branco, acento azul) com ícone
+      const kpi = (val, label, sub, icon) =>
+        '<div class="crm-kpi"><div class="crm-kpi-top"><span class="crm-kpi-ic">' + ic(icon) + '</span><span class="crm-kpi-l">' + label + '</span></div>' +
+        '<div class="crm-kpi-v">' + val + '</div>' + (sub ? '<div class="crm-kpi-s">' + sub + '</div>' : '') + '</div>';
       const diff = (d.formsX != null) ? Math.max(d.formsX - d.juliaY, 0) : null;
       const kpis =
-        kpi(nf(d.total), 'Total de cadastros', 'únicos (sem repetidos)', '#6d8bff') +
-        kpi(nf(d.dup), 'Repetidos filtrados', 'CPFs duplicados', '#f59e0b') +
-        kpi(nf(d.formsX), 'Cadastros do Forms', 'planilha do Forms', '#38bdf8') +
-        kpi(nf(d.juliaY), 'Forms no CRM', 'em nome da Julia Dourado', '#a855f7') +
-        kpi(nf(diff), 'Já cadastrados antes', 'Forms que já existiam', '#64748b');
+        kpi(nf(d.total), 'Total de cadastros', 'únicos (sem repetidos)', 'users') +
+        kpi(nf(d.dup), 'Repetidos filtrados', 'CPFs duplicados', 'copy') +
+        kpi(nf(d.formsX), 'Cadastros do Forms', 'planilha do Forms', 'file-text') +
+        kpi(nf(d.juliaY), 'Forms no CRM', 'em nome da Julia Dourado', 'user-check') +
+        kpi(nf(diff), 'Já cadastrados antes', 'Forms que já existiam', 'rotate-ccw');
 
-      // === Pódio (top 3) + ranking (4º+) ===
+      // === Pódio em degraus (2º | 1º | 3º) ===
       const corr = d.corretores || [];
-      const medals = ['🥇', '🥈', '🥉'];
       const podClass = ['crm-pod-1', 'crm-pod-2', 'crm-pod-3'];
+      const podIcon = ['crown', 'medal', 'award'];
       const top3 = corr.slice(0, 3);
       const maxTop = (top3[0] && top3[0].total) || 1;
-      const badge = c => c.hoje > 0 ? '<div class="crm-pod-badge">🔥 +' + c.hoje + ' hoje</div>'
-        : (c.sem > 0 ? '<div class="crm-pod-badge crm-pod-badge-wk">+' + c.sem + ' na semana</div>' : '');
+      const badge = c => c.hoje > 0 ? '<div class="crm-pod-badge">' + ic('trending-up') + '+' + c.hoje + ' hoje</div>'
+        : (c.sem > 0 ? '<div class="crm-pod-badge">+' + c.sem + ' na semana</div>' : '');
       const podium = top3.map((c, i) =>
         '<div class="crm-pod ' + podClass[i] + '">' +
-          '<div class="crm-pod-av"><i data-lucide="medal"></i></div>' +
-          '<div class="crm-pod-nome" title="' + _lancEsc(c.nome) + '">' + _lancEsc(c.nome) + '</div>' +
-          '<div class="crm-pod-n">' + c.total + '</div>' +
-          '<div class="crm-pod-pct">' + (d.total ? Math.round(c.total / d.total * 100) : 0) + '% do total</div>' +
-          badge(c) +
+          '<div class="crm-pod-top">' +
+            '<div class="crm-pod-av">' + ic(podIcon[i]) + '</div>' +
+            '<div class="crm-pod-nome" title="' + _lancEsc(c.nome) + '">' + _lancEsc(c.nome) + '</div>' +
+            '<div class="crm-pod-n">' + c.total + '</div>' +
+            '<div class="crm-pod-pct">' + (d.total ? Math.round(c.total / d.total * 100) : 0) + '% do total</div>' +
+            badge(c) +
+          '</div>' +
+          '<div class="crm-pod-base">' + (i + 1) + 'º</div>' +
         '</div>'
       ).join('');
       const rankRows = corr.slice(3, 12).map((c, i) => {
         const pct = (c.total / maxTop * 100).toFixed(1);
         return '<div class="crm-rank-row">' +
           '<div class="crm-rank-pos">' + (i + 4) + 'º</div>' +
-          '<div class="crm-rank-av"><i data-lucide="medal"></i></div>' +
-          '<div class="crm-rank-mid"><div class="crm-rank-nome">' + _lancEsc(c.nome) + (c.hoje > 0 ? ' <span class="crm-rank-hot">🔥' + c.hoje + '</span>' : '') + '</div>' +
+          '<div class="crm-rank-av">' + ic('user') + '</div>' +
+          '<div class="crm-rank-mid"><div class="crm-rank-nome">' + _lancEsc(c.nome) + (c.hoje > 0 ? ' <span class="crm-rank-hot">' + ic('trending-up') + c.hoje + '</span>' : '') + '</div>' +
             '<div class="crm-rank-bar"><div class="crm-rank-fill" style="width:' + pct + '%"></div></div></div>' +
           '<div class="crm-rank-n">' + c.total + '</div>' +
         '</div>';
       }).join('');
       const campeoes = corr.length
-        ? '<div class="crm-section-h">🏆 Campeões de cadastro</div>' +
+        ? '<div class="crm-section-h">' + ic('trophy') + ' Campeões de cadastro</div>' +
           (podium ? '<div class="crm-podium">' + podium + '</div>' : '') +
           (rankRows ? '<div class="crm-rank">' + rankRows + '</div>' : '')
         : '';
 
-      // === Ritmo (barras por dia + média/melhor dia) ===
+      // === Ritmo (barras + linha de média + tendência) ===
       const diasArr = Object.entries(d.porDia).sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-14);
       const maxN = diasArr.reduce((m, x) => Math.max(m, x[1]), 1);
+      const CH = 120, barMax = 100;
       const diaBars = diasArr.map(([iso, qt]) => {
-        const h = Math.max(Math.round(qt / maxN * 60), 3);
+        const h = Math.max(Math.round(qt / maxN * barMax), 3);
         const dd = iso.split('-');
         const best = d.ritmo && iso === d.ritmo.bestIso;
-        return '<div class="crm-day' + (best ? ' crm-day-best' : '') + '" title="' + dd[2] + '/' + dd[1] + ': ' + qt + ' cadastros"><div class="crm-day-n">' + qt + '</div><div class="crm-day-bar" style="height:' + h + 'px"></div><div class="crm-day-lbl">' + dd[2] + '/' + dd[1] + '</div></div>';
+        return '<div class="crm-day' + (best ? ' crm-day-best' : '') + '" title="' + dd[2] + '/' + dd[1] + ': ' + qt + ' cadastros"><div class="crm-day-n">' + qt + '</div><div class="crm-day-bar" style="height:' + h + 'px"></div></div>';
       }).join('');
-      const ritmoStats = d.ritmo ? '<div class="crm-ritmo-stats"><span>Média diária: <b>' + nf(d.ritmo.media) + '</b></span>' +
-        (d.ritmo.bestIso ? '<span>Melhor dia: <b>' + _lancDataBR(d.ritmo.bestIso) + '</b> (' + d.ritmo.bestN + ')</span>' : '') + '</div>' : '';
+      const diaLbls = diasArr.map(([iso]) => { const dd = iso.split('-'); return '<div class="crm-day-x">' + dd[2] + '/' + dd[1] + '</div>'; }).join('');
+      const mediaTop = (d.ritmo && d.ritmo.media && d.ritmo.media < maxN) ? (CH - Math.round(d.ritmo.media / maxN * barMax)) : null;
+      const mediaLine = (mediaTop != null) ? '<div class="crm-media-line" style="top:' + mediaTop + 'px;"><span>média ' + d.ritmo.media + '</span></div>' : '';
+      let trendHtml = '';
+      if (diasArr.length >= 2) {
+        const ult = diasArr[diasArr.length - 1][1], pen = diasArr[diasArr.length - 2][1];
+        const dv = ult - pen;
+        const cls = dv > 0 ? 'up' : (dv < 0 ? 'down' : 'flat');
+        const arrow = dv > 0 ? 'trending-up' : (dv < 0 ? 'trending-down' : 'minus');
+        trendHtml = '<span class="crm-trend ' + cls + '">' + ic(arrow) + (dv > 0 ? '+' : '') + dv + ' vs dia anterior</span>';
+      }
+      const ritmoStats = d.ritmo ? '<div class="crm-ritmo-stats">' +
+        '<span>' + ic('activity') + ' Média diária: <b>' + nf(d.ritmo.media) + '</b></span>' +
+        (d.ritmo.bestIso ? '<span>' + ic('award') + ' Melhor dia: <b>' + _lancDataBR(d.ritmo.bestIso) + '</b> (' + d.ritmo.bestN + ')</span>' : '') +
+        trendHtml + '</div>' : '';
 
-      const painel = (titulo, conteudo) => '<div class="crm-panel"><div class="crm-panel-h">' + titulo + '</div>' + conteudo + '</div>';
+      const painel = (titulo, icon, conteudo) => '<div class="crm-panel"><div class="crm-panel-h">' + ic(icon) + ' ' + titulo + '</div>' + conteudo + '</div>';
+      const ritmoBody = diasArr.length
+        ? '<div class="crm-ritmo-chart"><div class="crm-days">' + diaBars + '</div>' + mediaLine + '</div><div class="crm-days-x">' + diaLbls + '</div>' + ritmoStats
+        : '<div style="color:#475569;font-size:12px;">Sem datas (DT_INICIO) ainda.</div>';
 
       return '<div class="lanc-weather-card-inner">' +
-        '<div class="lw-head"><div class="lw-ic" style="background:rgba(84,104,255,.12);border-color:rgba(84,104,255,.28);">👥</div><div>' +
+        '<div class="lw-head"><div class="lw-ic" style="background:rgba(84,104,255,.12);border-color:rgba(84,104,255,.28);color:#8b9bff;">' + ic('users-round') + '</div><div>' +
         '<div class="lw-title">Cadastros Gerais (CRM)</div>' +
         '<div class="lw-sub">Base interna · última atualização: ' + _lancDataBR(d.maxDia) + '</div></div></div>' +
         '<div class="crm-kpis">' + kpis + '</div>' +
         campeoes +
         '<div class="crm-cols" style="margin-top:14px;">' +
-          painel('🎯 Origem dos cadastros', '<div id="lanc-crm-donut" style="min-height:230px;"></div>') +
-          painel('📅 Ritmo de cadastros', (diasArr.length ? '<div class="crm-days">' + diaBars + '</div>' + ritmoStats : '<div style="color:#475569;font-size:12px;">Sem datas (DT_INICIO) ainda.</div>')) +
+          painel('Origem dos cadastros', 'target', '<div id="lanc-crm-donut" style="min-height:230px;"></div>') +
+          painel('Ritmo de cadastros', 'bar-chart-3', ritmoBody) +
         '</div>' +
       '</div>';
     }
