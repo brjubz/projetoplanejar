@@ -1284,6 +1284,20 @@
     @keyframes lancHeroGlow { 0%,100% { opacity:.55; } 50% { opacity:.9; } }
     /* === Previsao do tempo (Lancamento) === */
     .lanc-weather-card { margin-bottom: 20px; }
+    .crm-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px; }
+    .crm-kpi { background:rgba(255,255,255,.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px 16px; }
+    .crm-kpi-l { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+    .crm-kpi-v { font-size:26px; font-weight:800; line-height:1; }
+    .crm-kpi-s { font-size:10.5px; color:#475569; margin-top:5px; }
+    .crm-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .crm-panel { background:rgba(255,255,255,.03); border:1px solid var(--border-glass); border-radius:14px; padding:16px; }
+    .crm-panel-h { font-size:12px; font-weight:700; color:#e2e8f0; margin-bottom:14px; }
+    .crm-days { display:flex; align-items:flex-end; gap:7px; height:94px; overflow-x:auto; padding-bottom:2px; }
+    .crm-day { flex:1; min-width:30px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
+    .crm-day-bar { width:100%; max-width:22px; background:linear-gradient(180deg,#6d5efc,#4f46e5); border-radius:4px 4px 0 0; min-height:3px; }
+    .crm-day-n { font-size:9px; color:#94a3b8; font-weight:700; margin-bottom:3px; }
+    .crm-day-lbl { font-size:8px; color:#475569; margin-top:3px; white-space:nowrap; }
+    @media (max-width:860px){ .crm-kpis { grid-template-columns:repeat(2,1fr); } .crm-cols { grid-template-columns:1fr; } }
     .lanc-weather-card-inner { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 18px; padding: 20px; }
     .lw-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .lw-ic { width: 42px; height: 42px; border-radius: 12px; display:flex; align-items:center; justify-content:center; font-size:23px; background: rgba(56,189,248,.12); border:1px solid rgba(56,189,248,.25); flex-shrink:0; }
@@ -3932,6 +3946,9 @@
 
           <!-- Previsao do tempo semanal da cidade do lancamento -->
           <div id="lanc-weather" class="lanc-weather-card" style="display:none;"></div>
+
+          <!-- Cadastros Gerais (CRM) -->
+          <div id="lanc-crm" class="lanc-weather-card" style="display:none;"></div>
 
           <!-- Canal + Evolução 30 dias -->
           <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:20px;">
@@ -16272,6 +16289,8 @@
       _lancCidadeNome     = cfg.cidadeNome     || '';
       _lancCidadeIbge     = (cfg.cidadeIbge    || '').replace(/\D/g, '');
       _lancNome           = cfg.nome           || '';
+      window._lancCrmSheetId = cfg.crmSheetId || '';
+      window._lancCrmGid     = cfg.crmGid     || '0';
       (function(){
         var tEl = document.getElementById('lanc-welcome-title');
         var sEl = document.getElementById('lanc-welcome-sub');
@@ -16856,6 +16875,8 @@
       _lancRenderTabela(leads);
       _lancRenderDemografia(leads);
       _lancLoadWeather(_lancCidadeNome);
+      window._lancFormsTotal = (leads && leads.length) || 0;
+      _lancLoadCrm();
 
       if (window.lucide) lucide.createIcons();
     }
@@ -17164,6 +17185,100 @@
       '</div>';
     }
     window._lancLoadWeather = _lancLoadWeather;
+
+    // === CADASTROS GERAIS (CRM) — planilha interna configurada no admin ===
+    window._lancCrmSheetId = window._lancCrmSheetId || '';
+    window._lancCrmGid = window._lancCrmGid || '0';
+    window._lancFormsTotal = null;
+    function _lancDataISO(s) {
+      s = String(s || '').trim(); if (!s) return '';
+      let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (m) return m[1] + '-' + String(+m[2]).padStart(2,'0') + '-' + String(+m[3]).padStart(2,'0');
+      m = s.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+      if (m) { let y = +m[3]; if (y < 100) y += 2000; return y + '-' + String(+m[2]).padStart(2,'0') + '-' + String(+m[1]).padStart(2,'0'); }
+      return '';
+    }
+    function _lancDataBR(iso) { if (!iso) return '—'; const p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+    function _lancIsJulia(s) { const n = _lancNorm(s); return n.indexOf('julia') >= 0 && n.indexOf('dourado') >= 0; }
+
+    async function _lancLoadCrm() {
+      const box = document.getElementById('lanc-crm'); if (!box) return;
+      const id = window._lancCrmSheetId || '';
+      if (!id) { box.style.display = 'none'; return; }
+      box.style.display = 'block';
+      box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando cadastros gerais (CRM)…</div></div>';
+      try {
+        const info = extrairSheetIdEGid(id);
+        const url = 'https://docs.google.com/spreadsheets/d/' + info.sheetId + '/export?format=csv&gid=' + (info.gid || 0) + '&t=' + Date.now();
+        const res = await fetch(url);
+        if (!res.ok) { box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Não foi possível ler a planilha CRM (verifique se está pública como leitor).</div></div>'; return; }
+        const csv = await res.text();
+        const rows = csv.trim().split(/\r?\n/).map(parseCSVLine);
+        if (rows.length < 2) { box.style.display = 'none'; return; }
+        const header = rows[0].map(h => (h || '').toString().replace(/^\ufeff/, '').trim().toUpperCase());
+        const col = name => header.indexOf(name);
+        const idx = {
+          nome: col('DS_NOME_CONTA'), cpf: col('NR_CPF'), nasc: col('DT_NASCIMENTO'),
+          origem: col('DS_ORIGEM_LEAD'), resp: col('DS_NOME_USUARIO_RESPONSAVEL'), inicio: col('DT_INICIO'),
+        };
+        const get = (row, i) => (i >= 0 && i < row.length) ? String(row[i] || '').trim() : '';
+        const seen = {}; const regs = []; let dup = 0;
+        for (let r = 1; r < rows.length; r++) {
+          const row = rows[r]; if (!row || !get(row, idx.nome)) continue;
+          const cpf = get(row, idx.cpf).replace(/\D/g, '');
+          const key = cpf || (_lancNorm(get(row, idx.nome)) + '|' + _lancDataISO(get(row, idx.nasc)));
+          if (!key) continue;
+          if (seen[key]) { dup++; continue; }
+          seen[key] = true;
+          regs.push({ resp: get(row, idx.resp), origem: get(row, idx.origem), inicio: get(row, idx.inicio) });
+        }
+        const total = regs.length;
+        const juliaY = regs.filter(r => _lancIsJulia(r.resp)).length;
+        const formsX = (window._lancFormsTotal != null) ? window._lancFormsTotal : null;
+        const porCorr = {}; regs.forEach(r => { const n = _lancIsJulia(r.resp) ? 'Forms (Julia Dourado)' : (_lancTitulo(r.resp) || 'Sem responsável'); porCorr[n] = (porCorr[n] || 0) + 1; });
+        const corretores = Object.entries(porCorr).sort((a, b) => b[1] - a[1]);
+        const porOri = {}; regs.forEach(r => { const o = _lancTitulo((r.origem || '').trim()) || '—'; porOri[o] = (porOri[o] || 0) + 1; });
+        const origens = Object.entries(porOri).sort((a, b) => b[1] - a[1]);
+        const porDia = {}; let maxDia = '';
+        regs.forEach(r => { const d = _lancDataISO(r.inicio); if (d) { porDia[d] = (porDia[d] || 0) + 1; if (d > maxDia) maxDia = d; } });
+        box.innerHTML = _lancCrmHTML({ total, dup, juliaY, formsX, corretores, origens, maxDia, porDia });
+        if (window.lucide) lucide.createIcons({ elements: [box] });
+        console.log('[CRM] únicos:', total, '| repetidos:', dup, '| Julia(Forms):', juliaY, '| Forms(X):', formsX, '| última DT_INICIO:', maxDia);
+      } catch (e) { console.warn('[CRM] falhou:', e && e.message); box.style.display = 'none'; }
+    }
+    window._lancLoadCrm = _lancLoadCrm;
+
+    function _lancCrmHTML(d) {
+      const kpi = (val, label, sub, cor) =>
+        '<div class="crm-kpi"><div class="crm-kpi-l">' + label + '</div><div class="crm-kpi-v" style="color:' + (cor || '#e2e8f0') + '">' + val + '</div>' + (sub ? '<div class="crm-kpi-s">' + sub + '</div>' : '') + '</div>';
+      const diff = (d.formsX != null) ? Math.max(d.formsX - d.juliaY, 0) : null;
+      const n = v => (v == null) ? '—' : v.toLocaleString('pt-BR');
+      const kpis =
+        kpi(n(d.total), 'Total de cadastros', 'únicos (sem repetidos)', '#10b981') +
+        kpi(n(d.dup), 'Repetidos filtrados', 'CPFs duplicados', '#f59e0b') +
+        kpi(n(d.formsX), 'Cadastros do Forms', 'planilha do Forms', '#38bdf8') +
+        kpi(n(d.juliaY), 'Forms no CRM', 'em nome da Julia Dourado', '#a855f7') +
+        kpi(n(diff), 'Já cadastrados antes', 'Forms que já existiam', '#64748b');
+      const diasArr = Object.entries(d.porDia).sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-14);
+      const maxN = diasArr.reduce((m, x) => Math.max(m, x[1]), 1);
+      const diaBars = diasArr.map(([iso, qt]) => {
+        const h = Math.max(Math.round(qt / maxN * 60), 3);
+        const dd = iso.split('-');
+        return '<div class="crm-day" title="' + dd[2] + '/' + dd[1] + ': ' + qt + ' cadastros"><div class="crm-day-n">' + qt + '</div><div class="crm-day-bar" style="height:' + h + 'px"></div><div class="crm-day-lbl">' + dd[2] + '/' + dd[1] + '</div></div>';
+      }).join('');
+      const painel = (titulo, conteudo) => '<div class="crm-panel"><div class="crm-panel-h">' + titulo + '</div>' + conteudo + '</div>';
+      return '<div class="lanc-weather-card-inner">' +
+        '<div class="lw-head"><div class="lw-ic" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25);">👥</div><div>' +
+        '<div class="lw-title">Cadastros Gerais (CRM)</div>' +
+        '<div class="lw-sub">Base interna · última atualização: ' + _lancDataBR(d.maxDia) + '</div></div></div>' +
+        '<div class="crm-kpis">' + kpis + '</div>' +
+        '<div class="crm-cols">' +
+          painel('👔 Cadastros por corretor', _lancBarras(d.corretores.slice(0, 10), '#10b981', d.total)) +
+          painel('🎯 Top origem', _lancBarras(d.origens.slice(0, 8), '#38bdf8', d.total)) +
+        '</div>' +
+        (diasArr.length ? '<div class="crm-panel" style="margin-top:14px;"><div class="crm-panel-h">📅 Cadastros por dia (DT_INICIO)</div><div class="crm-days">' + diaBars + '</div></div>' : '') +
+      '</div>';
+    }
 
     function _lancRenderDemografia(leads) {
       const el = document.getElementById('lanc-demografia');

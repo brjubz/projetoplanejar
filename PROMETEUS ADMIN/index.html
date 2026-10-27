@@ -641,6 +641,19 @@
           </div>
         </div>
 
+        <div class="card">
+          <h3>👥 Planilha de Cadastros Gerais (CRM)</h3>
+          <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 16px;">Planilha que VOCÊ alimenta diariamente, com TODOS os cadastros (Forms = Julia Dourado + corretores). Deixe em branco para ocultar. Compartilhe como pública (leitor).</p>
+          <div class="form-group">
+            <label class="form-label">ID da Planilha Google Sheets</label>
+            <input type="text" id="lanc_crm_id" class="form-input" placeholder="ID (nao GID)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">GID da Aba</label>
+            <input type="text" id="lanc_crm_gid" class="form-input" placeholder="Ex: 0">
+          </div>
+        </div>
+
         <button class="btn" style="background: #10b981; margin-top: 20px;" onclick="salvarConfigLancamento()">Salvar Configuracao</button>
         <button class="btn" style="background: rgba(100, 100, 100, 0.6); margin-top: 10px; margin-left: 10px;" onclick="testarConfigLancamento()">Testar</button>
         <div id="lanc_status" style="margin-top: 10px; font-size: 12px; color: var(--text-gray);"></div>
@@ -1792,7 +1805,9 @@ async function salvarConfigLancamento() {
     dataInicio: document.getElementById('lanc_data_inicio').value.trim(),
     meta: document.getElementById('lanc_meta').value.trim(),
     sheetId: document.getElementById('lanc_sheet_id').value.trim(),
-    gid: document.getElementById('lanc_gid').value.trim() || '0'
+    gid: document.getElementById('lanc_gid').value.trim() || '0',
+    crmSheetId: document.getElementById('lanc_crm_id').value.trim(),
+    crmGid: document.getElementById('lanc_crm_gid').value.trim() || '0'
   };
 
   try {
@@ -1835,6 +1850,8 @@ async function carregarConfigLancamento() {
       document.getElementById('lanc_meta').value = config.meta || '';
       document.getElementById('lanc_sheet_id').value = config.sheetId || '';
       document.getElementById('lanc_gid').value = config.gid || '0';
+      document.getElementById('lanc_crm_id').value = config.crmSheetId || '';
+      document.getElementById('lanc_crm_gid').value = config.crmGid || '0';
       console.log('Config carregada');
     }
   } catch (error) {
