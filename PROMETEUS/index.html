@@ -5898,9 +5898,6 @@
 
           if (vendasAnt.length > 0 && rowEl) {
             // VGV do mês anterior também filtrado por corretor se possível
-            const vendasAntProprias = nomeUsuario2
-              ? vendasAnt.filter(v => (v.corretor || '').toUpperCase() === nomeUsuario2.toUpperCase())
-              : vendasAnt;
             const vgvAnt = vendasAnt.reduce((s, v) => s + (v.vgv || 0), 0);
             const comissaoAnt = vgvAnt * (percentual / 100);
 
@@ -6575,7 +6572,7 @@
         document.getElementById('roi-conversao').textContent = conversao !== null ? conversao.toFixed(1) + '%' : '—';
         document.getElementById('roi-valor').textContent     = formatBRL(melhorVGV);
 
-        console.log(`🎯 Melhor canal: ${melhorMidia} — VGV ${formatBRL(melhorVGV)} | conv. ${conversao.toFixed(1)}%`);
+        console.log(`🎯 Melhor canal: ${melhorMidia} — VGV ${formatBRL(melhorVGV)} | conv. ${conversao !== null && conversao !== undefined ? conversao.toFixed(1) : '—'}%`);
       } catch (e) {
         console.log('⚠️ Erro ao calcular ROI:', e);
       }
@@ -17215,8 +17212,10 @@
       box.style.display = 'block';
       box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando cadastros gerais (CRM)…</div></div>';
       try {
-        const info = extrairSheetIdEGid(id);
-        const url = 'https://docs.google.com/spreadsheets/d/' + info.sheetId + '/export?format=csv&gid=' + (info.gid || 0) + '&t=' + Date.now();
+        const _p = String(id).split('|');
+        const _sheetId = (_p[0] || '').trim();
+        const _gid = (_p[1] || window._lancCrmGid || '0').toString().trim();
+        const url = 'https://docs.google.com/spreadsheets/d/' + _sheetId + '/export?format=csv&gid=' + _gid + '&t=' + Date.now();
         const res = await fetch(url);
         if (!res.ok) { box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Não foi possível ler a planilha CRM (verifique se está pública como leitor).</div></div>'; return; }
         const csv = await res.text();
