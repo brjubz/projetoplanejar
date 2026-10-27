@@ -1289,9 +1289,9 @@
     .crm-section-h { font-size:13px; font-weight:700; color:#f1f5f9; margin:24px 0 14px; display:flex; align-items:center; gap:10px; letter-spacing:.2px; }
     .crm-section-h::before { content:''; width:4px; height:17px; border-radius:3px; background:linear-gradient(180deg,#6d5efc,#0E06A5); flex-shrink:0; }
     .crm-podium { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; margin-bottom:14px; }
-    .crm-pod { position:relative; border-radius:18px; padding:20px 12px 16px; text-align:center; border:1px solid rgba(255,255,255,.08); background:linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); transition:transform .22s, box-shadow .22s; }
-    .crm-pod:hover { transform:translateY(-4px); box-shadow:0 18px 40px -18px rgba(14,6,165,.6); }
-    .crm-pod-1 { border-color:rgba(251,191,36,.5); background:linear-gradient(165deg,rgba(245,158,11,.17),rgba(255,255,255,.02)); box-shadow:0 0 34px -4px rgba(245,158,11,.28); }
+    .crm-pod { position:relative; border-radius:16px; padding:20px 12px 16px; text-align:center; border:1px solid rgba(255,255,255,.06); background:#16161b; transition:transform .22s, border-color .22s; }
+    .crm-pod:hover { transform:translateY(-3px); border-color:rgba(84,104,255,.4); }
+    .crm-pod-1 { border-color:rgba(251,191,36,.38); background:linear-gradient(180deg,rgba(245,158,11,.1),#16161b); }
     .crm-pod-2 { border-color:rgba(148,163,184,.4); background:linear-gradient(180deg,rgba(148,163,184,.12),rgba(255,255,255,.03)); }
     .crm-pod-3 { border-color:rgba(180,83,9,.4); background:linear-gradient(180deg,rgba(180,83,9,.12),rgba(255,255,255,.03)); }
     .crm-pod-medal { font-size:24px; line-height:1; margin-bottom:6px; }
@@ -1307,7 +1307,7 @@
     .crm-pod-n { font-size:30px; font-weight:800; line-height:1; color:#fff; }
     .crm-pod-1 .crm-pod-n { color:#fbbf24; }
     .crm-pod-pct { font-size:10.5px; color:#64748b; margin-top:3px; }
-    .crm-pod-badge { display:inline-block; margin-top:9px; font-size:10px; font-weight:700; color:#10b981; background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.25); padding:3px 8px; border-radius:20px; }
+    .crm-pod-badge { display:inline-block; margin-top:9px; font-size:10px; font-weight:700; color:#8b9bff; background:rgba(84,104,255,.12); border:1px solid rgba(84,104,255,.28); padding:3px 8px; border-radius:20px; }
     .crm-pod-badge-wk { color:#38bdf8; background:rgba(56,189,248,.1); border-color:rgba(56,189,248,.22); }
     .crm-rank { display:flex; flex-direction:column; gap:8px; }
     .crm-rank-row { display:flex; align-items:center; gap:11px; }
@@ -1316,24 +1316,23 @@
     .crm-rank-av svg { width:16px; height:16px; stroke-width:2; color:#8b93ff; }
     .crm-rank-mid { flex:1; min-width:0; }
     .crm-rank-nome { font-size:12px; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px; }
-    .crm-rank-hot { color:#10b981; font-weight:700; font-size:10.5px; }
+    .crm-rank-hot { color:#6d8bff; font-weight:700; font-size:10.5px; }
     .crm-rank-bar { height:6px; background:rgba(255,255,255,.06); border-radius:5px; overflow:hidden; }
-    .crm-rank-fill { height:100%; background:linear-gradient(90deg,#10b981,#10b981aa); border-radius:5px; }
-    .crm-rank-n { font-size:14px; font-weight:800; color:#10b981; width:40px; text-align:right; flex-shrink:0; }
-    .crm-day-best .crm-day-bar { background:linear-gradient(180deg,#f59e0b,#fbbf24) !important; }
-    .crm-day-best .crm-day-n { color:#fbbf24; }
+    .crm-rank-fill { height:100%; background:repeating-linear-gradient(45deg,#5468ff,#5468ff 6px,#3b4ad1 6px,#3b4ad1 12px); border-radius:5px; }
+    .crm-rank-n { font-size:14px; font-weight:800; color:#6d8bff; width:40px; text-align:right; flex-shrink:0; }
+    .crm-day-best .crm-day-bar { background:linear-gradient(180deg,#8b9bff,#5468ff) !important; }
+    .crm-day-best .crm-day-n { color:#8b9bff; }
     .crm-ritmo-stats { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:#64748b; }
     .crm-ritmo-stats b { color:#cbd5e1; }
     @media (max-width:640px){ .crm-podium { grid-template-columns:1fr; } }
     .crm-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px; }
-    .crm-kpi { position:relative; overflow:hidden; background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:15px 16px; transition:transform .18s, border-color .18s, box-shadow .18s; }
-    .crm-kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, rgba(109,94,252,.65), transparent); }
-    .crm-kpi:hover { transform:translateY(-3px); border-color:rgba(109,94,252,.4); box-shadow:0 14px 30px -14px rgba(14,6,165,.65); }
+    .crm-kpi { position:relative; overflow:hidden; background:#16161b; border:1px solid rgba(255,255,255,.055); border-radius:16px; padding:15px 16px; transition:transform .18s, border-color .18s; }
+    .crm-kpi:hover { transform:translateY(-2px); border-color:rgba(84,104,255,.45); }
     .crm-kpi-l { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
     .crm-kpi-v { font-size:26px; font-weight:800; line-height:1; }
     .crm-kpi-s { font-size:10.5px; color:#475569; margin-top:5px; }
     .crm-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    .crm-panel { background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); border:1px solid rgba(255,255,255,.07); border-radius:18px; padding:18px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+    .crm-panel { background:#16161b; border:1px solid rgba(255,255,255,.055); border-radius:16px; padding:18px; }
     .crm-panel-h { font-size:12px; font-weight:700; color:#e2e8f0; margin-bottom:14px; }
     .crm-days { display:flex; align-items:flex-end; gap:7px; height:94px; overflow-x:auto; padding-bottom:2px; }
     .crm-day { flex:1; min-width:30px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
@@ -1341,7 +1340,7 @@
     .crm-day-n { font-size:9px; color:#94a3b8; font-weight:700; margin-bottom:3px; }
     .crm-day-lbl { font-size:8px; color:#475569; margin-top:3px; white-space:nowrap; }
     @media (max-width:860px){ .crm-kpis { grid-template-columns:repeat(2,1fr); } .crm-cols { grid-template-columns:1fr; } }
-    .lanc-weather-card-inner { position:relative; background: linear-gradient(160deg, rgba(23,18,74,.55), rgba(9,9,17,.72)); border: 1px solid rgba(255,255,255,.08); border-radius: 22px; padding: 24px; backdrop-filter: blur(26px) saturate(140%); -webkit-backdrop-filter: blur(26px) saturate(140%); box-shadow: 0 20px 52px -20px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.05); }
+    .lanc-weather-card-inner { position:relative; background:#111117; border: 1px solid rgba(255,255,255,.06); border-radius: 20px; padding: 24px; }
     .lw-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .lw-ic { width: 42px; height: 42px; border-radius: 12px; display:flex; align-items:center; justify-content:center; font-size:23px; background: rgba(56,189,248,.12); border:1px solid rgba(56,189,248,.25); flex-shrink:0; }
     .lw-title { font-size: 14px; font-weight: 700; color: #fff; }
@@ -1380,13 +1379,13 @@
     .lanc-hero-banner {
       position: relative; overflow: hidden; border-radius: 20px; padding: 26px 30px; min-height: 172px;
       margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-      background: radial-gradient(120% 150% at 82% 50%, rgba(16,185,129,.20), rgba(5,150,105,.05) 45%, rgba(10,14,20,0) 72%), linear-gradient(135deg, #0b1a16 0%, #0a0e14 62%);
-      border: 1px solid rgba(16,185,129,.22);
-      box-shadow: inset 0 0 60px rgba(16,185,129,.06);
+      background: radial-gradient(120% 150% at 82% 50%, rgba(84,104,255,.14), rgba(14,6,165,.04) 45%, rgba(10,10,16,0) 72%), linear-gradient(135deg, #101017 0%, #0a0a0f 62%);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: inset 0 0 60px rgba(84,104,255,.04);
     }
     .lanc-hero-grid {
       position: absolute; inset: 0; pointer-events: none; z-index: 1;
-      background-image: linear-gradient(rgba(16,185,129,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,.06) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(84,104,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(84,104,255,.06) 1px, transparent 1px);
       background-size: 34px 34px; animation: lancGridShift 16s linear infinite;
       -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%);
     }
@@ -1398,16 +1397,16 @@
     .lanc-hero-content { position: relative; z-index: 2; max-width: 62%; }
     .lanc-hero-chip {
       display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
-      background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.3); color: #6ee7b7;
+      background: rgba(84,104,255,.12); border: 1px solid rgba(84,104,255,.3); color: #b4c0ff;
       padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600;
     }
     .lanc-hero-count {
       position: relative; z-index: 2; text-align: right; padding: 14px 18px; border-radius: 16px;
-      background: rgba(10,14,20,.45); border: 1px solid rgba(16,185,129,.22); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
     }
     .lanc-hero-num {
-      font-size: 48px; font-weight: 800; color: #10b981; line-height: 1; letter-spacing: -1px;
-      text-shadow: 0 0 22px rgba(16,185,129,.55); font-variant-numeric: tabular-nums;
+      font-size: 48px; font-weight: 800; color: #6d8bff; line-height: 1; letter-spacing: -1px;
+      text-shadow: 0 0 22px rgba(84,104,255,.5); font-variant-numeric: tabular-nums;
     }
     @media (max-width: 720px) {
       .lanc-hero-content { max-width: 100%; }
@@ -1430,7 +1429,7 @@
     .lanc-progress-fill {
       height: 100%;
       border-radius: 99px;
-      background: linear-gradient(90deg, #10b981, #34d399);
+      background: repeating-linear-gradient(45deg,#5468ff,#5468ff 6px,#3b4ad1 6px,#3b4ad1 12px);
       transition: width .7s cubic-bezier(.4,0,.2,1);
     }
     .lanc-heat-cell {
@@ -1441,7 +1440,7 @@
     }
     /* Contador regressivo + foguete */
     .lanc-cd-num {
-      font-size: 34px; font-weight: 800; color: #10b981; line-height: 1;
+      font-size: 34px; font-weight: 800; color: #6d8bff; line-height: 1;
       font-variant-numeric: tabular-nums;
     }
     .lanc-cd-unit { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
@@ -1458,14 +1457,14 @@
     }
     .lanc-rocket-rail-fill {
       height: 100%; border-radius: 99px;
-      background: linear-gradient(90deg, #10b981, #34d399, #a7f3d0);
+      background: linear-gradient(90deg, #5468ff, #8b9bff, #c7cfff);
       transition: width 1s cubic-bezier(.4,0,.2,1);
     }
     .lanc-rocket {
       position: absolute; top: 2px; transform: translateX(-50%);
       font-size: 24px; transition: left 1s cubic-bezier(.4,0,.2,1);
       animation: lanc-rocket-bob 1.6s ease-in-out infinite;
-      filter: drop-shadow(0 2px 6px rgba(16,185,129,0.4));
+      filter: drop-shadow(0 2px 6px rgba(84,104,255,0.4));
     }
     @keyframes lanc-rocket-bob {
       0%,100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
@@ -3901,14 +3900,14 @@
           <svg class="lanc-hero-map" viewBox="-51.0382 14.2532 11.1814 8.652" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="mgFill" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#10b981" stop-opacity="0.38"/>
-                <stop offset="1" stop-color="#059669" stop-opacity="0.10"/>
+                <stop offset="0" stop-color="#5468ff" stop-opacity="0.38"/>
+                <stop offset="1" stop-color="#0E06A5" stop-opacity="0.10"/>
               </linearGradient>
               <filter id="mgGlow" x="-40%" y="-40%" width="180%" height="180%">
-                <feDropShadow dx="0" dy="0" stdDeviation="0.08" flood-color="#10b981" flood-opacity="0.9"/>
+                <feDropShadow dx="0" dy="0" stdDeviation="0.08" flood-color="#5468ff" flood-opacity="0.9"/>
               </filter>
               <pattern id="mgGridPat" patternUnits="userSpaceOnUse" width="0.34" height="0.34">
-                <path d="M0.34 0 L0 0 0 0.34" fill="none" stroke="#34d399" stroke-width="0.012" opacity="0.35"/>
+                <path d="M0.34 0 L0 0 0 0.34" fill="none" stroke="#8b9bff" stroke-width="0.012" opacity="0.35"/>
               </pattern>
               <clipPath id="mgClip"><path transform="scale(0.0001,-0.0001)" d="M-476797,-183561l-898,-622l-910,-219l-41,-89l-900,-509l-724,639l-2002,901l-446,166l-700,-414l-3120,280l-1334,-104l-1305,473l-418,-176l-943,-791l-1520,-115l-435,-1087l-434,-411l-807,-709l-1128,1025l-614,-73l-1754,-698l-347,-3l-369,-341l-2342,423l-510,-704l-1902,-123l-823,-761l-1209,-1611l-620,-1775l-1105,-359l-874,-522l-73,-262l-876,-976l-474,-1120l498,-505l-1094,58l44,-1228l-1076,-1015l47,-989l330,-2947l1145,950l419,228l1577,514l722,552l522,474l1079,274l1167,-833l1656,-60l656,12l621,-421l1379,-208l1568,125l1362,47l1594,-581l2037,88l-558,-1476l407,-1128l55,-291l761,-559l629,442l548,1170l799,-173l230,-2323l765,-338l194,380l-200,1236l650,1138l925,112l827,-167l1095,334l858,77l2330,-20l152,824l1266,-1029l956,1120l818,-893l296,495l189,864l883,38l1229,-612l905,534l596,245l1604,-1460l981,-1039l-15,-83l-441,-641l-168,-1271l700,-724l793,-497l65,-203l-51,-45l418,-1164l-852,-494l-407,-1241l-5,-10l461,-973l334,-817l303,-1177l-9,-327l743,-815l475,-899l-148,-650l1269,151l1031,365l168,106l1171,-195l315,-507l1072,-588l-29,-763l-429,-880l-598,-231l-162,-921l-600,-690l728,-1574l-320,-145l-696,-738l1210,-531l-471,-442l-262,23l-85,-382l-430,-901l624,-594l446,-726l664,-309l934,-522l322,-777l312,-636l-800,-420l1405,-611l-419,-541l296,-850l1527,400l1415,-318l942,472l855,-217l1030,355l558,662l-929,325l1111,856l-360,330l513,454l125,-779l897,495l-39,-512l1000,624l600,-307l204,-325l1309,423l1023,807l424,335l216,73l1369,147l1220,474l345,222l0,13l59,106l1376,210l40,-78l1182,482l866,747l975,36l997,-140l707,276l98,119l2023,821l2127,832l555,-126l405,-103l770,303l1544,-42l903,562l201,-40l989,-210l965,-4l6,-58l-117,-694l1401,716l926,421l2443,1174l593,269l1428,602l35,14l820,364l1111,339l-861,1228l67,90l914,957l-208,595l398,846l114,51l216,1166l73,609l208,285l560,570l384,446l-47,72l-661,490l1750,385l462,919l15,496l535,281l240,747l253,2079l259,63l-39,548l-332,131l-229,362l374,620l471,508l182,532l908,-1l2504,-4l37,13l1140,2685l265,-46l844,507l124,1243l61,950l1963,1669l58,817l341,1724l-31,285l-289,1006l-965,656l-42,1117l-721,542l-1061,368l108,565l856,-7l1214,-392l1086,217l-247,1248l-1094,565l251,1066l28,703l-1588,177l376,343l-147,971l1070,1431l2786,575l-1291,1214l1039,293l1365,-558l1350,1208l1586,-310l1460,-575l105,855l-118,1606l-165,-6l-1039,1193l-704,55l-685,1216l-365,411l-852,912l569,725l-309,1341l864,2622h587l259,-113l64,85l1197,-110l-254,2044l-62,182l377,1052l1176,-61l477,1302l930,1015l994,635l610,1705l-580,1138l-896,-18l-1231,947l-1082,1036l-1893,-22l-250,441l-698,-360l-1251,687l-557,616l-671,-468l-491,665l-3257,-1244l-1877,287l-120,1047l-197,1436l-24,20l-918,827l-3038,2723l-424,377l-80,-11l-1431,-743l-951,50l-1248,847l-923,-390l-120,113l-2014,995l-367,313l-1030,432l-2534,1750l-668,567l-2361,569l-1362,-186l-1758,-1206l-438,-252l-2,1l-1812,1001l-1713,628l23,901l628,1747l352,485l-1864,652l-761,-98l-2503,306l-1158,-284l-1454,-554l-1842,-1301l-918,-327l-438,-994l-1633,-813l-555,-725l-1098,83l-1001,-890l-3112,-1804l-1229,-1063l-2319,-335l-1054,-1108l1110,2991l-715,909l-18,-6l-1374,-741l-1425,490l-29,858l-1812,1105l-571,-1109l578,-2359l-234,-55l-993,-331l-2315,792l-682,-472l-122,-1475l636,-804l242,-878l-810,-699l-156,-1202l635,-468l764,-2605l-1463,-460l-1841,-108l-1734,-1089l15,-137l-141,-1591l-1318,-2555l417,-1098l1172,-514l698,-947l173,-1542l810,-1040l-547,-853l-1699,-1025l-1366,-1822l-222,226l-138,-858l-120,-452l697,-769l1538,-94l483,-680l-1064,-2199l878,-2095l-1245,-1011l-219,-233l-1772,-810l-32,-695l-695,-404Z"/></clipPath>
             </defs>
@@ -3919,27 +3918,27 @@
             </g>
             <rect x="-51.1" y="14.2" width="11.4" height="8.8" fill="url(#mgGridPat)" clip-path="url(#mgClip)"/>
             <g transform="scale(0.0001,-0.0001)">
-              <path d="M-476797,-183561l-898,-622l-910,-219l-41,-89l-900,-509l-724,639l-2002,901l-446,166l-700,-414l-3120,280l-1334,-104l-1305,473l-418,-176l-943,-791l-1520,-115l-435,-1087l-434,-411l-807,-709l-1128,1025l-614,-73l-1754,-698l-347,-3l-369,-341l-2342,423l-510,-704l-1902,-123l-823,-761l-1209,-1611l-620,-1775l-1105,-359l-874,-522l-73,-262l-876,-976l-474,-1120l498,-505l-1094,58l44,-1228l-1076,-1015l47,-989l330,-2947l1145,950l419,228l1577,514l722,552l522,474l1079,274l1167,-833l1656,-60l656,12l621,-421l1379,-208l1568,125l1362,47l1594,-581l2037,88l-558,-1476l407,-1128l55,-291l761,-559l629,442l548,1170l799,-173l230,-2323l765,-338l194,380l-200,1236l650,1138l925,112l827,-167l1095,334l858,77l2330,-20l152,824l1266,-1029l956,1120l818,-893l296,495l189,864l883,38l1229,-612l905,534l596,245l1604,-1460l981,-1039l-15,-83l-441,-641l-168,-1271l700,-724l793,-497l65,-203l-51,-45l418,-1164l-852,-494l-407,-1241l-5,-10l461,-973l334,-817l303,-1177l-9,-327l743,-815l475,-899l-148,-650l1269,151l1031,365l168,106l1171,-195l315,-507l1072,-588l-29,-763l-429,-880l-598,-231l-162,-921l-600,-690l728,-1574l-320,-145l-696,-738l1210,-531l-471,-442l-262,23l-85,-382l-430,-901l624,-594l446,-726l664,-309l934,-522l322,-777l312,-636l-800,-420l1405,-611l-419,-541l296,-850l1527,400l1415,-318l942,472l855,-217l1030,355l558,662l-929,325l1111,856l-360,330l513,454l125,-779l897,495l-39,-512l1000,624l600,-307l204,-325l1309,423l1023,807l424,335l216,73l1369,147l1220,474l345,222l0,13l59,106l1376,210l40,-78l1182,482l866,747l975,36l997,-140l707,276l98,119l2023,821l2127,832l555,-126l405,-103l770,303l1544,-42l903,562l201,-40l989,-210l965,-4l6,-58l-117,-694l1401,716l926,421l2443,1174l593,269l1428,602l35,14l820,364l1111,339l-861,1228l67,90l914,957l-208,595l398,846l114,51l216,1166l73,609l208,285l560,570l384,446l-47,72l-661,490l1750,385l462,919l15,496l535,281l240,747l253,2079l259,63l-39,548l-332,131l-229,362l374,620l471,508l182,532l908,-1l2504,-4l37,13l1140,2685l265,-46l844,507l124,1243l61,950l1963,1669l58,817l341,1724l-31,285l-289,1006l-965,656l-42,1117l-721,542l-1061,368l108,565l856,-7l1214,-392l1086,217l-247,1248l-1094,565l251,1066l28,703l-1588,177l376,343l-147,971l1070,1431l2786,575l-1291,1214l1039,293l1365,-558l1350,1208l1586,-310l1460,-575l105,855l-118,1606l-165,-6l-1039,1193l-704,55l-685,1216l-365,411l-852,912l569,725l-309,1341l864,2622h587l259,-113l64,85l1197,-110l-254,2044l-62,182l377,1052l1176,-61l477,1302l930,1015l994,635l610,1705l-580,1138l-896,-18l-1231,947l-1082,1036l-1893,-22l-250,441l-698,-360l-1251,687l-557,616l-671,-468l-491,665l-3257,-1244l-1877,287l-120,1047l-197,1436l-24,20l-918,827l-3038,2723l-424,377l-80,-11l-1431,-743l-951,50l-1248,847l-923,-390l-120,113l-2014,995l-367,313l-1030,432l-2534,1750l-668,567l-2361,569l-1362,-186l-1758,-1206l-438,-252l-2,1l-1812,1001l-1713,628l23,901l628,1747l352,485l-1864,652l-761,-98l-2503,306l-1158,-284l-1454,-554l-1842,-1301l-918,-327l-438,-994l-1633,-813l-555,-725l-1098,83l-1001,-890l-3112,-1804l-1229,-1063l-2319,-335l-1054,-1108l1110,2991l-715,909l-18,-6l-1374,-741l-1425,490l-29,858l-1812,1105l-571,-1109l578,-2359l-234,-55l-993,-331l-2315,792l-682,-472l-122,-1475l636,-804l242,-878l-810,-699l-156,-1202l635,-468l764,-2605l-1463,-460l-1841,-108l-1734,-1089l15,-137l-141,-1591l-1318,-2555l417,-1098l1172,-514l698,-947l173,-1542l810,-1040l-547,-853l-1699,-1025l-1366,-1822l-222,226l-138,-858l-120,-452l697,-769l1538,-94l483,-680l-1064,-2199l878,-2095l-1245,-1011l-219,-233l-1772,-810l-32,-695l-695,-404Z" fill="none" stroke="#34d399" stroke-width="2.2" vector-effect="non-scaling-stroke" filter="url(#mgGlow)"/>
+              <path d="M-476797,-183561l-898,-622l-910,-219l-41,-89l-900,-509l-724,639l-2002,901l-446,166l-700,-414l-3120,280l-1334,-104l-1305,473l-418,-176l-943,-791l-1520,-115l-435,-1087l-434,-411l-807,-709l-1128,1025l-614,-73l-1754,-698l-347,-3l-369,-341l-2342,423l-510,-704l-1902,-123l-823,-761l-1209,-1611l-620,-1775l-1105,-359l-874,-522l-73,-262l-876,-976l-474,-1120l498,-505l-1094,58l44,-1228l-1076,-1015l47,-989l330,-2947l1145,950l419,228l1577,514l722,552l522,474l1079,274l1167,-833l1656,-60l656,12l621,-421l1379,-208l1568,125l1362,47l1594,-581l2037,88l-558,-1476l407,-1128l55,-291l761,-559l629,442l548,1170l799,-173l230,-2323l765,-338l194,380l-200,1236l650,1138l925,112l827,-167l1095,334l858,77l2330,-20l152,824l1266,-1029l956,1120l818,-893l296,495l189,864l883,38l1229,-612l905,534l596,245l1604,-1460l981,-1039l-15,-83l-441,-641l-168,-1271l700,-724l793,-497l65,-203l-51,-45l418,-1164l-852,-494l-407,-1241l-5,-10l461,-973l334,-817l303,-1177l-9,-327l743,-815l475,-899l-148,-650l1269,151l1031,365l168,106l1171,-195l315,-507l1072,-588l-29,-763l-429,-880l-598,-231l-162,-921l-600,-690l728,-1574l-320,-145l-696,-738l1210,-531l-471,-442l-262,23l-85,-382l-430,-901l624,-594l446,-726l664,-309l934,-522l322,-777l312,-636l-800,-420l1405,-611l-419,-541l296,-850l1527,400l1415,-318l942,472l855,-217l1030,355l558,662l-929,325l1111,856l-360,330l513,454l125,-779l897,495l-39,-512l1000,624l600,-307l204,-325l1309,423l1023,807l424,335l216,73l1369,147l1220,474l345,222l0,13l59,106l1376,210l40,-78l1182,482l866,747l975,36l997,-140l707,276l98,119l2023,821l2127,832l555,-126l405,-103l770,303l1544,-42l903,562l201,-40l989,-210l965,-4l6,-58l-117,-694l1401,716l926,421l2443,1174l593,269l1428,602l35,14l820,364l1111,339l-861,1228l67,90l914,957l-208,595l398,846l114,51l216,1166l73,609l208,285l560,570l384,446l-47,72l-661,490l1750,385l462,919l15,496l535,281l240,747l253,2079l259,63l-39,548l-332,131l-229,362l374,620l471,508l182,532l908,-1l2504,-4l37,13l1140,2685l265,-46l844,507l124,1243l61,950l1963,1669l58,817l341,1724l-31,285l-289,1006l-965,656l-42,1117l-721,542l-1061,368l108,565l856,-7l1214,-392l1086,217l-247,1248l-1094,565l251,1066l28,703l-1588,177l376,343l-147,971l1070,1431l2786,575l-1291,1214l1039,293l1365,-558l1350,1208l1586,-310l1460,-575l105,855l-118,1606l-165,-6l-1039,1193l-704,55l-685,1216l-365,411l-852,912l569,725l-309,1341l864,2622h587l259,-113l64,85l1197,-110l-254,2044l-62,182l377,1052l1176,-61l477,1302l930,1015l994,635l610,1705l-580,1138l-896,-18l-1231,947l-1082,1036l-1893,-22l-250,441l-698,-360l-1251,687l-557,616l-671,-468l-491,665l-3257,-1244l-1877,287l-120,1047l-197,1436l-24,20l-918,827l-3038,2723l-424,377l-80,-11l-1431,-743l-951,50l-1248,847l-923,-390l-120,113l-2014,995l-367,313l-1030,432l-2534,1750l-668,567l-2361,569l-1362,-186l-1758,-1206l-438,-252l-2,1l-1812,1001l-1713,628l23,901l628,1747l352,485l-1864,652l-761,-98l-2503,306l-1158,-284l-1454,-554l-1842,-1301l-918,-327l-438,-994l-1633,-813l-555,-725l-1098,83l-1001,-890l-3112,-1804l-1229,-1063l-2319,-335l-1054,-1108l1110,2991l-715,909l-18,-6l-1374,-741l-1425,490l-29,858l-1812,1105l-571,-1109l578,-2359l-234,-55l-993,-331l-2315,792l-682,-472l-122,-1475l636,-804l242,-878l-810,-699l-156,-1202l635,-468l764,-2605l-1463,-460l-1841,-108l-1734,-1089l15,-137l-141,-1591l-1318,-2555l417,-1098l1172,-514l698,-947l173,-1542l810,-1040l-547,-853l-1699,-1025l-1366,-1822l-222,226l-138,-858l-120,-452l697,-769l1538,-94l483,-680l-1064,-2199l878,-2095l-1245,-1011l-219,-233l-1772,-810l-32,-695l-695,-404Z" fill="none" stroke="#8b9bff" stroke-width="2.2" vector-effect="non-scaling-stroke" filter="url(#mgGlow)"/>
             </g>
 
             <!-- Marcador Sabinópolis (pulsante) -->
-            <circle cx="-43.0635" cy="18.6509" r="0.1" fill="none" stroke="#6ee7b7" stroke-width="0.035">
+            <circle cx="-43.0635" cy="18.6509" r="0.1" fill="none" stroke="#b4c0ff" stroke-width="0.035">
               <animate attributeName="r" values="0.14;0.95" dur="2.6s" repeatCount="indefinite"/>
               <animate attributeName="opacity" values="0.95;0" dur="2.6s" repeatCount="indefinite"/>
             </circle>
-            <circle cx="-43.0635" cy="18.6509" r="0.1" fill="none" stroke="#6ee7b7" stroke-width="0.03">
+            <circle cx="-43.0635" cy="18.6509" r="0.1" fill="none" stroke="#b4c0ff" stroke-width="0.03">
               <animate attributeName="r" values="0.14;0.95" dur="2.6s" begin="1.3s" repeatCount="indefinite"/>
               <animate attributeName="opacity" values="0.95;0" dur="2.6s" begin="1.3s" repeatCount="indefinite"/>
             </circle>
-            <circle cx="-43.0635" cy="18.6509" r="0.19" fill="#10b981" opacity="0.35"/>
-            <circle cx="-43.0635" cy="18.6509" r="0.11" fill="#10b981"/>
-            <circle cx="-43.0635" cy="18.6509" r="0.05" fill="#ecfdf5"/>
+            <circle cx="-43.0635" cy="18.6509" r="0.19" fill="#5468ff" opacity="0.35"/>
+            <circle cx="-43.0635" cy="18.6509" r="0.11" fill="#5468ff"/>
+            <circle cx="-43.0635" cy="18.6509" r="0.05" fill="#eef2ff"/>
           </svg>
 
           <!-- Conteúdo -->
           <div class="lanc-hero-content">
-            <div class="live-badge" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3);color:#10b981;">
-              <span class="pulse-dot" style="background:#10b981;"></span> Ao Vivo
+            <div class="live-badge" style="background:rgba(84,104,255,0.15);border-color:rgba(84,104,255,0.35);color:#8b9bff;">
+              <span class="pulse-dot" style="background:#5468ff;"></span> Ao Vivo
             </div>
             <h1 class="welcome-title" id="lanc-welcome-title" style="margin:10px 0 6px;">Lançamento</h1>
             <p class="motivation-text" id="lanc-welcome-sub" style="margin:0;">Cadastros em tempo real</p>
@@ -3952,8 +3951,8 @@
           <!-- Contador -->
           <div class="lanc-hero-count">
             <div style="display:flex;align-items:center;gap:7px;justify-content:flex-end;margin-bottom:2px;">
-              <i data-lucide="users-round" style="width:15px;height:15px;color:#10b981;"></i>
-              <span style="font-size:11px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:.6px;">Cadastros</span>
+              <i data-lucide="users-round" style="width:15px;height:15px;color:#6d8bff;"></i>
+              <span style="font-size:11px;font-weight:700;color:#6d8bff;text-transform:uppercase;letter-spacing:.6px;">Cadastros</span>
             </div>
             <div id="lanc-total-hero" class="lanc-hero-num">—</div>
             <div style="font-size:11px;color:#94a3b8;">únicos · sem duplicados</div>
@@ -17337,7 +17336,7 @@
           const hj = porDia[_todayISO] || 0, on = porDia[_yISO] || 0, dl = hj - on;
           _heroCtx.innerHTML = (hj > 0 ? '▲ +' + hj + ' hoje' : (dl < 0 ? '▼ ' + dl + ' vs ontem' : 'sem novos hoje')) +
             (media ? ' <span style="color:#64748b;font-weight:400;">· média ' + media + '/dia</span>' : '');
-          _heroCtx.style.color = hj > 0 ? '#10b981' : '#64748b';
+          _heroCtx.style.color = hj > 0 ? '#6d8bff' : '#64748b';
         }
         if (window.lucide) lucide.createIcons({ elements: [box] });
         console.log('[CRM] únicos:', total, '| repetidos:', dup, '| Julia(Forms):', juliaY, '| Forms(X):', formsX, '| última DT_INICIO:', maxDia);
@@ -17362,7 +17361,7 @@
       if (!series.length) { el.innerHTML = '<div style="color:#475569;font-size:12px;">Sem dados.</div>'; return; }
       if (!window.ApexCharts) { el.innerHTML = _lancBarras((origens || []).slice(0, 8), '#38bdf8', totalBase); return; }
       try { if (window._lancCrmDonut) { window._lancCrmDonut.destroy(); window._lancCrmDonut = null; } } catch (e) {}
-      const cores = ['#10b981', '#38bdf8', '#a855f7', '#f59e0b', '#f43f5e', '#6d5efc', '#64748b'];
+      const cores = ['#5468ff', '#38bdf8', '#a855f7', '#f59e0b', '#f43f5e', '#8b9bff', '#64748b'];
       const opt = {
         chart: { type: 'donut', height: 250, background: 'transparent', fontFamily: 'Poppins, Inter, sans-serif' },
         series: series, labels: labels, colors: cores,
@@ -17385,7 +17384,7 @@
         '<div class="crm-kpi"><div class="crm-kpi-l">' + label + '</div><div class="crm-kpi-v" style="color:' + (cor || '#e2e8f0') + '">' + val + '</div>' + (sub ? '<div class="crm-kpi-s">' + sub + '</div>' : '') + '</div>';
       const diff = (d.formsX != null) ? Math.max(d.formsX - d.juliaY, 0) : null;
       const kpis =
-        kpi(nf(d.total), 'Total de cadastros', 'únicos (sem repetidos)', '#10b981') +
+        kpi(nf(d.total), 'Total de cadastros', 'únicos (sem repetidos)', '#6d8bff') +
         kpi(nf(d.dup), 'Repetidos filtrados', 'CPFs duplicados', '#f59e0b') +
         kpi(nf(d.formsX), 'Cadastros do Forms', 'planilha do Forms', '#38bdf8') +
         kpi(nf(d.juliaY), 'Forms no CRM', 'em nome da Julia Dourado', '#a855f7') +
@@ -17439,7 +17438,7 @@
       const painel = (titulo, conteudo) => '<div class="crm-panel"><div class="crm-panel-h">' + titulo + '</div>' + conteudo + '</div>';
 
       return '<div class="lanc-weather-card-inner">' +
-        '<div class="lw-head"><div class="lw-ic" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25);">👥</div><div>' +
+        '<div class="lw-head"><div class="lw-ic" style="background:rgba(84,104,255,.12);border-color:rgba(84,104,255,.28);">👥</div><div>' +
         '<div class="lw-title">Cadastros Gerais (CRM)</div>' +
         '<div class="lw-sub">Base interna · última atualização: ' + _lancDataBR(d.maxDia) + '</div></div></div>' +
         '<div class="crm-kpis">' + kpis + '</div>' +
