@@ -1284,6 +1284,8 @@
     @keyframes lancHeroGlow { 0%,100% { opacity:.55; } 50% { opacity:.9; } }
     /* === Previsao do tempo (Lancamento) === */
     .lanc-weather-card { margin-bottom: 20px; }
+    .lanc-forms-divider { display:flex; align-items:center; gap:9px; margin:4px 0 16px; padding-top:20px; border-top:1px solid var(--border-glass); font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.6px; }
+    .lanc-forms-divider i { color:#38bdf8; }
     .crm-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px; }
     .crm-kpi { background:rgba(255,255,255,.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px 16px; }
     .crm-kpi-l { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
@@ -3935,6 +3937,15 @@
         <!-- Conteúdo principal -->
         <div id="lanc-content" style="display:none;">
 
+          <!-- Cadastros Gerais (CRM) — total atualizado (topo, fonte da verdade) -->
+          <div id="lanc-crm" class="lanc-weather-card" style="display:none;"></div>
+
+          <!-- Divisor: dados do Forms viram detalhamento -->
+          <div id="lanc-forms-divider" class="lanc-forms-divider">
+            <i data-lucide="file-text"></i>
+            <span>Cadastros do Forms · detalhamento</span>
+          </div>
+
           <!-- KPIs -->
           <div class="lanc-kpi-grid" id="lanc-kpi-grid"><!-- preenchido por JS --></div>
 
@@ -3946,9 +3957,6 @@
 
           <!-- Previsao do tempo semanal da cidade do lancamento -->
           <div id="lanc-weather" class="lanc-weather-card" style="display:none;"></div>
-
-          <!-- Cadastros Gerais (CRM) -->
-          <div id="lanc-crm" class="lanc-weather-card" style="display:none;"></div>
 
           <!-- Canal + Evolução 30 dias -->
           <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:20px;">
@@ -17252,6 +17260,8 @@
         const porDia = {}; let maxDia = '';
         regs.forEach(r => { const d = _lancDataISO(r.inicio); if (d) { porDia[d] = (porDia[d] || 0) + 1; if (d > maxDia) maxDia = d; } });
         box.innerHTML = _lancCrmHTML({ total, dup, juliaY, formsX, corretores, origens, maxDia, porDia });
+        const _hero = document.getElementById('lanc-total-hero');
+        if (_hero) _hero.textContent = total.toLocaleString('pt-BR');
         if (window.lucide) lucide.createIcons({ elements: [box] });
         console.log('[CRM] únicos:', total, '| repetidos:', dup, '| Julia(Forms):', juliaY, '| Forms(X):', formsX, '| última DT_INICIO:', maxDia);
       } catch (e) { console.warn('[CRM] falhou:', e && e.message); box.style.display = 'none'; }
