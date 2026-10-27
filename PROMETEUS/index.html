@@ -1401,16 +1401,26 @@
       padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600;
     }
     .lanc-hero-count {
-      position: relative; z-index: 2; text-align: right; padding: 14px 18px; border-radius: 16px;
-      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      position: relative; z-index: 2; text-align: right; padding: 16px 22px; border-radius: 18px; min-width: 190px;
+      background: linear-gradient(165deg, rgba(84,104,255,.11), rgba(255,255,255,.015));
+      border: 1px solid rgba(84,104,255,.22);
+      box-shadow: 0 12px 34px -16px rgba(14,6,165,.55), inset 0 1px 0 rgba(255,255,255,.06);
     }
+    .lanc-hero-label { display:flex; align-items:center; gap:7px; justify-content:flex-end; font-size:10.5px; font-weight:700; color:#8b9bff; text-transform:uppercase; letter-spacing:1.3px; }
     .lanc-hero-num {
-      font-size: 48px; font-weight: 800; color: #6d8bff; line-height: 1; letter-spacing: -1px;
-      text-shadow: 0 0 22px rgba(84,104,255,.5); font-variant-numeric: tabular-nums;
+      font-size: 56px; font-weight: 800; line-height: 1; letter-spacing: -2px; margin: 3px 0 1px;
+      font-variant-numeric: tabular-nums;
+      background: linear-gradient(135deg, #d4dbff, #6d8bff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+      filter: drop-shadow(0 0 20px rgba(84,104,255,.45));
     }
+    .lanc-hero-sub2 { font-size:11.5px; color:#9aa3b8; }
+    .lanc-hero-ctx2 { margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.07); display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
+    .lanc-hero-pill { display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; color:#9fb0ff; background:rgba(84,104,255,.14); border:1px solid rgba(84,104,255,.32); padding:3px 9px; border-radius:20px; }
+    .lanc-hero-pill.muted { color:#8a93a8; background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1); }
+    .lanc-hero-media { font-size:10.5px; color:#8a93a8; }
     @media (max-width: 720px) {
       .lanc-hero-content { max-width: 100%; }
-      .lanc-hero-num { font-size: 38px; }
+      .lanc-hero-num { font-size: 44px; }
       .lanc-hero-map { opacity: .5; }
     }
 
@@ -3950,13 +3960,10 @@
 
           <!-- Contador -->
           <div class="lanc-hero-count">
-            <div style="display:flex;align-items:center;gap:7px;justify-content:flex-end;margin-bottom:2px;">
-              <i data-lucide="users-round" style="width:15px;height:15px;color:#6d8bff;"></i>
-              <span style="font-size:11px;font-weight:700;color:#6d8bff;text-transform:uppercase;letter-spacing:.6px;">Cadastros</span>
-            </div>
+            <div class="lanc-hero-label"><i data-lucide="users-round" style="width:14px;height:14px;"></i> Cadastros</div>
             <div id="lanc-total-hero" class="lanc-hero-num">—</div>
-            <div style="font-size:11px;color:#94a3b8;">únicos · sem duplicados</div>
-            <div id="lanc-hero-ctx" style="font-size:11px;font-weight:700;margin-top:3px;color:#64748b;"></div>
+            <div class="lanc-hero-sub2">únicos · sem duplicados</div>
+            <div id="lanc-hero-ctx" class="lanc-hero-ctx2"></div>
           </div>
         </div>
 
@@ -17334,9 +17341,9 @@
         const _heroCtx = document.getElementById('lanc-hero-ctx');
         if (_heroCtx) {
           const hj = porDia[_todayISO] || 0, on = porDia[_yISO] || 0, dl = hj - on;
-          _heroCtx.innerHTML = (hj > 0 ? '▲ +' + hj + ' hoje' : (dl < 0 ? '▼ ' + dl + ' vs ontem' : 'sem novos hoje')) +
-            (media ? ' <span style="color:#64748b;font-weight:400;">· média ' + media + '/dia</span>' : '');
-          _heroCtx.style.color = hj > 0 ? '#6d8bff' : '#64748b';
+          const pillTxt = hj > 0 ? '▲ +' + hj + ' hoje' : (dl < 0 ? '▼ ' + dl + ' vs ontem' : 'sem novos hoje');
+          _heroCtx.innerHTML = '<span class="lanc-hero-pill' + (hj > 0 ? '' : ' muted') + '">' + pillTxt + '</span>' +
+            (media ? '<span class="lanc-hero-media">média ' + media + '/dia</span>' : '');
         }
         if (window.lucide) lucide.createIcons({ elements: [box] });
         console.log('[CRM] únicos:', total, '| repetidos:', dup, '| Julia(Forms):', juliaY, '| Forms(X):', formsX, '| última DT_INICIO:', maxDia);
