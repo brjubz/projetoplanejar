@@ -175,16 +175,19 @@
     /* VARIÁVEIS DO DESIGN SYSTEM V9.5 */
     :root {
       --bg-body: #060609;
-      --bg-glass: rgba(16, 16, 24, 0.55);
-      --bg-glass-hover: rgba(35, 35, 45, 0.6);
+      --bg-glass: rgba(21, 22, 30, 0.74);
+      --bg-glass-hover: rgba(30, 31, 42, 0.82);
       --bg-input: rgba(255, 255, 255, 0.03);
-      --border-glass: rgba(255, 255, 255, 0.06);
-      --border-light: rgba(255, 255, 255, 0.12);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.14);
+      --shadow-card: 0 16px 38px -22px rgba(0, 0, 0, 0.8);
+      --shadow-soft: 0 10px 26px -18px rgba(0, 0, 0, 0.65);
+      --sheen: linear-gradient(160deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
       
       /* Paleta */
-      --accent-primary: #4f46e5; 
-      --accent-secondary: #6d5efc; 
-      --accent-tertiary: #5b50f0; 
+      --accent-primary: #5468ff; 
+      --accent-secondary: #6d8bff; 
+      --accent-tertiary: #4a5bd6; 
       --accent-white: #ffffff;
       
       --text-white: #ffffff;
@@ -215,6 +218,9 @@
       color: var(--text-white);
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: -0.01em;
       background-image: 
         radial-gradient(760px circle at 88% -6%, rgba(79, 70, 229, 0.14) 0%, transparent 50%),
         radial-gradient(620px circle at 10% 6%, rgba(14, 6, 165, 0.12) 0%, transparent 46%);
@@ -951,7 +957,8 @@
     .grid-4col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
     
-    .card { background: rgba(255,255,255,0.022); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 35px 30px; position: relative; display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; min-width: 0; word-wrap: break-word; }
+    .card { background: var(--sheen), var(--bg-glass); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 35px 30px; position: relative; display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; min-width: 0; word-wrap: break-word; box-shadow: var(--shadow-card); }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 26px 50px -24px rgba(0,0,0,0.85); border-color: var(--border-light); }
     .card:hover { transform: translateY(-2px); box-shadow: 0 18px 44px -18px rgba(0,0,0,0.65); border-color: var(--border-light); }
     
     .card-destaque { background: linear-gradient(145deg, rgba(37, 99, 235, 0.1), var(--bg-glass)); border-color: rgba(37, 99, 235, 0.2); }
@@ -990,7 +997,16 @@
     .rank-sort-btn.active { background: var(--accent-primary); border-color: var(--accent-primary); color: #fff; box-shadow: 0 0 12px rgba(37,99,235,0.4); }
 
     /* === RANKINGS E PODIUMS === */
-    .section-title { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #fff; margin: 10px 0 0 10px; display: flex; align-items: center; gap: 12px; }
+    /* === Elevação premium compartilhada (todos os módulos) === */
+    .social-stat-card, .social-chart-card, .news-card, .news-ind-card, .email-stat-card,
+    .filter-section, .table-container, .table-header-expand, .app-loading-box,
+    .ig-profile-header, .news-toolbar, .search-input-wrapper, .modal-content {
+      box-shadow: var(--shadow-soft);
+    }
+    .social-stat-card, .social-chart-card, .email-stat-card, .news-ind-card {
+      background: var(--sheen), var(--bg-glass) !important;
+    }
+    .section-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #fff; margin: 10px 0 0 10px; display: flex; align-items: center; gap: 12px; }
     .section-title i { color: var(--accent-primary); transition: 0.5s; }
     .grid-podium { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .ranking-row { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-glass); }
