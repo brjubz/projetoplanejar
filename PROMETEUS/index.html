@@ -7050,7 +7050,10 @@
       const vgvTotal = vendas.reduce((acc, curr) => acc + curr.vgv, 0);
       const entradasTotal = vendas.reduce((acc, curr) => acc + curr.entradas, 0);
       const qtdContratos = vendas.length;
-      const ticketMedio = qtdContratos > 0 ? (vgvTotal / qtdContratos) : 0;
+      // Totalizador = fonte da verdade (VGV liquido + qtd de vendas)
+      const vgvHead = (window._totVGV != null) ? window._totVGV : vgvTotal;
+      const qtdHead = (window._totQtd != null) ? window._totQtd : qtdContratos;
+      const ticketMedio = qtdHead > 0 ? (vgvHead / qtdHead) : 0;
 
       // Taxa de conversão = apenas vendas que cruzaram com lead do pré-atendimento / total leads
       const _crossVendas = _cruzarAtendVendas(leadsFiltrados, vendas);
@@ -7059,9 +7062,9 @@
         ? ((_crossVendas.vendasPre.length / leadsFiltrados.length) * 100).toFixed(2)
         : 0;
 
-      document.getElementById('vgvTotal').textContent = formatBRL(vgvTotal);
+      document.getElementById('vgvTotal').textContent = formatBRL(vgvHead);
       document.getElementById('entradasTotal').textContent = formatBRL(entradasTotal);
-      document.getElementById('qtdContratos').textContent = qtdContratos;
+      document.getElementById('qtdContratos').textContent = qtdHead;
       document.getElementById('ticketMedio').textContent = formatBRL(ticketMedio);
       document.getElementById('taxaConversao').textContent = `${conversao}%`;
 
@@ -8696,6 +8699,7 @@
 
       // Metas mensais (carrega do Firestore na primeira vez, depois usa cache)
       _homeRenderVGVArea(vendas);
+      set('home-vgv-chart-num', formatBRL(vgvHead));
       _homeRenderKPIMoM();
       _homeRenderVSOEmpreendimentos(vendas);
       _homeSetPhraseAndMonth(vgvHead);
@@ -9008,8 +9012,8 @@
 
       // Realizados no período filtrado
       const realizados = {
-        lotes:    vendas.length,
-        vgv:      vendas.reduce((s, v) => s + (v.vgv     || 0), 0),
+        lotes:    (window._totQtd != null) ? window._totQtd : vendas.length,
+        vgv:      (window._totVGV != null) ? window._totVGV : vendas.reduce((s, v) => s + (v.vgv     || 0), 0),
         entradas: vendas.reduce((s, v) => s + (v.entradas || 0), 0),
       };
 
