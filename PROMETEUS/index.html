@@ -4850,6 +4850,10 @@
               window.ESTOQUE_GIDS = data.gids || {};
               console.log('✓ ESTOQUE_SHEET_ID definido como:', ESTOQUE_SHEET_ID, '| GIDs mensais:', ESTOQUE_GIDS);
             }
+            if (nome.includes('totalizador')) {
+              window.TOTALIZADOR_SHEET_ID = data.googleSheetId;
+              console.log('✓ TOTALIZADOR_SHEET_ID definido como:', TOTALIZADOR_SHEET_ID);
+            }
           }
         });
         
@@ -5700,6 +5704,7 @@
         if (_overlayAtivo) atualizarProgressoLoadingApp(88, 'Calculando estoque e corretores...');
         await Promise.all([
           _preloadEstoque().catch(() => {}),
+          _carregarTotalizador().catch(() => {}),
           _preloadCorretores().catch(() => {}),
         ]);
 
@@ -5848,25 +5853,18 @@
           document.getElementById('cardComissaoContainer').style.display = 'block';
 
           const percentual = userData.comissao.percentual;
-          document.getElementById('comissaoPercentualInfo').textContent = `${percentual}% sobre VGV próprio`;
+          document.getElementById('comissaoPercentualInfo').textContent = `${percentual}% sobre o VGV líquido (totalizador)`;
 
           // Calcular comissão baseada no VGV atual (vendas do corretor logado)
           // Tenta pegar VGV apenas das vendas do usuário logado; fallback para VGV total
+          // Base da comissao: VGV LIQUIDO do TOTALIZADOR (regra: todos sobre o VGV geral)
           let vgvValue = 0;
-          const vendasAtual = window.allVendasFiltered || window.allVendas || [];
-          const nomeUsuario2 = localStorage.getItem('nomeUsuario') || '';
-          const vendasProprias = nomeUsuario2
-            ? vendasAtual.filter(v => (v.corretor || '').toUpperCase() === nomeUsuario2.toUpperCase())
-            : [];
-          if (vendasProprias.length > 0) {
-            vgvValue = vendasProprias.reduce((s, v) => s + (v.vgv || 0), 0);
+          if (window._totVGV != null) {
+            vgvValue = window._totVGV;
           } else {
-            // fallback: lê do elemento VGV total na tela
-            const vgvElement = document.getElementById('vgvTotal');
-            if (vgvElement) {
-              let vgvText = vgvElement.textContent.trim().replace(/R\$|\s/g, '');
-              vgvValue = parseFloat(vgvText.replace(/\./g, '').replace(',', '.')) || 0;
-            }
+            // fallback (totalizador ainda nao carregado): VGV total das vendas detalhadas
+            const vendasAtual = window.allVendasFiltered || window.allVendas || [];
+            vgvValue = vendasAtual.reduce((s, v) => s + (v.vgv || 0), 0);
           }
 
           const comissaoValue = vgvValue * (percentual / 100);
@@ -5886,8 +5884,7 @@
             const vendasAntProprias = nomeUsuario2
               ? vendasAnt.filter(v => (v.corretor || '').toUpperCase() === nomeUsuario2.toUpperCase())
               : vendasAnt;
-            const vgvAnt = (vendasAntProprias.length > 0 ? vendasAntProprias : vendasAnt)
-              .reduce((s, v) => s + (v.vgv || 0), 0);
+            const vgvAnt = vendasAnt.reduce((s, v) => s + (v.vgv || 0), 0);
             const comissaoAnt = vgvAnt * (percentual / 100);
 
             antVisEl.textContent = formatBRL(comissaoAnt);
@@ -6008,7 +6005,7 @@
         // Pegar VGV para calcular comissões
         const vgvElement = document.getElementById('vgvTotal');
         const vgvText = vgvElement.textContent.trim();
-        const vgvValue = parseFloat(vgvText.replace(/R\$|\s/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+        const vgvValue = (window._totVGV != null) ? window._totVGV : (parseFloat(vgvText.replace(/R\$|\s/g, '').replace(/\./g, '').replace(',', '.')) || 0);
 
         // ===== PUXAR COMISSÃO DE JULIA =====
         let comissaoJulia = 0;
@@ -8500,15 +8497,18 @@
       const entradas     = vendas.reduce((a, c) => a + (c.entradas || 0), 0);
       const qtdContratos = vendas.length;
       const gastoTotal   = gastos.reduce((a, c) => a + (c.negociado || 0), 0);
+      // Totalizador = fonte da verdade dos numeros gerais (VGV liquido + lotes); fallback = detalhado
+      const vgvHead = (window._totVGV != null) ? window._totVGV : vgvTotal;
+      const qtdHead = (window._totQtd != null) ? window._totQtd : qtdContratos;
 
       // Metricas cruzadas
-      const roi    = gastoTotal > 0 ? (vgvTotal / gastoTotal).toFixed(1) + 'x' : '--';
+      const roi    = gastoTotal > 0 ? (vgvHead / gastoTotal).toFixed(1) + 'x' : '--';
       const cpl    = totalLeads > 0 ? formatBRL(gastoTotal / totalLeads) : '--';
-      const cac    = qtdContratos > 0 ? formatBRL(gastoTotal / qtdContratos) : '--';
+      const cac    = qtdHead > 0 ? formatBRL(gastoTotal / qtdHead) : '--';
       // conv = apenas vendas cruzadas com pré-atendimento ÷ total leads
       const _crossHome = _cruzarAtendVendas(leads, vendas);
       const conv   = totalLeads > 0 ? (_crossHome.convertidos / totalLeads * 100).toFixed(1) + '%' : '--';
-      const ticket = qtdContratos > 0 ? formatBRL(vgvTotal / qtdContratos) : '--';
+      const ticket = qtdHead > 0 ? formatBRL(vgvHead / qtdHead) : '--';
 
       // Obras
       const obrasEntregues = obras.filter(o => (o.progresso || 0) >= 100).length;
@@ -8569,9 +8569,9 @@
       };
 
       // Vendas + Gastos
-      set('home-vgv',        formatBRL(vgvTotal));
+      set('home-vgv',        formatBRL(vgvHead));
       set('home-entradas',   formatBRL(entradas));
-      set('home-contratos',  qtdContratos);
+      set('home-contratos',  qtdHead);
       set('home-gastos',     formatBRL(gastoTotal));
 
       // ── Tags comparativas mês atual vs anterior ──────────────────────────────
@@ -8599,9 +8599,9 @@
           el.textContent = `${sobe ? '▲' : '▼'} ${Math.abs(pct).toFixed(1)}% vs mês ant.`;
         }
 
-        _deltaTag('home-vgv-delta',          vgvTotal,    vgvAnt,       false);
+        _deltaTag('home-vgv-delta',          vgvHead,     vgvAnt,       false);
         _deltaTag('home-entradas-delta',      entradas,    entradasAnt,  false);
-        _deltaTag('home-contratos-delta',     qtdContratos, contratosAnt, false);
+        _deltaTag('home-contratos-delta',     qtdHead,     contratosAnt, false);
         _deltaTag('home-gastos-delta',        gastoTotal,  gastosAntTotal, true);
         // Vendas Pré-Atend. vs mês anterior (usa total de vendas como proxy se não há cruzamento anterior)
         const _preAntProxy = (window.allVendasAnteriorMes || []).length;
@@ -8698,12 +8698,59 @@
       _homeRenderVGVArea(vendas);
       _homeRenderKPIMoM();
       _homeRenderVSOEmpreendimentos(vendas);
-      _homeSetPhraseAndMonth(vgvTotal);
-      _loadMetasMensais().then(() => { _renderMetasMensais(vendas); _homeRenderVGVBlueMeta(vgvTotal); });
+      _homeSetPhraseAndMonth(vgvHead);
+      _loadMetasMensais().then(() => { _renderMetasMensais(vendas); _homeRenderVGVBlueMeta(vgvHead); });
 
       if (window.lucide) lucide.createIcons();
     }
     window.renderAreaHome = renderAreaHome;
+
+    // === TOTALIZADOR DE VENDAS (fonte da verdade: VGV liquido + qtd de lotes) ===
+    window.TOTALIZADOR_SHEET_ID = window.TOTALIZADOR_SHEET_ID || '';
+    window._totVGV = null;  // VGV liquido
+    window._totQtd = null;  // qtd de vendas/lotes
+    async function _carregarTotalizador() {
+      window._totVGV = null; window._totQtd = null;
+      const id = window.TOTALIZADOR_SHEET_ID || '';
+      if (!id) return;
+      try {
+        const info = extrairSheetIdEGid(id);
+        const url = `https://docs.google.com/spreadsheets/d/${info.sheetId}/export?format=csv&gid=${info.gid || 0}&t=${Date.now()}`;
+        const res = await fetch(url);
+        if (!res.ok) { console.warn('[Totalizador] HTTP', res.status); return; }
+        const csv = await res.text();
+        const linhas = csv.trim().split(/\r?\n/);
+        if (linhas.length < 2) return;
+        const rows = linhas.map(l => parseCSVLine(l));
+        const norm = s => (s == null ? '' : s.toString()).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+        let h = -1;
+        for (let i = 0; i < rows.length; i++) {
+          const tx = rows[i].map(norm).join(' ');
+          if (tx.indexOf('QTD') >= 0 && tx.indexOf('VALOR') >= 0) { h = i; break; }
+        }
+        if (h < 0 || h + 1 >= rows.length) { console.warn('[Totalizador] cabecalho/linha nao encontrados'); return; }
+        const head = rows[h].map(norm);
+        const data = rows[h + 1];
+        const findCol = pred => { for (let i = 0; i < head.length; i++) { if (pred(head[i])) return i; } return -1; };
+        const colQtd = findCol(c => c.indexOf('QTD') >= 0);
+        const colVgv = findCol(c => c.indexOf('LIQ') >= 0); // Total Valor Liq. = VGV liquido
+        const parseMoney = s => {
+          s = String(s || '').replace(/[R$\s]/g, '').replace(/[^\d.,-]/g, '');
+          if (!s) return 0;
+          const hasC = s.indexOf(',') >= 0, hasD = s.indexOf('.') >= 0;
+          if (hasC && hasD) { if (s.lastIndexOf(',') > s.lastIndexOf('.')) { s = s.replace(/\./g, '').replace(',', '.'); } else { s = s.replace(/,/g, ''); } }
+          else if (hasC) { s = s.replace(',', '.'); }
+          return parseFloat(s) || 0;
+        };
+        const parseQtd = s => parseInt(String(s || '').replace(/[^\d]/g, ''), 10) || 0;
+        if (colQtd >= 0) window._totQtd = parseQtd(data[colQtd]);
+        if (colVgv >= 0) window._totVGV = parseMoney(data[colVgv]);
+        console.log('[Totalizador] lotes:', window._totQtd, '| VGV liquido:', window._totVGV);
+      } catch (e) {
+        console.warn('[Totalizador] falhou:', e && e.message);
+      }
+    }
+    window._carregarTotalizador = _carregarTotalizador;
 
     // === HOME v6: graficos + privacidade (dados reais) ===
     let _homeVSOData = [];
