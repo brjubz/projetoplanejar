@@ -1286,6 +1286,39 @@
     .lanc-weather-card { margin-bottom: 20px; }
     .lanc-forms-divider { display:flex; align-items:center; gap:9px; margin:4px 0 16px; padding-top:20px; border-top:1px solid var(--border-glass); font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.6px; }
     .lanc-forms-divider i { color:#38bdf8; }
+    .crm-section-h { font-size:12px; font-weight:700; color:#e2e8f0; margin:20px 0 12px; display:flex; align-items:center; gap:7px; }
+    .crm-podium { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; margin-bottom:14px; }
+    .crm-pod { position:relative; border-radius:16px; padding:18px 12px 16px; text-align:center; border:1px solid var(--border-glass); background:rgba(255,255,255,.03); transition:transform .2s; }
+    .crm-pod:hover { transform:translateY(-3px); }
+    .crm-pod-1 { border-color:rgba(245,158,11,.5); background:linear-gradient(180deg,rgba(245,158,11,.14),rgba(255,255,255,.03)); box-shadow:0 0 26px rgba(245,158,11,.18); }
+    .crm-pod-2 { border-color:rgba(148,163,184,.4); background:linear-gradient(180deg,rgba(148,163,184,.12),rgba(255,255,255,.03)); }
+    .crm-pod-3 { border-color:rgba(180,83,9,.4); background:linear-gradient(180deg,rgba(180,83,9,.12),rgba(255,255,255,.03)); }
+    .crm-pod-medal { font-size:24px; line-height:1; margin-bottom:6px; }
+    .crm-pod-av { width:48px; height:48px; border-radius:50%; margin:0 auto 9px; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800; color:#fff; background:linear-gradient(135deg,#4f46e5,#6d5efc); border:2px solid rgba(255,255,255,.14); }
+    .crm-pod-1 .crm-pod-av { background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#1a1205; }
+    .crm-pod-2 .crm-pod-av { background:linear-gradient(135deg,#94a3b8,#cbd5e1); color:#0f172a; }
+    .crm-pod-3 .crm-pod-av { background:linear-gradient(135deg,#b45309,#d97706); }
+    .crm-pod-nome { font-size:12px; font-weight:600; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:6px; }
+    .crm-pod-n { font-size:30px; font-weight:800; line-height:1; color:#fff; }
+    .crm-pod-1 .crm-pod-n { color:#fbbf24; }
+    .crm-pod-pct { font-size:10.5px; color:#64748b; margin-top:3px; }
+    .crm-pod-badge { display:inline-block; margin-top:9px; font-size:10px; font-weight:700; color:#10b981; background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.25); padding:3px 8px; border-radius:20px; }
+    .crm-pod-badge-wk { color:#38bdf8; background:rgba(56,189,248,.1); border-color:rgba(56,189,248,.22); }
+    .crm-rank { display:flex; flex-direction:column; gap:8px; }
+    .crm-rank-row { display:flex; align-items:center; gap:11px; }
+    .crm-rank-pos { width:26px; font-size:12px; font-weight:800; color:#64748b; text-align:center; flex-shrink:0; }
+    .crm-rank-av { width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; background:linear-gradient(135deg,#334155,#475569); }
+    .crm-rank-mid { flex:1; min-width:0; }
+    .crm-rank-nome { font-size:12px; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px; }
+    .crm-rank-hot { color:#10b981; font-weight:700; font-size:10.5px; }
+    .crm-rank-bar { height:6px; background:rgba(255,255,255,.06); border-radius:5px; overflow:hidden; }
+    .crm-rank-fill { height:100%; background:linear-gradient(90deg,#10b981,#10b981aa); border-radius:5px; }
+    .crm-rank-n { font-size:14px; font-weight:800; color:#10b981; width:40px; text-align:right; flex-shrink:0; }
+    .crm-day-best .crm-day-bar { background:linear-gradient(180deg,#f59e0b,#fbbf24) !important; }
+    .crm-day-best .crm-day-n { color:#fbbf24; }
+    .crm-ritmo-stats { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:11px; color:#64748b; }
+    .crm-ritmo-stats b { color:#cbd5e1; }
+    @media (max-width:640px){ .crm-podium { grid-template-columns:1fr; } }
     .crm-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:16px; }
     .crm-kpi { background:rgba(255,255,255,.03); border:1px solid var(--border-glass); border-radius:14px; padding:14px 16px; }
     .crm-kpi-l { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
@@ -3916,6 +3949,7 @@
             </div>
             <div id="lanc-total-hero" class="lanc-hero-num">—</div>
             <div style="font-size:11px;color:#94a3b8;">únicos · sem duplicados</div>
+            <div id="lanc-hero-ctx" style="font-size:11px;font-weight:700;margin-top:3px;color:#64748b;"></div>
           </div>
         </div>
 
@@ -17253,50 +17287,160 @@
         const total = regs.length;
         const juliaY = regs.filter(r => _lancIsJulia(r.resp)).length;
         const formsX = (window._lancFormsTotal != null) ? window._lancFormsTotal : null;
-        const porCorr = {}; regs.forEach(r => { const n = _lancIsJulia(r.resp) ? 'Forms (Julia Dourado)' : (_lancTitulo(r.resp) || 'Sem responsável'); porCorr[n] = (porCorr[n] || 0) + 1; });
-        const corretores = Object.entries(porCorr).sort((a, b) => b[1] - a[1]);
+
+        // datas de referência (hoje / 7 dias / ontem)
+        const _todayISO = _lancDataISO(new Date().toISOString());
+        const _dW = new Date(); _dW.setDate(_dW.getDate() - 6); const _weekISO = _lancDataISO(_dW.toISOString());
+        const _dY = new Date(); _dY.setDate(_dY.getDate() - 1); const _yISO = _lancDataISO(_dY.toISOString());
+
+        // por corretor (com recência hoje/semana)
+        const corrMap = {};
+        regs.forEach(r => {
+          const isF = _lancIsJulia(r.resp);
+          const nome = isF ? 'Forms (Julia Dourado)' : (_lancTitulo(r.resp) || 'Sem responsável');
+          const di = _lancDataISO(r.inicio);
+          const o = corrMap[nome] || (corrMap[nome] = { nome, total: 0, hoje: 0, sem: 0, isForms: isF });
+          o.total++;
+          if (di && di === _todayISO) o.hoje++;
+          if (di && di >= _weekISO) o.sem++;
+        });
+        const corretores = Object.values(corrMap).sort((a, b) => b.total - a.total);
+
+        // origens
         const porOri = {}; regs.forEach(r => { const o = _lancTitulo((r.origem || '').trim()) || '—'; porOri[o] = (porOri[o] || 0) + 1; });
         const origens = Object.entries(porOri).sort((a, b) => b[1] - a[1]);
+
+        // por dia + ritmo (média diária, melhor dia)
         const porDia = {}; let maxDia = '';
-        regs.forEach(r => { const d = _lancDataISO(r.inicio); if (d) { porDia[d] = (porDia[d] || 0) + 1; if (d > maxDia) maxDia = d; } });
-        box.innerHTML = _lancCrmHTML({ total, dup, juliaY, formsX, corretores, origens, maxDia, porDia });
+        regs.forEach(r => { const di = _lancDataISO(r.inicio); if (di) { porDia[di] = (porDia[di] || 0) + 1; if (di > maxDia) maxDia = di; } });
+        const diasVals = Object.values(porDia);
+        const somaDias = diasVals.reduce((s, x) => s + x, 0);
+        const media = diasVals.length ? Math.round(somaDias / diasVals.length) : 0;
+        let bestIso = '', bestN = 0;
+        Object.entries(porDia).forEach(([k, v]) => { if (v > bestN) { bestN = v; bestIso = k; } });
+        const ritmo = { media, bestIso, bestN };
+
+        box.innerHTML = _lancCrmHTML({ total, dup, juliaY, formsX, corretores, origens, maxDia, porDia, ritmo });
+        _lancRenderCrmDonut(origens, total);
         const _hero = document.getElementById('lanc-total-hero');
         if (_hero) _hero.textContent = total.toLocaleString('pt-BR');
+        const _heroCtx = document.getElementById('lanc-hero-ctx');
+        if (_heroCtx) {
+          const hj = porDia[_todayISO] || 0, on = porDia[_yISO] || 0, dl = hj - on;
+          _heroCtx.innerHTML = (hj > 0 ? '▲ +' + hj + ' hoje' : (dl < 0 ? '▼ ' + dl + ' vs ontem' : 'sem novos hoje')) +
+            (media ? ' <span style="color:#64748b;font-weight:400;">· média ' + media + '/dia</span>' : '');
+          _heroCtx.style.color = hj > 0 ? '#10b981' : '#64748b';
+        }
         if (window.lucide) lucide.createIcons({ elements: [box] });
         console.log('[CRM] únicos:', total, '| repetidos:', dup, '| Julia(Forms):', juliaY, '| Forms(X):', formsX, '| última DT_INICIO:', maxDia);
       } catch (e) { console.warn('[CRM] falhou:', e && e.message); box.style.display = 'none'; }
     }
     window._lancLoadCrm = _lancLoadCrm;
 
+    function _lancIniciais(nome) {
+      const p = String(nome || '').trim().split(/\s+/).filter(Boolean);
+      if (!p.length) return '?';
+      if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+      return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+    }
+
+    function _lancRenderCrmDonut(origens, totalBase) {
+      const el = document.getElementById('lanc-crm-donut');
+      if (!el) return;
+      const top = (origens || []).slice(0, 6);
+      let outras = 0; (origens || []).slice(6).forEach(([, nn]) => outras += nn);
+      const labels = top.map(o => o[0]); const series = top.map(o => o[1]);
+      if (outras > 0) { labels.push('Outras'); series.push(outras); }
+      if (!series.length) { el.innerHTML = '<div style="color:#475569;font-size:12px;">Sem dados.</div>'; return; }
+      if (!window.ApexCharts) { el.innerHTML = _lancBarras((origens || []).slice(0, 8), '#38bdf8', totalBase); return; }
+      try { if (window._lancCrmDonut) { window._lancCrmDonut.destroy(); window._lancCrmDonut = null; } } catch (e) {}
+      const cores = ['#10b981', '#38bdf8', '#a855f7', '#f59e0b', '#f43f5e', '#6d5efc', '#64748b'];
+      const opt = {
+        chart: { type: 'donut', height: 250, background: 'transparent', fontFamily: 'Poppins, Inter, sans-serif' },
+        series: series, labels: labels, colors: cores,
+        stroke: { width: 2, colors: ['#0b0b12'] },
+        dataLabels: { enabled: true, formatter: v => Math.round(v) + '%', style: { fontSize: '11px', fontWeight: 700 }, dropShadow: { enabled: false } },
+        legend: { position: 'bottom', labels: { colors: '#94a3b8' }, fontSize: '11px', markers: { width: 9, height: 9 }, itemMargin: { horizontal: 7, vertical: 3 } },
+        tooltip: { theme: 'dark', y: { formatter: v => v + ' cadastros' } },
+        plotOptions: { pie: { donut: { size: '62%', labels: { show: true,
+          total: { show: true, label: 'Total', color: '#94a3b8', fontSize: '12px', formatter: () => (totalBase || series.reduce((s, x) => s + x, 0)).toLocaleString('pt-BR') },
+          value: { color: '#fff', fontSize: '22px', fontWeight: 800 } } } } },
+        theme: { mode: 'dark' }
+      };
+      try { window._lancCrmDonut = new ApexCharts(el, opt); window._lancCrmDonut.render(); }
+      catch (e) { el.innerHTML = _lancBarras((origens || []).slice(0, 8), '#38bdf8', totalBase); }
+    }
+
     function _lancCrmHTML(d) {
+      const nf = v => (v == null) ? '—' : v.toLocaleString('pt-BR');
       const kpi = (val, label, sub, cor) =>
         '<div class="crm-kpi"><div class="crm-kpi-l">' + label + '</div><div class="crm-kpi-v" style="color:' + (cor || '#e2e8f0') + '">' + val + '</div>' + (sub ? '<div class="crm-kpi-s">' + sub + '</div>' : '') + '</div>';
       const diff = (d.formsX != null) ? Math.max(d.formsX - d.juliaY, 0) : null;
-      const n = v => (v == null) ? '—' : v.toLocaleString('pt-BR');
       const kpis =
-        kpi(n(d.total), 'Total de cadastros', 'únicos (sem repetidos)', '#10b981') +
-        kpi(n(d.dup), 'Repetidos filtrados', 'CPFs duplicados', '#f59e0b') +
-        kpi(n(d.formsX), 'Cadastros do Forms', 'planilha do Forms', '#38bdf8') +
-        kpi(n(d.juliaY), 'Forms no CRM', 'em nome da Julia Dourado', '#a855f7') +
-        kpi(n(diff), 'Já cadastrados antes', 'Forms que já existiam', '#64748b');
+        kpi(nf(d.total), 'Total de cadastros', 'únicos (sem repetidos)', '#10b981') +
+        kpi(nf(d.dup), 'Repetidos filtrados', 'CPFs duplicados', '#f59e0b') +
+        kpi(nf(d.formsX), 'Cadastros do Forms', 'planilha do Forms', '#38bdf8') +
+        kpi(nf(d.juliaY), 'Forms no CRM', 'em nome da Julia Dourado', '#a855f7') +
+        kpi(nf(diff), 'Já cadastrados antes', 'Forms que já existiam', '#64748b');
+
+      // === Pódio (top 3) + ranking (4º+) ===
+      const corr = d.corretores || [];
+      const medals = ['🥇', '🥈', '🥉'];
+      const podClass = ['crm-pod-1', 'crm-pod-2', 'crm-pod-3'];
+      const top3 = corr.slice(0, 3);
+      const maxTop = (top3[0] && top3[0].total) || 1;
+      const badge = c => c.hoje > 0 ? '<div class="crm-pod-badge">🔥 +' + c.hoje + ' hoje</div>'
+        : (c.sem > 0 ? '<div class="crm-pod-badge crm-pod-badge-wk">+' + c.sem + ' na semana</div>' : '');
+      const podium = top3.map((c, i) =>
+        '<div class="crm-pod ' + podClass[i] + '">' +
+          '<div class="crm-pod-medal">' + medals[i] + '</div>' +
+          '<div class="crm-pod-av">' + _lancEsc(_lancIniciais(c.nome)) + '</div>' +
+          '<div class="crm-pod-nome" title="' + _lancEsc(c.nome) + '">' + _lancEsc(c.nome) + '</div>' +
+          '<div class="crm-pod-n">' + c.total + '</div>' +
+          '<div class="crm-pod-pct">' + (d.total ? Math.round(c.total / d.total * 100) : 0) + '% do total</div>' +
+          badge(c) +
+        '</div>'
+      ).join('');
+      const rankRows = corr.slice(3, 12).map((c, i) => {
+        const pct = (c.total / maxTop * 100).toFixed(1);
+        return '<div class="crm-rank-row">' +
+          '<div class="crm-rank-pos">' + (i + 4) + 'º</div>' +
+          '<div class="crm-rank-av">' + _lancEsc(_lancIniciais(c.nome)) + '</div>' +
+          '<div class="crm-rank-mid"><div class="crm-rank-nome">' + _lancEsc(c.nome) + (c.hoje > 0 ? ' <span class="crm-rank-hot">🔥' + c.hoje + '</span>' : '') + '</div>' +
+            '<div class="crm-rank-bar"><div class="crm-rank-fill" style="width:' + pct + '%"></div></div></div>' +
+          '<div class="crm-rank-n">' + c.total + '</div>' +
+        '</div>';
+      }).join('');
+      const campeoes = corr.length
+        ? '<div class="crm-section-h">🏆 Campeões de cadastro</div>' +
+          (podium ? '<div class="crm-podium">' + podium + '</div>' : '') +
+          (rankRows ? '<div class="crm-rank">' + rankRows + '</div>' : '')
+        : '';
+
+      // === Ritmo (barras por dia + média/melhor dia) ===
       const diasArr = Object.entries(d.porDia).sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-14);
       const maxN = diasArr.reduce((m, x) => Math.max(m, x[1]), 1);
       const diaBars = diasArr.map(([iso, qt]) => {
         const h = Math.max(Math.round(qt / maxN * 60), 3);
         const dd = iso.split('-');
-        return '<div class="crm-day" title="' + dd[2] + '/' + dd[1] + ': ' + qt + ' cadastros"><div class="crm-day-n">' + qt + '</div><div class="crm-day-bar" style="height:' + h + 'px"></div><div class="crm-day-lbl">' + dd[2] + '/' + dd[1] + '</div></div>';
+        const best = d.ritmo && iso === d.ritmo.bestIso;
+        return '<div class="crm-day' + (best ? ' crm-day-best' : '') + '" title="' + dd[2] + '/' + dd[1] + ': ' + qt + ' cadastros"><div class="crm-day-n">' + qt + '</div><div class="crm-day-bar" style="height:' + h + 'px"></div><div class="crm-day-lbl">' + dd[2] + '/' + dd[1] + '</div></div>';
       }).join('');
+      const ritmoStats = d.ritmo ? '<div class="crm-ritmo-stats"><span>Média diária: <b>' + nf(d.ritmo.media) + '</b></span>' +
+        (d.ritmo.bestIso ? '<span>Melhor dia: <b>' + _lancDataBR(d.ritmo.bestIso) + '</b> (' + d.ritmo.bestN + ')</span>' : '') + '</div>' : '';
+
       const painel = (titulo, conteudo) => '<div class="crm-panel"><div class="crm-panel-h">' + titulo + '</div>' + conteudo + '</div>';
+
       return '<div class="lanc-weather-card-inner">' +
         '<div class="lw-head"><div class="lw-ic" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25);">👥</div><div>' +
         '<div class="lw-title">Cadastros Gerais (CRM)</div>' +
         '<div class="lw-sub">Base interna · última atualização: ' + _lancDataBR(d.maxDia) + '</div></div></div>' +
         '<div class="crm-kpis">' + kpis + '</div>' +
-        '<div class="crm-cols">' +
-          painel('👔 Cadastros por corretor', _lancBarras(d.corretores.slice(0, 10), '#10b981', d.total)) +
-          painel('🎯 Top origem', _lancBarras(d.origens.slice(0, 8), '#38bdf8', d.total)) +
+        campeoes +
+        '<div class="crm-cols" style="margin-top:14px;">' +
+          painel('🎯 Origem dos cadastros', '<div id="lanc-crm-donut" style="min-height:230px;"></div>') +
+          painel('📅 Ritmo de cadastros', (diasArr.length ? '<div class="crm-days">' + diaBars + '</div>' + ritmoStats : '<div style="color:#475569;font-size:12px;">Sem datas (DT_INICIO) ainda.</div>')) +
         '</div>' +
-        (diasArr.length ? '<div class="crm-panel" style="margin-top:14px;"><div class="crm-panel-h">📅 Cadastros por dia (DT_INICIO)</div><div class="crm-days">' + diaBars + '</div></div>' : '') +
       '</div>';
     }
 
