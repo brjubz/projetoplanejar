@@ -17663,11 +17663,11 @@
             ${idadeCard}
             ${kpi(faixaTop, 'Faixa Predominante', 'idade mais comum', '#818cf8')}
             ${kpi(pctExterior + '%', 'Vêm do Exterior', `${exterior} de ${comTel} cadastros`, '#38bdf8')}
-            ${kpi(nCidades, nCidades === 1 ? 'Cidade' : 'Cidades de Origem', 'cidades identificadas', '#10b981')}
+            ${kpi(nCidades, nCidades === 1 ? 'Cidade' : 'Cidades de Origem', 'cidades identificadas', '#6d8bff')}
           </div>
 
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
-            ${painel('map-pin', '#10b981', 'Top Cidades', cidadesConteudo)}
+            ${painel('map-pin', '#6d8bff', 'Top Cidades', cidadesConteudo)}
             ${painel('globe', '#38bdf8', 'Origem · Brasil × Exterior', origemConteudo)}
             ${painel('cake', '#a855f7', 'Faixa Etária', _lancBarras(faixas.filter(f => f[1] > 0), '#a855f7', idades.length))}
             ${painel('briefcase', '#f59e0b', 'Top Profissões', _lancBarras(profs.slice(0, 8), '#f59e0b', totalProf))}
