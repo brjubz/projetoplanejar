@@ -1361,6 +1361,15 @@
     .crm-ritmo-stats span { display:inline-flex; align-items:center; gap:5px; }
     .crm-ritmo-stats svg { width:13px; height:13px; color:#8b9bff; }
     .crm-ritmo-stats b { color:#e8ebf5; }
+    .crm-hl { position:relative; overflow:hidden; background:linear-gradient(145deg,#8ba0ff,#5468ff); color:#07060f; border-radius:18px; padding:20px 24px; margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .crm-hl .glow { position:absolute; right:-30px; top:-34px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,.2); filter:blur(14px); pointer-events:none; }
+    .crm-hl-l { position:relative; }
+    .crm-hl-tag { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.6px; opacity:.72; }
+    .crm-hl-tag svg { width:14px; height:14px; }
+    .crm-hl-name { font-size:22px; font-weight:800; letter-spacing:-.5px; margin-top:9px; }
+    .crm-hl-sub { font-size:12.5px; font-weight:600; opacity:.78; margin-top:4px; }
+    .crm-hl-big { position:relative; font-size:46px; font-weight:800; letter-spacing:-2px; line-height:1; }
+    .crm-hl-big small { font-size:13px; font-weight:700; opacity:.7; margin-left:5px; letter-spacing:0; }
     .crm-trend { font-weight:700; }
     .crm-trend.up, .crm-trend.up svg { color:#6d8bff; }
     .crm-trend.down, .crm-trend.down svg { color:#f87171; }
@@ -17510,6 +17519,17 @@
           (rankRows ? '<div class="crm-rank">' + rankRows + '</div>' : '')
         : '';
 
+      // Destaque da semana (card inteiro no azul — assinatura Finpath)
+      const _wl = corr.slice().sort((a, b) => b.sem - a.sem)[0];
+      const destaque = (_wl && _wl.sem > 0)
+        ? '<div class="crm-hl"><div class="glow"></div><div class="crm-hl-l">' +
+            '<div class="crm-hl-tag">' + ic('zap') + ' Destaque da semana</div>' +
+            '<div class="crm-hl-name">' + _lancEsc(_wl.nome) + '</div>' +
+            '<div class="crm-hl-sub">líder de cadastros nos últimos 7 dias</div></div>' +
+            '<div class="crm-hl-big">+' + _wl.sem + '<small>cadastros</small></div>' +
+          '</div>'
+        : '';
+
       // === Ritmo (barras + linha de média + tendência) ===
       const diasArr = Object.entries(d.porDia).sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-14);
       const maxN = diasArr.reduce((m, x) => Math.max(m, x[1]), 1);
@@ -17547,6 +17567,7 @@
         '<div class="lw-sub">Base interna · última atualização: ' + _lancDataBR(d.maxDia) + '</div></div></div>' +
         '<div class="crm-kpis">' + kpis + '</div>' +
         campeoes +
+        destaque +
         '<div class="crm-cols" style="margin-top:14px;">' +
           painel('Origem dos cadastros', 'target', '<div id="lanc-crm-donut" style="min-height:230px;"></div>') +
           painel('Ritmo de cadastros', 'bar-chart-3', ritmoBody) +
