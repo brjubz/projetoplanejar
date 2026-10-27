@@ -17212,12 +17212,16 @@
       box.style.display = 'block';
       box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando cadastros gerais (CRM)…</div></div>';
       try {
-        const _p = String(id).split('|');
-        const _sheetId = (_p[0] || '').trim();
-        const _gid = (_p[1] || window._lancCrmGid || '0').toString().trim();
+        // Extrai o ID limpo de qualquer formato (URL completa, "d/ID", "ID|gid", "ID")
+        let _sheetId = String(id).trim();
+        let _gid = (window._lancCrmGid || '0').toString().trim();
+        const _mU = _sheetId.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (_mU) { _sheetId = _mU[1]; } else { _sheetId = _sheetId.replace(/^d\//i, '').split('|')[0].split('/')[0].trim(); }
+        const _mG = String(id).match(/[?&#]gid=(\d+)/); if (_mG) _gid = _mG[1];
+        const _pG = String(id).split('|')[1]; if (_pG) _gid = _pG.trim();
         const url = 'https://docs.google.com/spreadsheets/d/' + _sheetId + '/export?format=csv&gid=' + _gid + '&t=' + Date.now();
         const res = await fetch(url);
-        if (!res.ok) { box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Não foi possível ler a planilha CRM (verifique se está pública como leitor).</div></div>'; return; }
+        if (!res.ok) { console.warn('[CRM] HTTP', res.status, '| id configurado:', id, '| sheetId usado:', _sheetId); box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Não foi possível ler a planilha CRM (HTTP ' + res.status + '). Confira o ID no admin e se ela está pública (leitor).</div></div>'; return; }
         const csv = await res.text();
         const rows = csv.trim().split(/\r?\n/).map(parseCSVLine);
         if (rows.length < 2) { box.style.display = 'none'; return; }
