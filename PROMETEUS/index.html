@@ -159,6 +159,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Bibliotecas Base e Criptografia (LGPD) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -1306,6 +1307,16 @@
     .lanc-weather-card { margin-bottom: 20px; }
     .lanc-forms-divider { display:flex; align-items:center; gap:9px; margin:4px 0 16px; padding-top:20px; border-top:1px solid var(--border-glass); font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.6px; }
     .lanc-forms-divider i { color:#38bdf8; }
+    /* === Lançamento: fonte Finpath (Manrope) + barra de saudação === */
+    #view-lancamento { font-family:'Manrope','Inter',sans-serif; }
+    #view-lancamento .num, #view-lancamento .crm-kpi-v, #view-lancamento .lanc-hero-num, #view-lancamento .crm-pod-n, #view-lancamento .crm-rank-n { font-variant-numeric:tabular-nums; }
+    .lanc-greet { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+    .lanc-greet-who { display:flex; align-items:center; gap:13px; }
+    .lanc-greet-av { width:46px; height:46px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; background:linear-gradient(135deg,#5468ff,#0E06A5); color:#fff; box-shadow:0 0 0 1px rgba(255,255,255,.08) inset; }
+    .lanc-greet-hi { font-size:19px; font-weight:800; letter-spacing:-.3px; color:#fff; }
+    .lanc-greet-when { font-size:11.5px; color:#8b90a0; display:flex; align-items:center; gap:6px; margin-top:2px; }
+    .lanc-greet-dot { width:7px; height:7px; border-radius:50%; background:#5468ff; box-shadow:0 0 9px #5468ff; }
+    .lanc-greet-actions { display:flex; align-items:center; gap:9px; }
     .crm-section-h { font-size:13px; font-weight:700; color:#f1f5f9; margin:24px 0 14px; display:flex; align-items:center; gap:10px; letter-spacing:.2px; }
     .crm-section-h::before { content:''; width:4px; height:17px; border-radius:3px; background:linear-gradient(180deg,#6d8bff,#0E06A5); flex-shrink:0; }
     .crm-section-h svg { width:16px; height:16px; color:#8b9bff; }
@@ -3937,9 +3948,21 @@
       <!-- ============================================== -->
       <div id="view-lancamento" class="view-section">
 
-        <button class="btn-sync-discrete" onclick="carregarLancamento()">
-          <i data-lucide="refresh-cw"></i> Sync
-        </button>
+        <!-- Barra de saudação (estilo Finpath) -->
+        <div class="lanc-greet">
+          <div class="lanc-greet-who">
+            <div class="lanc-greet-av" id="lancGreetAv">JB</div>
+            <div>
+              <div class="lanc-greet-hi" id="lancGreetHi">Boa tarde</div>
+              <div class="lanc-greet-when"><span class="lanc-greet-dot"></span> Dados atualizados · <span id="lancGreetDate">hoje</span></div>
+            </div>
+          </div>
+          <div class="lanc-greet-actions">
+            <button class="btn-sync-discrete" onclick="carregarLancamento()">
+              <i data-lucide="refresh-cw"></i> Sync
+            </button>
+          </div>
+        </div>
 
         <!-- Welcome card — banner com mapa digital de MG -->
         <div class="lanc-hero-banner">
@@ -16869,6 +16892,17 @@
 
     function renderAreaLancamento(leads, meta) {
       _lancShow('content');
+
+      // Saudação (estilo Finpath): nome do usuário + data
+      try {
+        const _h = new Date().getHours();
+        const _g = _h < 12 ? 'Bom dia' : (_h < 18 ? 'Boa tarde' : 'Boa noite');
+        const _wm = document.getElementById('welcomeMsg');
+        const _nm = _wm ? (_wm.textContent || '').trim().split(/\s+/)[0] : '';
+        const _hi = document.getElementById('lancGreetHi'); if (_hi) _hi.textContent = _g + (_nm ? ', ' + _nm : '');
+        const _gd = document.getElementById('lancGreetDate'); if (_gd) _gd.textContent = new Date().toLocaleDateString('pt-BR');
+        const _av = document.getElementById('lancGreetAv'); if (_av && _nm) _av.textContent = _nm.slice(0, 2).toUpperCase();
+      } catch (e) {}
 
       // Contador regressivo + foguete (usa data configurada no Admin)
       _renderCountdownLancamento(leads);
