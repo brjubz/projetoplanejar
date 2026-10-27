@@ -1,5 +1,5 @@
 // Service Worker - Cache + Update Detection
-const CACHE_NAME = 'prometeus-v1';
+const CACHE_NAME = 'prometeus-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -62,6 +62,22 @@ self.addEventListener('fetch', event => {
         .catch(() => {
           return caches.match(request);
         })
+    );
+    return;
+  }
+
+  // index.html / navegacao: NETWORK FIRST (pega o deploy novo na hora, cai pro cache offline)
+  if (request.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .then(response => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put('/index.html', copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request).then(r => r || caches.match('/index.html')))
     );
     return;
   }
