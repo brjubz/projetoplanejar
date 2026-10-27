@@ -16893,26 +16893,26 @@
       const heroEl = document.getElementById('lanc-total-hero');
       if (heroEl) heroEl.textContent = totalReal.toLocaleString('pt-BR');
 
-      // KPI cards
+      // KPI cards (premium, monocromático azul — padrão do CRM)
+      const ic = n => `<i data-lucide="${n}"></i>`;
       const delta = totalHoje - totalOntem;
-      const deltaHtml = delta === 0 ? '' :
-        `<span style="font-size:11px;color:${delta>0?'#10b981':'#f43f5e'};margin-left:5px;">${delta>0?'↑':'↓'}${Math.abs(delta)} vs ontem</span>`;
+      const deltaPill = delta === 0 ? '' :
+        `<div class="crm-kpi-s"><span class="crm-trend ${delta>0?'up':'down'}">${ic(delta>0?'trending-up':'trending-down')}${delta>0?'+':''}${delta} vs ontem</span></div>`;
 
-      const mkCard = (val, label, sub, color) =>
-        `<div style="background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:16px;padding:16px 18px;">
-          <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">${label}</div>
-          <div style="font-size:30px;font-weight:800;color:${color||'#e2e8f0'};line-height:1;">${val}</div>
-          ${sub ? `<div style="font-size:11px;color:#475569;margin-top:5px;">${sub}</div>` : ''}
-        </div>`;
+      const mkCard = (val, label, sub, icon, extra) =>
+        `<div class="crm-kpi"><div class="crm-kpi-top"><span class="crm-kpi-ic">${ic(icon)}</span><span class="crm-kpi-l">${label}</span></div>` +
+        `<div class="crm-kpi-v">${val}</div>` + (extra || (sub ? `<div class="crm-kpi-s">${sub}</div>` : '')) + `</div>`;
 
-      document.getElementById('lanc-kpi-grid').innerHTML =
-        mkCard(total.toLocaleString('pt-BR'),          'Total Cadastros', '', '#10b981') +
-        mkCard(totalReal.toLocaleString('pt-BR'),      'Total Real (sem duplicados)', '', '#3b82f6') +
-        mkCard(totalDup.toLocaleString('pt-BR'),       'Duplicados', totalDup > 0 ? 'mesmo nome+whatsapp+e-mail' : '', totalDup > 0 ? '#f59e0b' : '') +
-        mkCard(totalCompletos.toLocaleString('pt-BR'), 'Cadastros Completos', 'preencheram todos os campos', '#a855f7') +
-        mkCard(totalHoje.toLocaleString('pt-BR'),      'Hoje' + deltaHtml, '') +
-        mkCard(totalOntem.toLocaleString('pt-BR'),     'Ontem', '') +
-        mkCard(totalSem.toLocaleString('pt-BR'),       'Esta Semana', 'últimos 7 dias', '');
+      const _kgrid = document.getElementById('lanc-kpi-grid');
+      _kgrid.innerHTML =
+        mkCard(total.toLocaleString('pt-BR'),          'Total Cadastros', 'todos os registros', 'database') +
+        mkCard(totalReal.toLocaleString('pt-BR'),      'Total Real', 'sem duplicados', 'user-check') +
+        mkCard(totalDup.toLocaleString('pt-BR'),       'Duplicados', totalDup > 0 ? 'nome+whatsapp+e-mail' : 'nenhum', 'copy') +
+        mkCard(totalCompletos.toLocaleString('pt-BR'), 'Cadastros Completos', 'todos os campos', 'badge-check') +
+        mkCard(totalHoje.toLocaleString('pt-BR'),      'Hoje', '', 'calendar-days', deltaPill) +
+        mkCard(totalOntem.toLocaleString('pt-BR'),     'Ontem', 'dia anterior', 'history') +
+        mkCard(totalSem.toLocaleString('pt-BR'),       'Esta Semana', 'últimos 7 dias', 'calendar-range');
+      if (window.lucide) lucide.createIcons({ elements: [_kgrid] });
 
       // Barra de meta — usa o total real (sem duplicados)
       const metaWrap = document.getElementById('lanc-meta-wrap');
@@ -16925,9 +16925,9 @@
             <div style="background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:18px;padding:18px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
                 <span style="font-size:13px;font-weight:600;color:#e2e8f0;display:flex;align-items:center;gap:6px;">
-                  <i data-lucide="target" style="width:15px;height:15px;color:#10b981;"></i> Meta de Cadastros
+                  <i data-lucide="target" style="width:15px;height:15px;color:#6d8bff;"></i> Meta de Cadastros
                 </span>
-                <span style="font-size:14px;font-weight:700;color:#10b981;">
+                <span style="font-size:14px;font-weight:700;color:#6d8bff;">
                   ${totalReal.toLocaleString('pt-BR')} <span style="color:#64748b;font-weight:400;">/ ${meta.toLocaleString('pt-BR')} (${pct}%)</span>
                 </span>
               </div>
