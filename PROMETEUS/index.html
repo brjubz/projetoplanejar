@@ -1372,6 +1372,42 @@
     .crm-hl-sub { font-size:12.5px; font-weight:600; opacity:.78; margin-top:4px; }
     .crm-hl-big { position:relative; font-size:46px; font-weight:800; letter-spacing:-2px; line-height:1; }
     .crm-hl-big small { font-size:13px; font-weight:700; opacity:.7; margin-left:5px; letter-spacing:0; }
+    /* === Ranking de cadastros (painel azul — estilo card compartilhável) === */
+    .rk-panel { position:relative; overflow:hidden; border-radius:22px; padding:26px 24px 22px; margin:18px 0; background:linear-gradient(150deg,#4253db 0%,#1b1fa6 55%,#120a7a 100%); box-shadow:0 20px 50px -24px rgba(14,6,165,.85); }
+    .rk-glow { position:absolute; left:-70px; top:-90px; width:340px; height:340px; border-radius:50%; background:radial-gradient(circle,rgba(130,150,255,.45),transparent 70%); pointer-events:none; }
+    .rk-head { position:relative; margin-bottom:22px; }
+    .rk-eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.62); }
+    .rk-eyebrow svg { width:14px; height:14px; color:#ffd36b; }
+    .rk-title { font-size:clamp(24px,3.4vw,34px); font-weight:800; letter-spacing:-1.2px; color:#fff; margin-top:6px; line-height:1.05; }
+    .rk-podium { position:relative; display:flex; align-items:flex-end; justify-content:center; gap:14px; margin-bottom:24px; }
+    .rk-pod { position:relative; flex:1; max-width:224px; display:flex; flex-direction:column; padding-top:28px; }
+    .rk-ball { position:absolute; top:0; left:50%; transform:translateX(-50%); width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; z-index:3; box-shadow:0 6px 16px rgba(0,0,0,.4), inset 0 2px 5px rgba(255,255,255,.55); border:2px solid rgba(255,255,255,.55); }
+    .rk-gold { background:radial-gradient(circle at 38% 30%,#ffe89a,#e0a63a); color:#6b4a06; }
+    .rk-silver { background:radial-gradient(circle at 38% 30%,#f4f6fa,#aab3c2); color:#44505f; }
+    .rk-bronze { background:radial-gradient(circle at 38% 30%,#f0b98a,#b06a34); color:#5a2f12; }
+    .rk-card { background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); border-radius:16px 16px 0 0; padding:36px 12px 18px; text-align:center; }
+    .rk-p1 .rk-card { background:rgba(255,255,255,.17); border-color:rgba(255,255,255,.3); min-height:182px; }
+    .rk-p2 .rk-card { min-height:158px; }
+    .rk-p3 .rk-card { min-height:140px; }
+    .rk-name { font-size:14px; font-weight:700; color:#fff; margin-bottom:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rk-num { font-size:42px; font-weight:800; color:#fff; line-height:1; letter-spacing:-1.5px; }
+    .rk-p1 .rk-num { font-size:54px; }
+    .rk-unit { font-size:9.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.55); margin-top:6px; }
+    .rk-foot { border-radius:0 0 14px 14px; padding:9px; text-align:center; font-weight:800; font-size:13px; }
+    .rk-p1 .rk-foot { background:linear-gradient(180deg,#5d74ff,#3a4bd6); color:#fff; }
+    .rk-p2 .rk-foot { background:linear-gradient(180deg,#2dd4bf,#14b8a6); color:#06302b; }
+    .rk-p3 .rk-foot { background:#eef1ff; color:#2a2f72; }
+    .rk-listhead { display:grid; grid-template-columns:44px 1fr 72px; gap:14px; padding:0 4px 10px; font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.5); border-bottom:1px solid rgba(255,255,255,.14); }
+    .rk-listhead span:last-child { text-align:right; }
+    .rk-list { display:flex; flex-direction:column; }
+    .rk-row { display:grid; grid-template-columns:44px 1fr 72px; gap:14px; align-items:center; padding:13px 4px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .rk-pos { font-size:14px; font-weight:800; color:rgba(255,255,255,.6); }
+    .rk-rmid { min-width:0; }
+    .rk-rname { font-size:15px; font-weight:700; color:#fff; margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rk-rbar { height:7px; border-radius:5px; background:rgba(255,255,255,.12); overflow:hidden; }
+    .rk-rfill { height:100%; border-radius:5px; background:linear-gradient(90deg,#9fb0ff,#5d74ff); }
+    .rk-rval { font-size:22px; font-weight:800; color:#fff; text-align:right; letter-spacing:-.5px; }
+    @media(max-width:560px){ .rk-num{font-size:32px} .rk-p1 .rk-num{font-size:40px} .rk-ball{width:44px;height:44px;font-size:17px} .rk-rval{font-size:18px} }
     .crm-trend { font-weight:700; }
     .crm-trend.up, .crm-trend.up svg { color:#6d8bff; }
     .crm-trend.down, .crm-trend.down svg { color:#f87171; }
@@ -17492,38 +17528,41 @@
 
       // === Pódio em degraus (2º | 1º | 3º) ===
       const corr = d.corretores || [];
-      const podClass = ['crm-pod-1', 'crm-pod-2', 'crm-pod-3'];
-      const podIcon = ['crown', 'medal', 'award'];
       const top3 = corr.slice(0, 3);
       const maxTop = (top3[0] && top3[0].total) || 1;
-      const badge = c => c.hoje > 0 ? '<div class="crm-pod-badge">' + ic('trending-up') + '+' + c.hoje + ' hoje</div>'
-        : (c.sem > 0 ? '<div class="crm-pod-badge">+' + c.sem + ' na semana</div>' : '');
-      const podium = top3.map((c, i) =>
-        '<div class="crm-pod ' + podClass[i] + '">' +
-          '<div class="crm-pod-top">' +
-            '<div class="crm-pod-av">' + ic(podIcon[i]) + '</div>' +
-            '<div class="crm-pod-nome" title="' + _lancEsc(c.nome) + '">' + _lancEsc(c.nome) + '</div>' +
-            '<div class="crm-pod-n">' + c.total + '</div>' +
-            '<div class="crm-pod-pct">' + (d.total ? Math.round(c.total / d.total * 100) : 0) + '% do total</div>' +
-            badge(c) +
+      const ballCls = ['rk-gold', 'rk-silver', 'rk-bronze'];
+      const podCls  = ['rk-p1', 'rk-p2', 'rk-p3'];
+      const ordem = [top3[1], top3[0], top3[2]];   // pódio: 2º | 1º | 3º
+      const idxReal = [1, 0, 2];
+      const podium = ordem.map((c, vi) => {
+        if (!c) return '';
+        const r = idxReal[vi];
+        return '<div class="rk-pod ' + podCls[r] + '">' +
+          '<div class="rk-ball ' + ballCls[r] + '">' + (r + 1) + '</div>' +
+          '<div class="rk-card">' +
+            '<div class="rk-name" title="' + _lancEsc(c.nome) + '">' + _lancEsc(c.nome) + '</div>' +
+            '<div class="rk-num">' + c.total + '</div>' +
+            '<div class="rk-unit">cadastros</div>' +
           '</div>' +
-          '<div class="crm-pod-base">' + (i + 1) + 'º</div>' +
-        '</div>'
-      ).join('');
+          '<div class="rk-foot">' + (r + 1) + 'º</div>' +
+        '</div>';
+      }).join('');
       const rankRows = corr.slice(3, 12).map((c, i) => {
-        const pct = (c.total / maxTop * 100).toFixed(1);
-        return '<div class="crm-rank-row">' +
-          '<div class="crm-rank-pos">' + (i + 4) + 'º</div>' +
-          '<div class="crm-rank-av">' + ic('user') + '</div>' +
-          '<div class="crm-rank-mid"><div class="crm-rank-nome">' + _lancEsc(c.nome) + (c.hoje > 0 ? ' <span class="crm-rank-hot">' + ic('trending-up') + c.hoje + '</span>' : '') + '</div>' +
-            '<div class="crm-rank-bar"><div class="crm-rank-fill" style="width:' + pct + '%"></div></div></div>' +
-          '<div class="crm-rank-n">' + c.total + '</div>' +
+        const pct = Math.max((c.total / maxTop * 100), 4).toFixed(1);
+        return '<div class="rk-row">' +
+          '<div class="rk-pos">' + (i + 4) + 'º</div>' +
+          '<div class="rk-rmid"><div class="rk-rname">' + _lancEsc(c.nome) + '</div>' +
+            '<div class="rk-rbar"><div class="rk-rfill" style="width:' + pct + '%"></div></div></div>' +
+          '<div class="rk-rval">' + c.total + '</div>' +
         '</div>';
       }).join('');
       const campeoes = corr.length
-        ? '<div class="crm-section-h">' + ic('trophy') + ' Campeões de cadastro</div>' +
-          (podium ? '<div class="crm-podium">' + podium + '</div>' : '') +
-          (rankRows ? '<div class="crm-rank">' + rankRows + '</div>' : '')
+        ? '<div class="rk-panel"><div class="rk-glow"></div>' +
+            '<div class="rk-head"><div class="rk-eyebrow">' + ic('trophy') + ' Lançamento · ranking</div>' +
+            '<div class="rk-title">Ranking de cadastros</div></div>' +
+            '<div class="rk-podium">' + podium + '</div>' +
+            (rankRows ? '<div class="rk-listhead"><span>#</span><span>Corretor(a)</span><span>Cadastros</span></div><div class="rk-list">' + rankRows + '</div>' : '') +
+          '</div>'
         : '';
 
       // Destaque da semana (card inteiro no azul — assinatura Finpath)
