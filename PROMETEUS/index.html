@@ -17411,6 +17411,8 @@
         const idx = {
           nome: col('DS_NOME_CONTA'), cpf: col('NR_CPF'), nasc: col('DT_NASCIMENTO'),
           origem: col('DS_ORIGEM_LEAD'), resp: col('DS_NOME_USUARIO_RESPONSAVEL'), inicio: col('DT_INICIO'),
+          prof: col('DS_PROFISSAO'), civil: col('DS_ESTADO_CIVIL'), sexo: col('DS_SEXO'),
+          cep: col('NR_CEP_COBRANCA'), tel: col('NR_TELEFONE'),
         };
         const get = (row, i) => (i >= 0 && i < row.length) ? String(row[i] || '').trim() : '';
         const seen = {}; const regs = []; let dup = 0;
@@ -17421,7 +17423,8 @@
           if (!key) continue;
           if (seen[key]) { dup++; continue; }
           seen[key] = true;
-          regs.push({ resp: get(row, idx.resp), origem: get(row, idx.origem), inicio: get(row, idx.inicio) });
+          regs.push({ resp: get(row, idx.resp), origem: get(row, idx.origem), inicio: get(row, idx.inicio),
+            nasc: get(row, idx.nasc), prof: get(row, idx.prof), civil: get(row, idx.civil), sexo: get(row, idx.sexo), cep: get(row, idx.cep), tel: get(row, idx.tel) });
         }
         const total = regs.length;
         const juliaY = regs.filter(r => _lancIsJulia(r.resp)).length;
@@ -17461,6 +17464,7 @@
 
         box.innerHTML = _lancCrmHTML({ total, dup, juliaY, formsX, corretores, origens, maxDia, porDia, ritmo });
         _lancRenderCrmDonut(origens, total);
+        _lancCrmDemografia(regs);
         const _hero = document.getElementById('lanc-total-hero');
         if (_hero) _hero.textContent = total.toLocaleString('pt-BR');
         const _heroCtx = document.getElementById('lanc-hero-ctx');
@@ -17620,6 +17624,77 @@
         '</div>' +
       '</div>';
     }
+
+    // === Perfil dos cadastros a partir da base COMPLETA (CRM) ===
+    function _lancSexo(s) { const n = _lancNorm(s); if (!n) return ''; if (n.indexOf('masc') >= 0 || n === 'm') return 'Masculino'; if (n.indexOf('fem') >= 0 || n === 'f') return 'Feminino'; return _lancTitulo(s); }
+
+    async function _lancRenderCrmCidades(regs) {
+      const el = document.getElementById('lanc-crm-cidades'); if (!el) return;
+      const cepList = regs.map(r => (r.cep || '').replace(/\D/g, '')).filter(c => c.length === 8);
+      if (!cepList.length) { el.innerHTML = '<div style="color:#64748b;font-size:12px;">Sem CEP nos cadastros.</div>'; return; }
+      const uniq = Array.from(new Set(cepList));
+      const map = {}; const toFetch = [];
+      uniq.forEach(cep => { let c = null; try { c = localStorage.getItem('viacep_' + cep); } catch (e) {} if (c === null) toFetch.push(cep); else map[cep] = c; });
+      const fetchList = toFetch.slice(0, 300);
+      let i = 0;
+      async function worker() {
+        while (i < fetchList.length) {
+          const cep = fetchList[i++];
+          try {
+            const j = await fetch('https://viacep.com.br/ws/' + cep + '/json/').then(r => r.json());
+            const city = (j && !j.erro && j.localidade) ? (j.localidade + (j.uf ? ' - ' + j.uf : '')) : '';
+            map[cep] = city; try { localStorage.setItem('viacep_' + cep, city); } catch (e) {}
+          } catch (e) { map[cep] = ''; }
+        }
+      }
+      await Promise.all([0,1,2,3,4,5].map(worker));
+      const counts = {}; let sem = 0;
+      cepList.forEach(cep => { const c = map[cep]; if (c) counts[c] = (counts[c] || 0) + 1; else sem++; });
+      const arr = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      el.innerHTML = (arr.length ? _lancBarras(arr.slice(0, 8), '#6d8bff', cepList.length) : '<div style="color:#64748b;font-size:12px;">Nenhuma cidade identificada.</div>') +
+        (sem ? '<div style="font-size:10.5px;color:#475569;margin-top:8px;">+ ' + sem + ' sem cidade (CEP não resolvido ainda)</div>' : '');
+    }
+
+    function _lancCrmDemografia(regs) {
+      const el = document.getElementById('lanc-demografia'); if (!el) return;
+      if (!regs || !regs.length) return;
+      const ic = n => '<i data-lucide="' + n + '"></i>';
+      const idades = [];
+      regs.forEach(r => { const i = _lancIdade(r.nasc); if (i != null) idades.push(i); });
+      const idadeMedia = idades.length ? Math.round(idades.reduce((a, b) => a + b, 0) / idades.length) : null;
+      const faixasDef = [['Até 25', 0, 25], ['26–35', 26, 35], ['36–45', 36, 45], ['46–60', 46, 60], ['60+', 61, 200]];
+      const faixas = faixasDef.map(([l, mn, mx]) => [l, idades.filter(i => i >= mn && i <= mx).length]);
+      const faixaTop = faixas.filter(f => f[1] > 0).sort((a, b) => b[1] - a[1])[0];
+      const sexo = _lancAgrupar(regs, r => _lancSexo(r.sexo)); const totSexo = sexo.reduce((a, c) => a + c[1], 0); const topSexo = sexo[0];
+      const civis = _lancAgrupar(regs, r => _lancEstadoCivil(r.civil)); const totCivil = civis.reduce((a, c) => a + c[1], 0); const topCivil = civis[0];
+      const profs = _lancAgrupar(regs, r => _lancProf(r.prof)); const totProf = profs.reduce((a, c) => a + c[1], 0); const topProf = profs[0];
+      const kpi = (val, label, sub, icon) => '<div class="crm-kpi"><div class="crm-kpi-top"><span class="crm-kpi-ic">' + ic(icon) + '</span><span class="crm-kpi-l">' + label + '</span></div><div class="crm-kpi-v">' + val + '</div>' + (sub ? '<div class="crm-kpi-s">' + sub + '</div>' : '') + '</div>';
+      const painel = (icon, titulo, conteudo) => '<div class="crm-panel"><div class="crm-panel-h">' + ic(icon) + ' ' + titulo + '</div>' + conteudo + '</div>';
+      const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '—';
+      el.innerHTML =
+        '<div class="lanc-weather-card-inner" style="margin-bottom:20px;">' +
+          '<div class="lw-head"><div class="lw-ic" style="background:rgba(84,104,255,.12);border-color:rgba(84,104,255,.28);color:#8b9bff;">' + ic('contact') + '</div><div>' +
+          '<div class="lw-title">Perfil dos cadastros</div><div class="lw-sub">Base completa (CRM) · ' + regs.length.toLocaleString('pt-BR') + ' cadastros</div></div></div>' +
+          '<div class="crm-kpis" style="grid-template-columns:repeat(4,1fr);">' +
+            kpi(idadeMedia != null ? idadeMedia + ' anos' : '—', 'Idade média', faixaTop ? ('faixa ' + faixaTop[0]) : '', 'cake') +
+            kpi(topSexo ? _lancTitulo(topSexo[0]) : '—', 'Sexo predominante', topSexo ? (pct(topSexo[1], totSexo) + ' da base') : '', 'users') +
+            kpi(topCivil ? _lancTitulo(topCivil[0]) : '—', 'Estado civil', topCivil ? pct(topCivil[1], totCivil) : '', 'heart') +
+            kpi(topProf ? _lancTitulo(topProf[0]) : '—', 'Top profissão', topProf ? (topProf[1] + ' pessoas') : '', 'briefcase') +
+          '</div>' +
+          '<div class="crm-cols" style="margin-top:14px;">' +
+            painel('cake', 'Faixa etária', _lancBarras(faixas.filter(f => f[1] > 0), '#6d8bff', idades.length)) +
+            painel('briefcase', 'Top profissões', _lancBarras(profs.slice(0, 8), '#8b9bff', totProf)) +
+          '</div>' +
+          '<div class="crm-cols" style="margin-top:14px;">' +
+            painel('heart', 'Estado civil', _lancBarras(civis, '#a9b8ff', totCivil)) +
+            painel('map-pin', 'Top cidades (via CEP)', '<div id="lanc-crm-cidades"><div style="color:#64748b;font-size:12px;">Calculando cidades pelos CEPs…</div></div>') +
+          '</div>' +
+        '</div>';
+      if (window.lucide) lucide.createIcons({ elements: [el] });
+      console.log('[CRM demografia] idades:', idades.length, '| sexo:', totSexo, '| civil:', totCivil, '| prof:', totProf, '| CEPs:', regs.filter(r => (r.cep || '').replace(/\D/g, '').length === 8).length);
+      _lancRenderCrmCidades(regs);
+    }
+    window._lancCrmDemografia = _lancCrmDemografia;
 
     function _lancRenderDemografia(leads) {
       const el = document.getElementById('lanc-demografia');
