@@ -16468,6 +16468,8 @@
         if (sEl) { sEl.textContent = 'Cadastros em tempo real.'; }
       })();
       _loadCidadeIBGE();
+      _lancShow('content');
+      _lancLoadWeather(_lancCidadeNome);   // previsão independente dos gráficos
 
       // Sem planilha do Forms configurada: mostra o conteudo mesmo assim (CRM, previsao, etc.)
       if (!(cfg.sheetId || '').trim()) {
@@ -17279,7 +17281,7 @@
       const box = document.getElementById('lanc-weather');
       if (!box) return;
       cidade = (cidade || '').trim();
-      if (!cidade) { box.style.display = 'none'; return; }
+      if (!cidade) { console.warn('[Previsão] cidade vazia — preencha o campo Cidade no Admin → Lançamento'); box.style.display = 'none'; return; }
       box.style.display = 'block';
       if (_lancWeatherCidade !== cidade) box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando previsão do tempo…</div></div>';
       _lancWeatherCidade = cidade;
