@@ -1312,7 +1312,8 @@
     #view-lancamento .num, #view-lancamento .crm-kpi-v, #view-lancamento .lanc-hero-num, #view-lancamento .crm-pod-n, #view-lancamento .crm-rank-n { font-variant-numeric:tabular-nums; }
     .lanc-greet { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
     .lanc-greet-who { display:flex; align-items:center; gap:13px; }
-    .lanc-greet-av { width:46px; height:46px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; background:linear-gradient(135deg,#5468ff,#0E06A5); color:#fff; box-shadow:0 0 0 1px rgba(255,255,255,.08) inset; }
+    .lanc-greet-av { width:46px; height:46px; border-radius:50%; flex:none; overflow:hidden; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; background:linear-gradient(135deg,#5468ff,#0E06A5); color:#fff; box-shadow:0 0 0 1px rgba(255,255,255,.08) inset; }
+    .lanc-greet-av img { width:100%; height:100%; object-fit:cover; display:block; }
     .lanc-greet-hi { font-size:19px; font-weight:800; letter-spacing:-.3px; color:#fff; }
     .lanc-greet-when { font-size:11.5px; color:#8b90a0; display:flex; align-items:center; gap:6px; margin-top:2px; }
     .lanc-greet-dot { width:7px; height:7px; border-radius:50%; background:#5468ff; box-shadow:0 0 9px #5468ff; }
@@ -4060,6 +4061,9 @@
           <!-- Cadastros Gerais (CRM) — total atualizado (topo, fonte da verdade) -->
           <div id="lanc-crm" class="lanc-weather-card" style="display:none;"></div>
 
+          <!-- Previsao do tempo semanal da cidade do lancamento -->
+          <div id="lanc-weather" class="lanc-weather-card" style="display:none;"></div>
+
           <!-- Divisor: dados do Forms viram detalhamento -->
           <div id="lanc-forms-divider" class="lanc-forms-divider">
             <i data-lucide="file-text"></i>
@@ -4074,9 +4078,6 @@
 
           <!-- Perfil dos cadastros (demografia) -->
           <div id="lanc-demografia"></div>
-
-          <!-- Previsao do tempo semanal da cidade do lancamento -->
-          <div id="lanc-weather" class="lanc-weather-card" style="display:none;"></div>
 
           <!-- Canal + Evolução 30 dias -->
           <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:20px;">
@@ -16428,7 +16429,7 @@
             else { tEl.innerHTML = '<strong>' + esc(nm) + '</strong>'; }
           } else { tEl.textContent = 'Lançamento'; }
         }
-        if (sEl) { sEl.textContent = 'Cadastros em tempo real' + (_lancCidadeNome ? ' · Lançamento ' + _lancCidadeNome : ''); }
+        if (sEl) { sEl.textContent = 'Cadastros em tempo real.'; }
       })();
       _loadCidadeIBGE();
 
@@ -16911,7 +16912,12 @@
         const _nm = _wm ? (_wm.textContent || '').trim().split(/\s+/)[0] : '';
         const _hi = document.getElementById('lancGreetHi'); if (_hi) _hi.textContent = _g + (_nm ? ', ' + _nm : '');
         const _gd = document.getElementById('lancGreetDate'); if (_gd) _gd.textContent = new Date().toLocaleDateString('pt-BR');
-        const _av = document.getElementById('lancGreetAv'); if (_av && _nm) _av.textContent = _nm.slice(0, 2).toUpperCase();
+        const _av = document.getElementById('lancGreetAv');
+        if (_av) {
+          let _ft = ''; try { _ft = localStorage.getItem('userFoto') || ''; } catch (e) {}
+          if (_ft && _ft.indexOf('data:image') === 0) _av.innerHTML = '<img src="' + _ft + '" alt="">';
+          else if (_nm) _av.textContent = _nm.slice(0, 2).toUpperCase();
+        }
       } catch (e) {}
 
       // Contador regressivo + foguete (usa data configurada no Admin)
