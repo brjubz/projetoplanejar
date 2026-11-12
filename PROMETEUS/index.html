@@ -17280,8 +17280,7 @@
     async function _lancLoadWeather(cidade) {
       const box = document.getElementById('lanc-weather');
       if (!box) return;
-      cidade = (cidade || '').trim();
-      if (!cidade) { console.warn('[Previsão] cidade vazia — preencha o campo Cidade no Admin → Lançamento'); box.style.display = 'none'; return; }
+      cidade = (cidade || '').trim() || 'Sabinópolis';   // fallback: cidade do lançamento
       box.style.display = 'block';
       if (_lancWeatherCidade !== cidade) box.innerHTML = '<div class="lanc-weather-card-inner"><div class="lw-msg">Carregando previsão do tempo…</div></div>';
       _lancWeatherCidade = cidade;
@@ -17293,17 +17292,17 @@
           geo = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(q) + '&count=1&language=pt').then(r => r.json()).catch(() => null);
           loc = geo && geo.results && geo.results[0];
         }
-        if (!loc) { console.warn('[Previsão] cidade não encontrada:', cidade, '->', q); box.style.display = 'none'; return; }
+        if (!loc) { console.warn('[Previsão] cidade não encontrada:', cidade, '->', q); box.innerHTML = '<div class=\"lanc-weather-card-inner\"><div class=\"lw-msg\" style=\"padding:10px 4px;color:#94a3b8;font-size:13px;\">🌦️ Previsão indisponível para esta cidade. Confira o nome no Admin → Lançamento.</div></div>'; return; }
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + loc.latitude + '&longitude=' + loc.longitude +
           '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation' +
           '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,uv_index_max' +
           '&timezone=auto&forecast_days=7';
         const f = await fetch(url).then(r => r.json());
-        if (!f || !f.daily || !f.daily.time) { box.style.display = 'none'; return; }
+        if (!f || !f.daily || !f.daily.time) { box.innerHTML = '<div class=\"lanc-weather-card-inner\"><div class=\"lw-msg\" style=\"padding:10px 4px;color:#94a3b8;font-size:13px;\">🌦️ Previsão do tempo indisponível no momento.</div></div>'; return; }
         box.innerHTML = _lancWeatherHTML(cidade, loc, f);
       } catch (e) {
         console.warn('[Previsão] falhou:', e && e.message);
-        box.style.display = 'none';
+        box.innerHTML = '<div class=\"lanc-weather-card-inner\"><div class=\"lw-msg\" style=\"padding:10px 4px;color:#94a3b8;font-size:13px;\">🌦️ Previsão do tempo indisponível no momento.</div></div>';
       }
     }
     function _lancWeatherHTML(cidade, loc, f) {
